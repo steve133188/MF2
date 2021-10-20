@@ -1,0 +1,42 @@
+package main
+
+import (
+	"mf-user-servies/DB"
+<<<<<<< HEAD
+	"mf-user-servies/Routes"
+	"mf-user-servies/Services"
+=======
+>>>>>>> 60667321252a0ffa87319b45ae7fb4b87f627779
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+)
+
+func main() {
+	app := fiber.New()
+
+	app.Use(logger.New())
+	app.Use(cors.New())
+
+	DB.MongoConnect()
+
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{"code": 200, "message": "Hello, MF-Users-Services"})
+	})
+
+<<<<<<< HEAD
+	app.Get("/test/add" , Services.AddUser)
+	app.Get("/all" , Services.GetAllUsers)
+	app.Post("/login" , Services.LoginUser)
+	api := app.Group("/api")
+
+	Routes.UsersRoute(api.Group("/users"))
+
+=======
+	app.Get("/test/add", Services.CreateOneUserTest)
+	app.Get("/all", Services.GetAllUsers)
+	app.Post("/login", Services.LoginUser)
+>>>>>>> 60667321252a0ffa87319b45ae7fb4b87f627779
+	app.Listen(":3000")
+}
