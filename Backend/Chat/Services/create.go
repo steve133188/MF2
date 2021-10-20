@@ -1,5 +1,0 @@
-package Services
-
-func CreateLog(){
-
-}
