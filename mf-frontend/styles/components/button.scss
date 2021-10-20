@@ -1,0 +1,78 @@
+.threeDotsMenu:after {
+  content: '\2807';
+  font-size: 30px;
+  font-family: BlinkMacSystemFont;
+}
+
+.newContactButton {
+  button {
+    border-radius: 10px;
+    text-transform: none;
+  }
+  button:hover {
+    background: #2172fa;
+  }
+}
+
+.buttonGrp {
+  display: flex;
+  margin-top: 19px;
+
+
+  button {
+    border-radius: 10px;
+    box-shadow: none;
+    text-transform: none;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 3px 16px;
+    text-transform: none;
+  }
+  .newContactButton {
+
+  }
+  .cancelButton {
+
+  }
+}
+
+.iconButtonContainer {
+  button {
+    box-shadow: none;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    margin-right: 23px;
+    border-radius: 10px;
+
+  }
+}
+.cancelButton {
+  button {
+    box-shadow: none;
+    border-radius: 10px;
+    text-transform: none;
+  }
+}
+
+.normalButton {
+  button {
+    box-shadow: none;
+    border-radius: 10px;
+    text-transform: none;
+  }
+}
+
+.textWithIconButton {
+  button {
+    padding-left: 16.5px;
+    padding-right: 16.5px;
+    text-transform: none;
+  }
+  img {
+    margin-right: 4px;
+    width: 15px;
+    height: 15px;
+    margin-bottom: 2px;
+  }
+}

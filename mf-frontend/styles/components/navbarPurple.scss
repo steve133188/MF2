@@ -1,0 +1,44 @@
+.navbarPurple {
+  background: #F8F9FB;
+  border-radius: 15px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  padding: 14px 11px;
+  justify-content: space-between;
+
+  .selectButtonGroup {
+    display: flex;
+    .selectContainer {
+      margin-right: 22px;
+
+      div {
+        color: #444444;
+
+        div {
+          padding-right: 52px;
+        }
+
+        svg {
+          fill: #444444;
+        }
+      }
+    }
+  }
+  .tagsButtonGroup {
+    display: flex;
+    span {
+      div {
+        color: #444444;
+      }
+    }
+    .controlButtonGroup {
+      margin-top: 33px;
+      display: flex;
+      justify-content: space-evenly;
+      span {
+        margin-left: 0;
+      }
+    }
+  }
+}

@@ -1,0 +1,158 @@
+.checkboxGroup1 {
+  margin-left: 11px;
+  margin-top: 39px;
+  margin-right: 30px;
+  color: #444444;
+
+  h1 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 32px;
+  }
+
+  .checkboxGrp {
+    display: flex;
+    justify-content: space-between;
+    /* The container */
+    .checkboxContainer {
+      position: relative;
+      padding-left: 35px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      font-size: 16px;
+
+      /* Hide the browser's default checkbox */
+      input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+      }
+
+      /* Create a custom checkbox */
+      .checkmark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 21px;
+        width: 21px;
+        border: 1.5px solid #E7E8EC;
+        border-radius: 5px;
+      }
+    }
+
+    /* On mouse-over, add a grey background color */
+    .checkboxContainer:hover input ~ .checkmark {
+      background-color: #c1e3ff;
+    }
+
+    /* When the checkbox is checked, add a blue background */
+    input:checked ~ .checkmark {
+      background-color: #2198FA;
+      box-shadow: 0px 3px 6px #00000029;
+      width: 21px;
+      height: 21px;
+      border: none;
+    }
+  }
+}
+
+.checkboxGroup2 {
+  margin-left: 11px;
+  margin-top: 30px;
+  margin-right: 30px;
+  color: #444444;
+
+  p {
+    font-size: 12px;
+  }
+
+  .checkboxGrp {
+    display: flex;
+    flex-flow: column;
+
+    .checkboxContainer {
+      margin-bottom: 25px;
+      position: relative;
+      cursor: pointer;
+
+      img {
+        width: 22px;
+        height: 22px;
+        margin-right: 5px;
+      }
+
+      input {
+        float: right;
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+      }
+
+      .checkmark {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 21px;
+        width: 21px;
+        border: 1.5px solid #E7E8EC;
+        border-radius: 5px;
+      }
+    }
+  }
+
+  /* On mouse-over, add a grey background color */
+  .checkboxContainer:hover input ~ .checkmark {
+    background-color: #c1e3ff;
+  }
+
+  /* When the checkbox is checked, add a blue background */
+  input:checked ~ .checkmark {
+    background-color: #2198FA;
+    box-shadow: 0px 3px 6px #00000029;
+    width: 21px;
+    height: 21px;
+    border: none;
+  }
+  .checkboxContainer:active input ~ .checkmark {
+
+  }
+}
+
+.testCheckboxContainer {
+  position: relative;
+  cursor: pointer;
+  input {
+    float: right;
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+  .checkmark {
+    position: absolute;
+    height: 21px;
+    width: 21px;
+    border: 1.5px solid #e7e8ec;
+    border-radius: 5px;
+    top: -16px;
+    left: -10px;
+  }
+  /* On mouse-over, add a grey background color */
+  .testCheckboxContainer:hover input ~ .checkmark {
+    background-color: #c1e3ff;
+  }
+
+  /* When the checkbox is checked, add a blue background */
+  input:checked ~ .checkmark {
+    background-color: #2198FA;
+    box-shadow: 0px 3px 6px #00000029;
+    width: 21px;
+    height: 21px;
+    border: none;
+  }
+}

@@ -1,0 +1,67 @@
+.selectContainer {
+  align-self: center;
+  div {
+    background: #FFFFFF;
+    border-radius: 10px;
+    color: #2198FA;
+    div {
+      padding-right: 70px;
+      padding-bottom: 5px;
+      padding-top: 5px;
+
+      min-width: 85px;
+      span {
+
+      }
+    }
+    svg {
+      fill: #2198FA;
+    }
+    fieldset {
+      border: none;
+      color: #2198FA;
+    }
+  }
+}
+
+.select2Container {
+  align-self: center;
+  margin-bottom: 22px;
+  div {
+    width: 100%;
+    border-radius: 10px;
+    color: #444444;
+    height: 47px;
+    div {
+      background: #F8F9FB;
+      span {
+        padding-right: 45px;
+        color: #444444;
+      }
+    }
+    svg {
+      fill: #444444;
+    }
+    fieldset {
+      border: none;
+      color: #2198FA;
+    }
+  }
+}
+
+.multipleSelectPlaceholder {
+  div {
+    div {
+      svg {
+        z-index: 1;
+      }
+      fieldset {
+        border: none;
+        background: white;
+      }
+      div {
+        z-index: 1;
+      }
+    }
+  }
+}

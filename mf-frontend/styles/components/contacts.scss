@@ -1,0 +1,57 @@
+.contactContainer {
+  border-radius: 10px;
+  cursor: pointer;
+
+  .contact {
+    border-bottom: #F8F9FB 2px solid;
+    padding: 13px 17px 28px 21px;
+
+    .addToFavouriteBtn {
+      text-align: right;
+    }
+
+    .contactInfoAndTime {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .contactInfoGrp {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .contactChatInfo {
+          margin-left: 15px;
+
+          .contactName {
+            color: #444444;
+            font-weight: 600;
+
+          }
+        }
+      }
+
+      .msgTimeGrp {
+        display: flex;
+        flex-flow: column;
+        text-align: right;
+        height: 48px;
+        justify-content: space-around;
+        margin-right: 18px;
+
+        .lastOnlineTime {
+          font-size: 10px;
+          color: #444444;
+        }
+
+        .contactExtraTime {
+          color: #FC736A;
+          font-size: 12px;
+        }
+      }
+    }
+  }
+}
+
+.contactContainer:hover {
+  background: #F8F9FB;
+}

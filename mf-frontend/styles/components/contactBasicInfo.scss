@@ -1,0 +1,41 @@
+.contactBasicInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .icon {
+    border-radius: 50px;
+    width: 100px;
+    height: 100px;
+  }
+  .contactNameAndPhone {
+    display: flex;
+    flex-direction: column;
+    .name {
+      font-weight: bold;
+      font-size: 1.5em;
+    }
+    .phone {
+      font-size: 0.7em;
+      img {
+        width: 17.5px;
+        margin-right: 6px;
+        margin-bottom: 6px;
+      }
+    }
+    .settings {
+
+    }
+    .pillContainer {
+      span {
+        font-size: 10px;
+        font-weight: 600;
+      }
+    }
+  }
+  .newNoteButton {
+    button:hover {
+      background-color: rgb(237 164 79 / 97%);
+    }
+  }
+}

@@ -1,0 +1,41 @@
+.customerProfileActivityLog {
+  display: flex;
+  flex-flow: column;
+  height: 493px;
+  width: 1111px;
+  border-radius: 10px;
+  justify-content: space-between;
+  padding: 37px 50px 32px 37px;
+  color: #495057;
+  .categoryName {
+    font-weight: bold;
+    margin-bottom: 32px;
+  }
+  .activityLogSet {
+    margin-left: 29px;
+    overflow-y: auto;
+    .activityLog {
+      .logInformation {
+        .activityContent {
+          .activityUser {
+            font-weight: 600;
+            color: #2198FA;
+          }
+          .activityUser:hover {
+            font-weight: bold;
+          }
+        }
+        .activityDate {
+          color: #AAAAAA;
+          font-size: 12px;
+        }
+      }
+    }
+    .vl {
+      border-left: 2px solid #DEF0FF;
+      height: 45px;
+      margin-left: 17.5px;
+      margin-bottom: 5px;
+    }
+  }
+}

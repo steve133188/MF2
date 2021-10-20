@@ -1,0 +1,58 @@
+.contactsContainer {
+  border: 1px solid;
+  padding: 48px 33px 20px 34px;
+  max-height: 100vh;
+
+  .topBar {
+    display: flex;
+    justify-content: space-between;
+
+    .searchBar {
+      .searchSVG {
+        input {
+          margin-bottom: 0px;
+          padding: 17px 0px;
+          padding-left: 50px;
+          padding-right: 25px;
+          width: 360px;
+          box-shadow: none;
+        }
+      }
+    }
+
+    .buttonGrp {
+      display: flex;
+      width: 500px;
+      justify-content: space-between;
+      align-items: center;
+
+      button {
+        max-height: 36px;
+        border-radius: 10px;
+        text-transform: unset;
+
+
+        img {
+          margin-right: 6px;
+          margin-bottom: 3px;
+        }
+      }
+
+      button:hover {
+        background: #bedef8;
+      }
+
+      .newContactButton {
+        button:hover {
+          background: #2172fa;
+        }
+      }
+    }
+  }
+
+  .navbarPurple {
+    .selectContainer {
+
+    }
+  }
+}

@@ -1,0 +1,14 @@
+.blueMenu {
+  width: 268px;
+  height: 916px;
+  padding: 29px 13px;
+  background: #F7FBFF;
+  border-radius: 15px;
+  .blueMenuGroup {
+    padding: 0;
+    display: flex;
+    flex-flow: column;
+    list-style: none;
+  }
+}
+

@@ -1,0 +1,114 @@
+.badgeContainer {
+  float: left;
+
+  .badge {
+    display: inline-block;
+    padding: 0.35em 0.65em;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 5px;
+    background: #7E7E7E;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    max-height: 25px;
+  }
+
+  .red {
+    background: #FC736A;
+  }
+
+  .blue {
+    background: #44A5FF;
+  }
+
+  .yellow {
+    background: #F1B44C;
+  }
+
+  .brown {
+    background: #E39841;
+  }
+
+  .green {
+    background: #34C38F;
+  }
+
+  .gray {
+    background: #ACC5C7;
+  }
+
+  .purple {
+    background: #D6DCF9;
+    color: #5B67E8;
+  }
+
+  .gp1 {
+    background: #68C093;
+    font-size: 13px;
+    width: 82px;
+    height: 28px;
+    max-height: 30px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .gp2 {
+    background: #5B73E8;
+    font-size: 13px;
+    width: 82px;
+    height: 28px;
+    max-height: 30px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .vip {
+    background: #DEF0FF;
+    color: #2198FA;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .newCustomer {
+    background: #D6DCF9;
+    color: #5B67E8;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .lightYellow {
+    background: #FCECD2;
+    color: #F1B44C;
+  }
+
+  .add {
+    background: #F5F6F8;
+    color: #4E4E4E;
+
+  }
+}
+
+.moreImageBadgeContainer {
+  .moreImageBadge {
+    display: inline-block;
+    padding: 33px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #2198FA;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 10px;
+    background: #ECF2F8;
+
+  }
+}

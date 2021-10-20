@@ -1,0 +1,43 @@
+.contactInfoSet {
+  border: solid 1px black;
+  padding: 23px 45px 17px 56px;
+  color: #444444;
+  overflow-y: auto;
+  width: 406px;
+  height: 966px;
+
+  .extraInfo {
+    border-bottom: 2px solid #F3F3F5;
+    .infoGrp {
+      line-height: 1;
+      margin-bottom: 20px;
+      .infoTitle {
+        font-size: 12px;
+      }
+      .infoContent {
+        font-weight: 600;
+      }
+    }
+  }
+  .assigneeAndTagsGroup {
+    display: flex;
+    flex-flow: column;
+    .tagsArea {
+
+      .tagsTitle {
+        margin-bottom: 5px;
+        font-size: 12px;
+      }
+      .assigneeTagsGroup {
+        .pillContainer {
+          margin-right: 7px;
+        }
+      }
+      .tagsGrp {
+        .pillContainer {
+          margin-right: 7px;
+        }
+      }
+    }
+  }
+}

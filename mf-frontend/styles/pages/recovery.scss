@@ -1,0 +1,83 @@
+*{
+
+}
+
+.recovery-container {
+  margin: auto;
+  text-align: center;
+  margin-top: 5%;
+
+  h1 {
+    color: #7E7E7E;
+    font-size: 4rem;
+    padding: 3px;
+    margin: auto;
+  }
+
+  p {
+    text-align: center;
+    font-size: 20px;
+    margin: auto;
+    margin-top: 5%;
+    max-width: 570px;
+  }
+}
+
+.recovery-form {
+  justify-content: center;
+  margin-top: 5%;
+
+  .emailSVG {
+    position: relative;
+    margin-bottom: 5%;
+    border-radius: 10px;
+    box-shadow: 0px 3px 6px #00000029;
+  }
+
+  .emailSVG:before {
+    content: "";
+    position: absolute;
+    left: 3rem;
+    top: 0;
+    bottom: 0;
+    width: 20px;
+    background: url("../../public/icon-email.svg") center / contain no-repeat;
+  }
+
+  input {
+    height: 2em;
+    border-radius: 10px;
+    opacity: 1;
+  }
+  input[type="text"] {
+    width: 29rem;
+    height: 4rem;
+    border: white;
+    font-size: 16px;
+    padding-left: 5.5em;
+    padding-bottom: 4px;
+  }
+  input:active {
+    border: white;
+    box-shadow: 0px 2px 6px #2198fa8c;
+  }
+  input:focus {
+    outline: none;
+    box-shadow: 0px 2px 6px #2198fa8c;
+  }
+  input:hover {
+    box-shadow: 0px 2px 6px #2198fa8c;
+  }
+
+  input[type="submit"] {
+    width: 30vh;
+    height: 3rem;
+    color: white;
+    background: #2198FA;
+    border: #2198FA;
+    font-size: 18px;
+  }
+  input[type="submit"]:hover {
+    background: #0D6EFD;
+  }
+}

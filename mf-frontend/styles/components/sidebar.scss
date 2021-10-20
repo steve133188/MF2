@@ -1,0 +1,11 @@
+.brand-logo{
+  display: flex;
+  img{
+    max-width: 32px;
+    max-height: 32px;
+    margin-right: 16px;
+  }
+  justify-content: center;
+  align-items: baseline;
+  padding: 16px;
+}
