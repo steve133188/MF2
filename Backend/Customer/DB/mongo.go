@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
+	uuid "github.com/nu7hatch/gouuid"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -27,13 +29,6 @@ type MongoInstance struct {
 }
 
 var MI MongoInstance
-
-// func NewDB() *DB {
-// 	url := goDotEnvVariable("DB_URL")
-// 	name := goDotEnvVariable("DB_NAME")
-// 	c := goDotEnvVariable("DB_COLLECTION")
-// 	return &DB{url: url, name: name, collection: c}
-// }
 
 func goDotEnvVariable(key string) string {
 
@@ -72,10 +67,15 @@ func MongoConnect() {
 			fmt.Println(err)
 		}
 		fmt.Println(res.DeletedCount, " Deleted")
+		counts = 0
 	}
 
 	if counts == 0 {
-		res, err := customers.InsertOne(context.TODO(), bson.M{"id": "1", "userId": "111", "customerFirstName": "Tom", "customerLastName": "Boy", "age": "20"})
+		id, err := uuid.NewV4()
+		if err != nil {
+			fmt.Println("Failed to generate first uuid")
+		}
+		res, err := customers.InsertOne(context.TODO(), bson.M{"id": id.String(), "userId": "111", "customerFirstName": "Tom", "customerLastName": "Boy", "age": "20", "timezone": "8", "lastUpdatedTime": time.Now(), "accountCreatedTime": time.Now()})
 		if err != nil {
 			fmt.Println(err)
 		}

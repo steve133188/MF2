@@ -7,7 +7,6 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func GetAllCustomers(c *fiber.Ctx) error {
@@ -38,6 +37,15 @@ func GetAllCustomers(c *fiber.Ctx) error {
 		})
 	}
 
+	// for i := range customers {
+	// 	timezone, err := strconv.ParseInt(customers[i].TimeZone, 10, 64)
+	// 	if err != nil {
+	// 		fmt.Println("Failed to parse TimeZone to int64")
+	// 	}
+	// 	customers[i].AccountCreatedTime = customers[i].AccountCreatedTime.Add(time.Hour * time.Duration(timezone))
+	// 	customers[i].LastUpdatedTime = customers[i].LastUpdatedTime.Add(time.Hour * time.Duration(timezone))
+	// }
+
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
 		"data": fiber.Map{
@@ -50,21 +58,20 @@ func GetCustomersById(c *fiber.Ctx) error {
 	customerCollection := DB.MI.DBCol
 
 	// get parameter value
-	paramID, err := primitive.ObjectIDFromHex(c.Params("id")) //valid id: 24 hex
-	if err != nil {
-		fmt.Println(err)
-	}
+	// paramID, err := primitive.ObjectIDFromHex(c.Params("id")) //valid id: 24 hex
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
 
-	// paramID := c.Params("id")
+	paramID := c.Params("id")
 	fmt.Println(paramID)
 
 	// find todo and return
 	customer := &Model.Customer{}
 
-	query := bson.D{{Key: "_id", Value: paramID}}
+	query := bson.D{{Key: "id", Value: paramID}}
 
-	err = customerCollection.FindOne(c.Context(), query).Decode(customer)
-
+	err := customerCollection.FindOne(c.Context(), query).Decode(customer)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"success": false,
@@ -72,6 +79,15 @@ func GetCustomersById(c *fiber.Ctx) error {
 			"error":   err,
 		})
 	}
+
+	// timezone, err := strconv.ParseInt(customer.TimeZone, 10, 64)
+	// if err != nil {
+	// 	fmt.Println("Failed to parse TimeZone to int64, using default Time Zone UTC +8")
+	// 	timezone = 8
+	// }
+
+	// customer.AccountCreatedTime = customer.AccountCreatedTime.Add(time.Hour * time.Duration(timezone))
+	// customer.LastUpdatedTime = customer.LastUpdatedTime.Add(time.Hour * time.Duration(timezone))
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,

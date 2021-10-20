@@ -1,5 +1,7 @@
 package Model
 
+import "time"
+
 type User struct {
 	ID         string        `json:"id", bson:"_id"`
 	Username   string        `json:"username"`
@@ -12,4 +14,5 @@ type User struct {
 	Teams      []string      `json:"teams"`
 	Role       string        `json:"role"`
 	Preference interface{}   //TODO define the preference datatype
+	Date       time.Time     `json:"date"`
 }

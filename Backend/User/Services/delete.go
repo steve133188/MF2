@@ -1,31 +1,3 @@
-// package Services
-
-// type DeleteUser interface {
-// 	DeleteOneUser(obj interface{}) (status string,err error)
-// 	DeleteManyUser(obj interface{}) (status string,err error)
-// 	DeleteAllUser(obj interface{}) (status string,err error)
-// }
-
-// type Delete struct {
-
-// }
-
-// func NewDelete() *Delete{
-// 	return &Delete{}
-// }
-
-// func (d*Delete)DeleteOneUser(obj interface{}) (status string,err error){
-// 	 return
-// }
-
-// func (d*Delete)DeleteManyUser(obj interface{}) (status string,err error){
-// 	 return
-// }
-
-// func (d*Delete)DeleteAllUser(obj interface{}) (status string,err error){
-// 	 return
-// }
-
 package Services
 
 import (

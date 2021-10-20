@@ -104,6 +104,7 @@ func MongoConnect() {
 			fmt.Println(err)
 		}
 		fmt.Println(res.DeletedCount, " Deleted")
+		counts = 0
 	}
 	if counts == 0 {
 		res, err := logs.InsertOne(context.TODO(), bson.M{"id": "1", "userId": "111"})

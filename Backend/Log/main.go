@@ -17,7 +17,7 @@ func main() {
 
 	DB.MongoConnect()
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/test", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{"code": 200, "message": "Hello, MF-Logs-Services"})
 	})
 
@@ -25,6 +25,6 @@ func main() {
 
 	Routes.CustomersRoute(api.Group("/logs"))
 
-	app.Listen(":3000")
+	app.Listen(":3002")
 
 }
