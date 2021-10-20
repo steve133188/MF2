@@ -1,14 +1,52 @@
 package Services
 
 import (
-	"context"
 	"fmt"
-	"github.com/gofiber/fiber/v2"
-	"go.mongodb.org/mongo-driver/bson"
 	"mf-user-servies/DB"
 	"mf-user-servies/Model"
 	"time"
+
+	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/bson"
 )
+
+func LoginUser(c *fiber.Ctx) error {
+	usersCollection := DB.MI.DBCol
+	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+
+	user := new(Model.User)
+
+	if err := c.BodyParser(&user); err != nil {
+		return err
+	}
+
+	fmt.Println(user)
+
+	filter := bson.M{"email": user.Email, "password": user.Password}
+
+	findResult := usersCollection.FindOne(c.Context(), filter)
+	if err := findResult.Err(); err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"message": "User Not found",
+			"error":   err,
+		})
+	}
+	err := findResult.Decode(&user)
+	user.Date = user.Date.Add(time.Hour * 8)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"message": "User Not found",
+			"error":   err,
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"data":    user,
+		"success": true,
+	})
+
+}
 
 func GetAllUsers(c *fiber.Ctx) error {
 	usersCollection := DB.MI.DBCol
@@ -36,6 +74,10 @@ func GetAllUsers(c *fiber.Ctx) error {
 			"message": "Error to interate cursor into result",
 			"error":   err.Error(),
 		})
+	}
+
+	for i := range users {
+		users[i].Date = users[i].Date.Add(time.Hour * 8)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
@@ -68,47 +110,12 @@ func GetUsersById(c *fiber.Ctx) error {
 		})
 	}
 
+	customer.Date = customer.Date.Add(time.Hour * 8)
+
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
 		"data": fiber.Map{
 			"customer": customer,
 		},
 	})
-}
-func LoginUser(c*fiber.Ctx) error{
-	users_collection := DB.MI.DBCol
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	var user Model.User
-
-	q:= new(Model.User)
-
-	if err := c.BodyParser(&q); err != nil {
-		return err
-	}
-
-	fmt.Println(q)
-
-	filter := bson.M{"email":q.Email,"password":q.Password}
-
-	findResult :=users_collection.FindOne(ctx , filter)
-	if err := findResult.Err(); err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "User Not found",
-			"error":   err,
-		})
-	}
-	err := findResult.Decode(&user)
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "User Not found",
-			"error":   err,
-		})
-	}
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"data":    user,
-		"success": true,
-	})
-
 }

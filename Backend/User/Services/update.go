@@ -1,25 +1,3 @@
-// package Services
-
-// type UpdateUser interface {
-// 	UpdateOneUser(obj interface{}) (status string,err error)
-// 	UpdateManyUser(obj interface{}) (status string,err error)
-// }
-
-// type Update struct {
-
-// }
-
-// func NewUpdate() *Update{
-// 	return &Update{}
-// }
-
-// func UpdateOneUser(obj interface{}) (status string,err error) {
-// 	return
-// }
-
-// func UpdateManyUser(obj interface{}) (status string,err error) {
-// 	return
-// }
 package Services
 
 import (
@@ -27,6 +5,7 @@ import (
 	"log"
 	"mf-user-servies/DB"
 	"mf-user-servies/Model"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
@@ -46,6 +25,8 @@ func UpdateUserByID(c *fiber.Ctx) error {
 		})
 	}
 
+	user.Date = time.Now()
+	user.ID = c.Params("id")
 	update := bson.D{{Key: "$set", Value: user}}
 
 	_, err := usersCollection.UpdateOne(c.Context(), bson.D{{Key: "id", Value: c.Params("id")}}, update)
