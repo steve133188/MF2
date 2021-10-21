@@ -1,10 +1,4 @@
-<<<<<<< HEAD
-export default function Layout (props){
 
-    return(
-        <div>
-            {props.children}
-=======
 import {useRouter} from "next/router";
 import {useEffect , useContext} from "react";
 import {AuthContext} from "../context/authContext"
@@ -14,7 +8,7 @@ export  default function Layout ({children}){
     let layout =(
         <div className={"layout"}>
             {children}
->>>>>>> 863d9e42ff766350b88638972936682852a0b635
+
         </div>
     )
     useEffect(()=>{
