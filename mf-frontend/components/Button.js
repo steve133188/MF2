@@ -76,7 +76,7 @@ export function NormalButton2(props) {
     return (
         <div className="newContactButton">
             <ThemeProvider theme={theme}>
-                <Button variant="contained" color="primary">
+                <Button variant="contained" color="primary" disabled={props.disabled} onClick={props.onClick}>
                     {props.children}
                 </Button>
             </ThemeProvider>

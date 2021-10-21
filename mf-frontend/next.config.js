@@ -15,3 +15,11 @@ module.exports = {
     includePaths: [path.join(__dirname, 'styles')],
   },
 }
+module.exports = {
+  webpack5: true,
+  webpack: (config) => {
+    config.resolve.fallback = { fs: false ,crypto:false , stream: false , path :false};
+
+    return config;
+  },
+};

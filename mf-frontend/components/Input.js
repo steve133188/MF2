@@ -42,7 +42,7 @@ export function Search2(props) {
         <div className="logoInputContainer">
             <span className="requiredMessage">This field is required.</span>
             <label className="searchSVG">
-                <input type={props.type} placeholder={props.children}/>
+                <input type={props.type} placeholder={props.children} onChange={props.handleChange}/>
             </label>
         </div>
     )
