@@ -24,6 +24,6 @@ export  default function Layout ({children}){
         }
     },[])
     return(
-        layout
+        !user["authReady"] ?<div className={"layout"}>{children}</div>:<div className={"unauth"}>{children}</div>
     )
 }
