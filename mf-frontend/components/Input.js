@@ -37,7 +37,7 @@ export function Search(props) {
     )
 }
 
-export function Search2(props) {
+export function Search2(...props) {
     return (
         <div className="logoInputContainer">
             <span className="requiredMessage">This field is required.</span>
