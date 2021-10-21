@@ -37,12 +37,17 @@ export function Search(props) {
     )
 }
 
-export function Search2(...props) {
+export function Search2({children,...props}) {
+    const {handleChange ,type } = props
     return (
         <div className="logoInputContainer">
             <span className="requiredMessage">This field is required.</span>
             <label className="searchSVG">
-                <input type={props.type} placeholder={props.children} onChange={props.handleChange}/>
+                <input
+                        onChange={handleChange}
+                        type
+                        placeholder={children}
+                      />
             </label>
         </div>
     )
