@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_4417" data-name="Rectangle 4417" width="1920" height="1080" fill="none"/>
+    </clipPath>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#2ac6ff"/>
+      <stop offset="1" stop-color="#167dff"/>
+    </linearGradient>
+  </defs>
+  <g id="Mask_Group_82" data-name="Mask Group 82" clip-path="url(#clip-path)">
+    <rect id="Rectangle_4413" data-name="Rectangle 4413" width="1382.985" height="463.555" rx="30" transform="translate(409.217 1670.701) rotate(-135)" opacity="0.547" fill="url(#linear-gradient)"/>
+    <rect id="Rectangle_4410" data-name="Rectangle 4410" width="754.47" height="774.635" rx="30" transform="translate(1853.158 -481.24) rotate(45)" opacity="0.547" fill="url(#linear-gradient)"/>
+    <rect id="Rectangle_4414" data-name="Rectangle 4414" width="429.038" height="437.58" rx="30" transform="translate(535.342 793) rotate(79)" opacity="0.547" fill="url(#linear-gradient)"/>
+    <rect id="Rectangle_4416" data-name="Rectangle 4416" width="429.038" height="437.58" rx="30" transform="translate(667.9 -188.375) rotate(135)" opacity="0.547" fill="url(#linear-gradient)"/>
+    <rect id="Rectangle_4415" data-name="Rectangle 4415" width="452.473" height="454.449" rx="30" transform="matrix(-0.259, -0.966, 0.966, -0.259, 1618.895, 712)" opacity="0.547" fill="url(#linear-gradient)"/>
+  </g>
+</svg>

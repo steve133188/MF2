@@ -1,11 +1,15 @@
 .login-layout{
   display: flex;
   background: #FFFFFF 0% 0% no-repeat padding-box;
+  background: url("../../public/Mask Group 82.svg") no-repeat ;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
   opacity: 1;
   justify-content: center;
   align-items: center;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   flex-wrap: wrap;
 }
 
