@@ -1,6 +1,6 @@
-.live_chat-layout{
+.customer_profile-layout{
   display: flex;
-  background: #FFFFFF 0% 0% no-repeat padding-box;
+  background: #F8F9FB 0% 0% no-repeat padding-box;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -14,6 +14,18 @@
     justify-content: center;
     display: flex;
     align-items: center;
+    .right {
+      margin-left: 50px;
+      .right1 {
+        display: flex;
+        margin-bottom: 50px;
+        .right1-1 {
+          margin-right: 45px;
+        }
+        .right1-2 {
+
+        }
+      }
+    }
   }
 }
-

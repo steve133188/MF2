@@ -14,7 +14,7 @@ export function ChatArea() {
     const isSent = false;
 
     return (
-        <div className="container">
+
             <div className="chatArea">
                 <div className="chatAreaTop">
                     <div className="targetContact">
@@ -75,6 +75,6 @@ export function ChatArea() {
                     </div>
                 </div>
             </div>
-        </div>
+
     )
 }

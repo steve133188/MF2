@@ -1,5 +1,4 @@
 .contactInfoSet {
-  border: solid 1px black;
   padding: 23px 45px 17px 56px;
   color: #444444;
   overflow-y: auto;
@@ -8,6 +7,8 @@
 
   .extraInfo {
     border-bottom: 2px solid #F3F3F5;
+    margin-top: 33px;
+    margin-bottom: 20px;
     .infoGrp {
       line-height: 1;
       margin-bottom: 20px;
@@ -23,7 +24,7 @@
     display: flex;
     flex-flow: column;
     .tagsArea {
-
+        margin-bottom: 67px;
       .tagsTitle {
         margin-bottom: 5px;
         font-size: 12px;

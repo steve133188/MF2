@@ -3,12 +3,13 @@ import {LabelSelect, MultipleSelectPlaceholder} from "./Select";
 import Box from '@mui/material/Box';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import {CancelButton, NormalButton2} from "./Button";
+import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 
 export function DeletePopper() {
 
     const deleteStyles = {
         position: 'absolute',
-        top: 25,
+        top: 55,
         right: -10,
         borderRadius: 2,
         zIndex: 1,
@@ -31,20 +32,22 @@ export function DeletePopper() {
     };
 
     return (
-        <ClickAwayListener onClickAway={handleClickAway}>
-            <Box sx={{position: 'relative'}}>
-                <span onClick={handleClick}>3</span>
-                {open ? (
-                    <Box sx={deleteStyles}>
-                        Delete 2 contacts? <br/>
-                        All conversation history will also be erased.
-                        <div className="controlButtonGroup">
-                            <NormalButton2>Delete</NormalButton2>
-                            <span onClick={handleClick}><CancelButton></CancelButton></span>
-                        </div>
-                    </Box>
-                ) : null}
-            </Box>
-        </ClickAwayListener>
+        <div className="deletePopperContainer">
+            <ClickAwayListener onClickAway={handleClickAway}>
+                <Box sx={{position: 'relative'}}>
+                    <span onClick={handleClick}><DeleteForeverOutlinedIcon sx={{fontSize: 33, fill: "#fa5d5d"}} /></span>
+                    {open ? (
+                        <Box sx={deleteStyles}>
+                            Delete 2 contacts? <br/>
+                            All conversation history will also be erased.
+                            <div className="controlButtonGroup">
+                                <NormalButton2>Delete</NormalButton2>
+                                <span onClick={handleClick}><CancelButton></CancelButton></span>
+                            </div>
+                        </Box>
+                    ) : null}
+                </Box>
+            </ClickAwayListener>
+        </div>
     )
 }

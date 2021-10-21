@@ -1,16 +1,23 @@
 .customerProfileInfo {
   overflow-y: auto;
   background: white;
-  width: 900px;
+  width: 467px;
   border-radius: 10px;
-  padding: 22px 48px 22px 58px;
+  padding: 19.5px 48px 60px 58px;
   color: #444444;
+  .threeDotsHoriMenuContainer {
+    .threeDotsHoriMenu {
+      text-align: right;
+    }
+  }
   .settingSets {
     display: flex;
     justify-content: right;
   }
   .contactBasicInfo {
     text-align: center;
+    display: flex;
+    flex-flow: column;
     .icon {
       width: 100px;
       height: 100px;

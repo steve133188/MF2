@@ -1,34 +1,73 @@
-.broadcastContainer {
-  padding: 48px 34px 20px 34px;
-  max-height: 100vh;
-  .topBar {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 19px;
-    margin-bottom: 19px;
-    .searchBar {
-    }
-    .buttonGrp {
-      display: flex;
-      width: 233px;
-      justify-content: space-between;
-      align-items: center;
-      button {
-        max-height: 36px;
-        border-radius: 10px;
-        text-transform: unset;
-        box-shadow: none;
-        img {
-          margin-right: 6px;
-          margin-bottom: 3px;
+.broadcast-layout {
+  display: flex;
+  background: #ffffff 0% 0% no-repeat padding-box;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  opacity: 1;
+  height: 100vh;
+
+  .rightContent {
+    width: 100%;
+
+    .broadcastContainer {
+      padding: 48px 33px 20px 34px;
+      max-height: 100vh;
+      width: 100%;
+      margin-right: auto;
+      margin-left: auto;
+
+      .navbarPurple {
+        .tagsButtonGroup {
+          display: none;
         }
       }
-      button:hover {
-        background: #bedef8;
-      }
-      .newContactButton {
-        button:hover{
-          background: #2172fa;
+
+      .topBar {
+        display: flex;
+        justify-content: space-between;
+
+        .searchBar {
+          .searchSVG {
+            input {
+              margin-bottom: 0px;
+              width: 421px;
+              box-shadow: none;
+              padding: 23.5px 0px;
+              padding-left: 50px;
+              padding-right: 25px;
+              border-radius: 15px;
+            }
+          }
+        }
+
+        .buttonGrp {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          button {
+            max-height: 36px;
+            border-radius: 10px;
+            text-transform: unset;
+            box-shadow: none;
+            margin-left: 15px;
+
+            img {
+              margin-right: 6px;
+              margin-bottom: 3px;
+            }
+          }
+
+          button:hover {
+            background: #bedef8;
+          }
+
+          .newContactButton {
+            button:hover {
+              background: #2172fa;
+            }
+          }
         }
       }
     }

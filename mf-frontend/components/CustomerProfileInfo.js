@@ -2,15 +2,12 @@ import {Pill} from "./Pill";
 import {LabelSelect, MultipleSelectPlaceholder} from "./Select";
 import {Select} from "./Input";
 import {ThreeDotsMenu} from "./Button";
+import {ThreeDotsHoriMenu} from "./Menu";
 
 export function CustomerProfileInfo() {
     return (
-        <div className="container">
             <div className="customerProfileInfo">
-                <div className="settingSets">
-                    <LabelSelect />
-                    <ThreeDotsMenu />
-                </div>
+                <ThreeDotsHoriMenu />
                 <div className="contactBasicInfo">
                     <img className="icon" src="https://ath2.unileverservices.com/wp-content/uploads/sites/4/2020/02/IG-annvmariv-1024x1016.jpg" alt=""/>
                     <div className="customerName">Debra Patel</div>
@@ -62,6 +59,5 @@ export function CustomerProfileInfo() {
                     </div>
                 </div>
             </div>
-        </div>
     )
 }

@@ -36,13 +36,17 @@
 @import "components/forgetPasswordPanel.scss";
 @import "components/successPanel.scss";
 @import "components/addPopper.scss";
+@import "components/deletePopper.scss";
 
 @import "pages/login.scss";
 @import "pages/recovery.scss";
 @import "pages/integrations.scss";
 @import "pages/live_chat.scss";
 @import "pages/contacts.scss";
-@import "pages/broadcast";
+@import "pages/broadcast.scss";
+@import "pages/dashboard.scss";
+@import "pages/customer_profile.scss";
+@import "pages/account_setting.scss";
 @import '../node_modules/bootstrap/dist/css/bootstrap.css';
 
 html,

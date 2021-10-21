@@ -28,6 +28,8 @@
   .tagsButtonGroup {
     display: flex;
     span {
+      cursor: pointer;
+      margin-right: 28px;
       div {
         color: #444444;
       }

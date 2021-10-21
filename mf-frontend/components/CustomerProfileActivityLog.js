@@ -5,7 +5,6 @@ import {LogInputField} from "./Input";
 export function CustomerProfileActivityLog() {
     return (
 
-        <div className="container">
             <div className="customerProfileActivityLog">
                 <span className="categoryName">Activity Log</span>
                 <div className="activityLogSet">
@@ -91,6 +90,5 @@ export function CustomerProfileActivityLog() {
                 </div>
                 <LogInputField />
             </div>
-        </div>
     )
 }

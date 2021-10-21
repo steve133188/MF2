@@ -5,7 +5,7 @@ import {ContactListTopBar} from "./ContactListTopBar"
 
 export function ContactList() {
     return (
-        <div className="container">
+
             <div className="contactList">
                 <ContactListTopBar />
                 <div className="contactContainerGrp">
@@ -23,6 +23,6 @@ export function ContactList() {
                     <Contacts/>
                 </div>
             </div>
-        </div>
+
     )
 }

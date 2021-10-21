@@ -5,6 +5,7 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 import {CancelButton, NormalButton2} from "./Button";
 import {DeletePopper} from "./DeletePopper";
 import {AddPopper} from "./AddPopper";
+import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined';
 
 
 export function NavbarPurple() {
@@ -29,7 +30,7 @@ export function NavbarPurple() {
             <div className="tagsButtonGroup">
                 <AddPopper/>
 
-                <span>2</span>
+                <span><IosShareOutlinedIcon sx={{fontSize: 30, fill: "#359ef1"}} /></span>
 
                 <DeletePopper/>
             </div>

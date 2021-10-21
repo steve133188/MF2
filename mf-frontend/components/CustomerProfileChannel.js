@@ -4,7 +4,6 @@ import {NormalButton} from "./Button";
 
 export function CustomerProfileChannel() {
     return (
-        <div className="container">
             <div className="customerProfileChannel">
                 <div className="customerChannelContainer">
                     <div className="categoryHeader">
@@ -47,6 +46,5 @@ export function CustomerProfileChannel() {
                     </div>
                 </div>
             </div>
-        </div>
     )
  }

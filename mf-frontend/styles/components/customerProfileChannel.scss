@@ -1,9 +1,11 @@
 .customerProfileChannel {
   display: flex;
   flex-flow: column;
-  height: 390px;
+  height: 420px;
   width: 533px;
   border-radius: 10px;
+  padding: 16px 30px 110px 37px;
+  background: white;
   justify-content: space-between;
   color: #495057;
   .customerChannelContainer {
