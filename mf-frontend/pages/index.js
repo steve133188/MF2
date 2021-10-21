@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import {LineChart} from "../components/LineChat"
+import {LineChart} from "../components/LineChart"
 
 export default function Home() {
     return (
