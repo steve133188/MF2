@@ -72,12 +72,13 @@ export function SelectButton() {
     )
 }
 
-export function NormalButton2(props) {
+export function NormalButton2({ children ,...props}) {
+    const {disabled , onClick} = props
     return (
         <div className="newContactButton">
             <ThemeProvider theme={theme}>
-                <Button variant="contained" color="primary">
-                    {props.children}
+                <Button variant="contained" color="primary"  disabled={disabled} onClick={onClick}>
+                    {children}
                 </Button>
             </ThemeProvider>
         </div>
