@@ -69,8 +69,8 @@ const MenuProps = {
 };
 
 const names = [
-    <Pill color="lightYellow" size="roundedPill size30">MF</Pill>,
-    <Pill color="lightBlue" size="roundedPill size30">AX</Pill>,
+    // <Pill color="lightYellow" size="roundedPill size30">MF</Pill>,
+    // <Pill color="lightBlue" size="roundedPill size30">AX</Pill>,
     'April Tucker',
     'Ralph Hubbard',
     'Omar Alexander',
