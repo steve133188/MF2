@@ -3,7 +3,8 @@ import {Search2} from "./Input"
 import {NormalButton2} from "./Button"
 import {Switch} from "./Switch";
 
-export function ForgetPasswordPanel() {
+export function ForgetPasswordPanel({...props}) {
+
     return (
         <div className="container">
             <div className="forgetPasswordPanel">
@@ -12,7 +13,7 @@ export function ForgetPasswordPanel() {
                 </div>
                 <div className="mainContent">
                     <div className="welcomeMessage">
-                        <h1>Forget Paswword</h1>
+                        <h1>Forget Password</h1>
                         <p>Enter the email address associated with <br/>your account and we’ll send you a link <br/> to reset your password.</p>
                     </div>
                     <div className="inputSet">
