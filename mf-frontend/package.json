@@ -16,7 +16,8 @@
     "next": "11.1.2",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "sass": "^1.42.1"
+    "sass": "^1.42.1",
+    "websocket": "^1.0.34"
   },
   "devDependencies": {
     "@mui/material": "^5.0.4",
