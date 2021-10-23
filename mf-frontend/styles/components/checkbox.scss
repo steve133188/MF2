@@ -117,6 +117,7 @@
     height: 21px;
     border: none;
   }
+
   .checkboxContainer:active input ~ .checkmark {
 
   }
@@ -125,6 +126,7 @@
 .testCheckboxContainer {
   position: relative;
   cursor: pointer;
+
   input {
     float: right;
     position: absolute;
@@ -133,6 +135,7 @@
     height: 0;
     width: 0;
   }
+
   .checkmark {
     position: absolute;
     height: 21px;
@@ -142,8 +145,56 @@
     top: -16px;
     left: -10px;
   }
+
   /* On mouse-over, add a grey background color */
-  .testCheckboxContainer:hover input ~ .checkmark {
+  .checkmark:hover {
+    background-color: #2198FA;
+  }
+
+  .checkmark:active {
+    background-color: #2198FA;
+  }
+
+  /* When the checkbox is checked, add a blue background */
+  input:checked ~ .checkmark {
+    background-color: #2198FA;
+    box-shadow: 0px 3px 6px #00000029;
+    width: 21px;
+    height: 21px;
+    border: none;
+  }
+}
+
+.columnCheckboxContainer {
+  position: relative;
+  cursor: pointer;
+
+  img {
+    margin-right: 15px;
+    cursor: grab;
+  }
+
+  input {
+    float: right;
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+
+  .checkmark {
+    position: absolute;
+    top: 23px;
+    right: 21px;
+    height: 21px;
+    width: 21px;
+    border: 1.5px solid #E7E8EC;
+    border-radius: 5px;
+  }
+
+  /* On mouse-over, add a grey background color */
+  .columnCheckboxContainer:hover input ~ .checkmark {
     background-color: #c1e3ff;
   }
 
@@ -154,5 +205,9 @@
     width: 21px;
     height: 21px;
     border: none;
+  }
+
+  .columnCheckboxContainer:active input ~ .checkmark {
+
   }
 }

@@ -18,6 +18,8 @@
     "next": "11.1.2",
     "react": "17.0.2",
     "react-chartjs-2": "^3.1.1",
+    "react-dnd": "^14.0.4",
+    "react-dnd-html5-backend": "^14.0.2",
     "react-dom": "17.0.2",
     "sass": "^1.42.1",
     "websocket": "^1.0.34"

@@ -1,5 +1,7 @@
+import {ContactFilterList} from "../../components/ContactFilterList";
+
 export default function Testing() {
     return (
-        <div id="dashbroad">asd</div>
+        <ContactFilterList />
     )
 }

@@ -2,13 +2,24 @@
   width: 268px;
   height: 916px;
   padding: 29px 13px;
-  background: #F7FBFF;
+  background: #F8F9FB;
   border-radius: 15px;
-  .blueMenuGroup {
-    padding: 0;
-    display: flex;
-    flex-flow: column;
-    list-style: none;
-  }
 }
 
+.blueMenuGroup {
+  padding: 0;
+  display: flex;
+  flex-flow: column;
+  list-style: none;
+}
+
+.blueMenuDropdownGroup {
+  position: static;
+  display: none;
+  .blueMenuLink {
+    line-height: 42px;
+    .blueLink {
+      padding-left: 41px;
+    }
+  }
+}
