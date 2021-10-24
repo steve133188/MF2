@@ -8,7 +8,7 @@
 
 .layout-sidebar{
   flex-direction: column;
-  width: 232px;
+  max-width: 232px;
   height: 100%;
   border-right: 2px solid #F1F1F1;
   .brand-logo{
@@ -47,11 +47,20 @@
 }
 
 .side-item{
-  padding: .5rem ;
+  padding: 0 .5rem ;
+  cursor: pointer;
+  &:hover,&:focus{
+    transform: translate(-2.5px,0);
+    transition: all 250ms ease-in-out;
+    color:#2198FA;
+    text-decoration: underline 2px;
+    text-underline-offset: 0.4em;
+
+  }
 }
 .active-side-item{
-  padding: .5rem;
-  border-right:2px solid #2198FA;
+  padding: 0 .5rem;
+  border-right:3px solid #2198FA;
 }
 
 .page-title{
@@ -99,8 +108,6 @@
 
 }
 
-
-
 .notification{
   display: flex;
   position: relative;
@@ -144,8 +151,8 @@
   vertical-align: center;
 }
 
-.layout-main-content{
-  height: 95vh;
+.main-content{
+  height: 100%;
 }
 
 .layout-main{
@@ -157,5 +164,11 @@
   max-width: 95vw;
   height: 100%;
   overflow: scroll;
+}
+
+.main-content{
+  overflow: scroll;
+  width: 100%;
+  max-width: 95vw;
 }
 

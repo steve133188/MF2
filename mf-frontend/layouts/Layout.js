@@ -7,7 +7,7 @@ export  default function Layout ({children}){
     const router = useRouter()
     const {user , login} = useContext(AuthContext)
     let layout =(
-        <div className={"layout"}><SideBar navItems={navItems} /><div className={"layout-main"}><LayoutTop page_title={"Dashboard"} />{children}</div></div>
+        <div className={"layout"}><SideBar navItems={navItems} /><div className={"layout-main"}><LayoutTop page_title={"Dashboard"} /><div className={"main-content"}>{children}</div></div></div>
     )
     let unAuth = (<div className={"unauth"}>{children}</div>)
     // useEffect(()=>{

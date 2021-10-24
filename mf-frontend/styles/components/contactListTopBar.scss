@@ -1,13 +1,10 @@
 .contactListTopBar {
-  h1 {
-    padding: 22px 17px;
+  h4 {
     color: #2198FA;
   }
   .contactListFilterBar {
-    top: 10px;
     background: white;
     margin-bottom: 9px;
-
     .searchSVG {
       width: 100%;
 
@@ -20,7 +17,7 @@
     .contactListBtns {
       display: flex;
       justify-content: space-between;
-      margin-top: 37px;
+      margin-top: 5px;
 
       span {
         margin-right: 15px;

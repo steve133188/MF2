@@ -2,12 +2,12 @@
   color: #444444;
   border-radius: 20px;
   background: #ECF2F8;
-  width: 817px;
-  height: 966px;
-  padding: 14px 29px 20px 29px;
+  width: 50%;
+  height: 100%;
+  padding:1.5rem;
   display: flex;
   flex-flow: column;
-  justify-content: space-around;
+  //justify-content: space-around;
   .chatAreaTop {
     display: flex;
     justify-content: space-between;
@@ -66,7 +66,7 @@
   .chatBubbleContainer {
     position: relative;
     overflow-y: auto;
-
+    height: 90%;
     .messageDate {
       font-size: 13px;
       color: #AAAAAA;
