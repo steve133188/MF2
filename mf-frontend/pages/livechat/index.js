@@ -9,7 +9,6 @@ export default function Live_chat() {
     return (
         <div className="live_chat-layout">
 
-            <div className="leftMenu">MENU</div>
 
             <div className="rightContent">
                 <div className="container-fluid">

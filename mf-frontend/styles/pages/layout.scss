@@ -9,14 +9,17 @@
 .layout-sidebar{
   flex-direction: column;
   width: 232px;
-  padding: .5rem;
   height: 100%;
+  border-right: 2px solid #F1F1F1;
   .brand-logo{
     display: flex;
+    min-height:180px ;
+    max-height:360px ;
+    height: 20%;
     img{
       max-width: 79px;
       max-height: 50px;
-      margin-right: 16px;
+      margin: auto;
     }
     justify-content: center;
     align-items: baseline;
@@ -33,22 +36,24 @@
     margin-top: 1rem;
   }
   .nav-item{
-    padding: 0.5rem;
+    padding: 1rem;
     text-align: center;
   }
 }
-//.layout-top{
-//  display: flex;
-//  flex-direction: row;
-//  vertical-align: middle;
-//  border-bottom: solid 0.5px #7E7E7E;
-//  height: 60px;
-//  padding: 1rem;
-//  align-items: center;
-//}
 .navbar{
   padding: 0.5rem 1rem;
+  border-bottom: 2px solid #F3F3F5;
+  opacity: 1;
 }
+
+.side-item{
+  padding: .5rem ;
+}
+.active-side-item{
+  padding: .5rem;
+  border-right:2px solid #2198FA;
+}
+
 .page-title{
   flex: 1;
   color:#2198FA;
@@ -89,12 +94,12 @@
     vertical-align: center;
     justify-content: center;
     top:45px;
-    //left: -15px;
     z-index: 1;
-    display: block;
   }
 
 }
+
+
 
 .notification{
   display: flex;
@@ -126,7 +131,6 @@
   top:45px;
   left: -15px;
   z-index: 1;
-
 }
 .dropdown-btn{
   background: #F5F6F8  no-repeat padding-box;
