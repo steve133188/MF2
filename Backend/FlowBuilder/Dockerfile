@@ -14,8 +14,8 @@ RUN go mod download
 
 COPY *.go ./
 
-RUN go build -o /docker-bot-api
+RUN go build -o /docker-flowbuilder-api
 
 EXPOSE 3006 
 
-CMD [ "/docker-bot-api" ]
+CMD [ "/docker-flowbuilder-api" ]

@@ -1,0 +1,60 @@
+version: "3.9"
+
+services:
+  user: 
+    build:
+      context: ./User
+    ports: 
+      - 3001:3001
+  log: 
+    build: 
+      context: ./Log
+    ports: 
+      - 3002:3002
+  chat: 
+    build: 
+      context: ./Chat
+    ports: 
+      - 3003:3003
+  customer: 
+    build: 
+      context: ./Customer
+    ports: 
+      - 3004:3004
+  bot: 
+    build: 
+      context: ./Bot
+    ports: 
+      - 3005:3005
+  flowbuilder: 
+    build: 
+      context: ./FlowBuilder
+    ports: 
+      - 3006:3006
+  boardcast: 
+    build: 
+      context: ./BoardCast
+    ports: 
+      - 3007:3007
+  auth: 
+    build: 
+      context: ./Auth
+    ports: 
+      - 3008:3008
+  analysis: 
+    build: 
+      context: ./Analysis
+    ports: 
+      - 3009:3009        
+  admin: 
+    build: 
+      context: ./Admin
+    ports: 
+      - 3010:3010
+  database:
+    image: 'mongo'
+    container_name: 'backend_mongo'
+    environment: 
+      - MONGO_INITDB_DATABASE=backend_db
+    ports:
+      - 27017:27017

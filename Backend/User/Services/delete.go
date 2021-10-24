@@ -15,7 +15,7 @@ func DeleteUserById(c *fiber.Ctx) error {
 	paramID := c.Params("id")
 
 	// find and delete todo
-	query := bson.D{{Key: "id", Value: paramID}}
+	query := bson.D{{Key: "old_id", Value: paramID}}
 
 	err := userCollection.FindOneAndDelete(c.Context(), query).Err()
 

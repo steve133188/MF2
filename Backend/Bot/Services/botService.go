@@ -6,19 +6,25 @@ import (
 	"fmt"
 	"mf-bot-services/Model"
 	"net/http"
+	"reflect"
 	"sync"
 )
 
 var Mu = sync.Mutex{}
-var Botlist = make(map[int]string)        // number : senderid
+
+// var Botlist = make(map[int]string)        // number : senderid
 var Stages = make(map[string]interface{}) // senderid : []Stages
 var Steps = make(map[string]string)       // senderid : location id in MongoDB
+var Connection = make(map[string]interface{})
 var Num = 0
 
 func HandleWhatsappResponse(resp http.ResponseWriter, req *http.Request) {
 	//send request body to Flow
 	senderId := req.URL.Query().Get("sender_id")
 	message := req.URL.Query().Get("message")
+
+	var connTodo Model.Connection
+	var connTodos []Model.Connection
 
 	fmt.Println(senderId, message)
 
@@ -54,15 +60,34 @@ func HandleWhatsappResponse(resp http.ResponseWriter, req *http.Request) {
 	// mapping
 	// Mu.Lock()
 	hasBot := false
-	for _, v := range Botlist {
-		if data.SenderId == v {
+	for _, v := range Steps {
+		if senderId == v {
 			hasBot = true
 		}
 	}
 	if !hasBot {
-		Botlist[Num] = senderId
 		Stages[senderId] = data.Stages
+		Connection[senderId] = data.Connections
 		// Stages[data.SenderId] = parData
+		if sl, ok := data.Connections.([]interface{}); ok {
+			for _, v := range sl {
+				mapData := v.(map[string]interface{})
+				b, err := json.Marshal(mapData)
+				if err != nil {
+					fmt.Println("send response marshal error")
+				}
+				err = json.Unmarshal(b, &connTodo)
+				if err != nil {
+					fmt.Println("send response unmarshal error")
+				}
+				connTodos = append(connTodos, connTodo)
+
+			}
+		}
+		Connection[senderId] = connTodos
+		for k, v := range Connection[senderId].([]Model.Connection) {
+			fmt.Println(k, " ", v)
+		}
 		Num++
 	}
 
@@ -72,6 +97,13 @@ func HandleWhatsappResponse(resp http.ResponseWriter, req *http.Request) {
 }
 
 func sendResponse(target string, message string) {
+	val := reflect.ValueOf(Connection[target]).Interface()
+	fmt.Println(val.([]Model.Connection))
+	test := val.([]Model.Connection)
+	for k, v := range test {
+		fmt.Println(k)
+		fmt.Println(v.Source, "   ", v.Target)
+	}
 	var todo = Stages[target]
 
 	var stages []Model.Stages
@@ -105,7 +137,7 @@ func sendResponse(target string, message string) {
 	Steps[target] = "12314"
 	if Steps[target] == "" {
 		if sl, ok := stages[0].Actions.([]interface{}); ok {
-			for k, v := range sl {
+			for _, v := range sl {
 				mapData := v.(map[string]interface{})
 				b, err := json.Marshal(mapData)
 				if err != nil {
@@ -115,9 +147,9 @@ func sendResponse(target string, message string) {
 				if err != nil {
 					fmt.Println("send response unmarshal error")
 				}
-				fmt.Println("/////////")
-				test, _ := json.Marshal(action)
-				fmt.Println(k, bytes.NewBuffer(test))
+				// fmt.Println("/////////")
+				// test, _ := json.Marshal(action)
+				// fmt.Println(k, bytes.NewBuffer(test))
 			}
 			// test, _ := json.Marshal(stages)
 			// fmt.Println(bytes.NewBuffer(test))
@@ -136,7 +168,7 @@ func sendResponse(target string, message string) {
 					if err != nil {
 						fmt.Println("send response unmarshal error")
 					}
-					fmt.Println(i, " ", action.Id)
+					// fmt.Println(i, " ", action.Id)
 				}
 				// test, _ := json.Marshal(stages)
 				// fmt.Println(bytes.NewBuffer(test))

@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"mf-user-servies/DB"
 	"mf-user-servies/Model"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
-	uuid "github.com/nu7hatch/gouuid"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -25,12 +23,12 @@ func AddUser(c *fiber.Ctx) error {
 		})
 	}
 
-	id, err := uuid.NewV4()
-	if err != nil {
-		fmt.Println("Failed to generate ID in POST")
-	}
-	data.ID = id.String()
-	data.Date = time.Now()
+	// id, err := uuid.NewV4()
+	// if err != nil {
+	// 	fmt.Println("Failed to generate ID in POST")
+	// }
+	// data.ID = id.String()
+	// data.Date = time.Now()
 	result, err := usersCollection.InsertOne(c.Context(), data)
 
 	if err != nil {
