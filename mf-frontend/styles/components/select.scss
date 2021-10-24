@@ -65,3 +65,24 @@
     }
   }
 }
+
+.bellNotificationSelect {
+  div {
+    div {
+      div {
+        height: 0px;
+        width: 0px;
+        svg {
+          display: none;
+        }
+        span {
+          display: none;
+        }
+        div {
+          width: 30px;
+          background: url("../../public/icon-search2.png") center / contain no-repeat;
+        }
+      }
+    }
+  }
+}
