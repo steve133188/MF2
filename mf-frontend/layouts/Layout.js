@@ -45,9 +45,10 @@ function LayoutTop(props){
                 <div className={"user-dropdown m-1"}>
                     <button className={'dropdown-btn'} onClick={()=>{setIsMenuShow(!isMenuShow);setIsNotificationShow(false);console.log(isMenuShow)}}> <div className={'online'}></div>  username</button>
                 {isMenuShow ? (<div className="dropdown-menu user-menu">
-                    <button className={"dropdown-item"}><div className={'offline'}></div> offline </button>
-                    <button className={"dropdown-item"}> online </button>
-                    <button className={"dropdown-item"}> Menu item 3 </button>
+                    <button className={"dropdown-item"}><div className={"d-flex"}><div className={'offline'}></div> offline </div></button>
+                    <button className={"dropdown-item"}><div className={"d-flex"}><div className={'offline'}></div> offline </div></button>
+                    <button className={"dropdown-item"}><div className={"d-flex"}><div className={'offline'}></div> offline </div></button>
+                    <button className={"dropdown-item"}><div className={"d-flex"}><div className={'offline'}></div> offline </div></button>
                 </div>):null }
             </div>
             </div>
