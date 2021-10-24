@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-export default function SideBar({navItems}){
-    const navs =navItems
+export default function SideBar(props){
+    const {navItems} =props
     const dropdown = ()=>{
 
     }
@@ -43,4 +43,15 @@ export default function SideBar({navItems}){
             </div>
         </div>
     )
+}
+
+export async function getStaticProps(context){
+    const res = await fetch(`"../data/nav.json"`)
+    const data = await res.json()
+
+    return{
+        props:{
+            data
+        }
+    }
 }

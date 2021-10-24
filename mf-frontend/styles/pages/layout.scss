@@ -10,6 +10,7 @@
   flex-direction: column;
   width: 232px;
   padding: .5rem;
+  height: 100%;
   .brand-logo{
     display: flex;
     img{
@@ -36,13 +37,121 @@
     text-align: center;
   }
 }
-.layout-top{
-  .page-title{}
+//.layout-top{
+//  display: flex;
+//  flex-direction: row;
+//  vertical-align: middle;
+//  border-bottom: solid 0.5px #7E7E7E;
+//  height: 60px;
+//  padding: 1rem;
+//  align-items: center;
+//}
+.navbar{
+  padding: 0.5rem 1rem;
+}
+.page-title{
+  flex: 1;
+  color:#2198FA;
+  font-size: 2rem;
+  align-items: center;
+  vertical-align: center;
+}
+.user-session{
+  display: inline;
+  .online{
+    margin: .5rem;
+    background: #23BF9B 0% 0% no-repeat padding-box;
+    opacity: 1;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
 
+  }
+  .offline{
+    margin: .5rem;
+    background: var(--unnamed-color-74788d) 0% 0% no-repeat padding-box;
+    background: #74788D 0% 0% no-repeat padding-box;
+    opacity: 1;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+  }
+
+  .user-dropdown{
+    flex: 1;
+    margin-left: auto;
+    position: relative;
+    display: inline-block;
+  }
+  .user-menu{
+    display: inline-block;
+    position: absolute;
+    vertical-align: center;
+    justify-content: center;
+    top:45px;
+    left: -15px;
+    z-index: 1;
+    display: block;
+  }
+
+}
+
+.notification{
+  display: flex;
+  position: relative;
+  align-items: center;
+  height: 100%;
+  justify-content: center;
+  text-align:center;
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: white;
+  .badge{
+    position: absolute;
+    font-size: xx-small;
+    left: 2rem;
+    top: -.25rem;
+    background-color: #F46A6A;
+    border-radius: 160px;
+    text-align: left;
+    color: #FFFFFF;
+    opacity: 1;
+  }
+}
+.notification-menu{
+  display: inline-block;
+  position: absolute;
+  vertical-align: center;
+  justify-content: center;
+  top:45px;
+  left: -15px;
+  z-index: 1;
+
+}
+.dropdown-btn{
+  background: #F5F6F8  no-repeat padding-box;
+  border-radius: 19px;
+  opacity: 1;
+  padding: 0.5rem 2rem;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  vertical-align: center;
+}
+
+.layout-main-content{
+  height: 95vh;
 }
 
 .layout-main{
-  padding: 2rem;
+  flex-direction: column;
+  padding: 0rem;
   margin: 0;
   display: flex;
+  width: 95%;
+  max-width: 95vw;
+  height: 100%;
+  overflow: scroll;
 }
+
