@@ -33,10 +33,9 @@ export default function Contacts() {
 
     return (
         <div className="contacts-layout">
-            <div className="leftMenu">MENU</div>
+
 
             <div className="rightContent">
-                <div className="navbar">NAVBAR</div>
                 <div className="contactsContainer">
                 <div className="topBar">
                     <div className="searchBar">

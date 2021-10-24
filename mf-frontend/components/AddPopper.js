@@ -5,7 +5,7 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 import {CancelButton, NormalButton2} from "./Button";
 import {CheckboxGroup2, Search2, Search3} from "./Input";
 import {Checkbox2, CheckboxPill} from "./Checkbox";
-import LabelOutlinedIcon from '@mui/icons-material/LabelOutlined';
+
 
 export function AddPopper() {
     const [open, setOpen] = React.useState(false);
@@ -36,7 +36,7 @@ export function AddPopper() {
         <div className="addPopperContainer">
             <ClickAwayListener onClickAway={handleClickAway}>
                 <Box sx={{position: 'relative'}}>
-                    <span onClick={handleClick} ><LabelOutlinedIcon sx={{fontSize: 35, fill: "#ffca43"}} /> </span>
+                    <span onClick={handleClick} > </span>
                     {open ? (
                         <Box sx={addStyles}>
                             <div className="addTagHeader">

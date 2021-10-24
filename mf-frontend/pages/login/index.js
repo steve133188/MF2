@@ -11,11 +11,11 @@ import {AuthContext} from "../../context/authContext";
 export default function Login(){
     const router = useRouter()
     const {user , login} = useContext(AuthContext)
-    useEffect(()=>{
-        if(user["authReady"]){
-            router.back()
-        }
-    },[])
+    // useEffect(()=>{
+    //     if(user["authReady"]){
+    //         router.back()
+    //     }
+    // },[])
     return(
         <div className={"login-layout"}>
             <LoginPanel />
