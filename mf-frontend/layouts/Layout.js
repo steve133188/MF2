@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-
-=======
 import {navItems} from "./nav-item";
->>>>>>> caec76d974697c3fd6f4dfbb9fc97ae936d2db12
 import {useRouter} from "next/router";
 import {useEffect, useContext, useState} from "react";
 import {AuthContext} from "../context/authContext"
@@ -11,14 +7,7 @@ export  default function Layout ({children}){
     const router = useRouter()
     const {user , login} = useContext(AuthContext)
     let layout =(
-<<<<<<< HEAD
-        <div className={"layout"}>
-            {children}
-
-        </div>
-=======
         <div className={"layout"}><SideBar navItems={navItems} /><div className={"layout-main"}><LayoutTop page_title={"Dashboard"} />{children}</div></div>
->>>>>>> caec76d974697c3fd6f4dfbb9fc97ae936d2db12
     )
     let unAuth = (<div className={"unauth"}>{children}</div>)
     // useEffect(()=>{

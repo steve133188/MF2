@@ -1,6 +1,8 @@
 import Link from "next/link";
+import {useRouter} from "next/router";
 
 export default function SideBar(props){
+    const router = useRouter()
     const {navItems} =props
     const dropdown = ()=>{
 
@@ -11,30 +13,46 @@ export default function SideBar(props){
                 <img src="/MS_logo-square (1).svg" alt="MatrixForce"/>
             </div>
             <div className={"nav-items"}>
+                <div className={router.pathname == "/dashboard" ? "active-side-item" : "side-item "}>
                 <Link href={"/dashboard"} >
-                    <div className={"nav-item active"}><img src="" alt=""/> Dashboard</div>
+                    <div className={router.pathname == "/dashboard" ? "active nav-item" : "nav-item "}><img src="" alt=""/> Dashboard</div>
                 </Link>
+                </div>
+                <div className={router.pathname == "/livechat" ? "active-side-item" : "side-item "}>
                 <Link href={"/livechat"} >
-                    <div className={"nav-item "}><img src="" alt=""/> Live Chat</div>
+                    <div className={router.pathname == "/livechat" ? "active nav-item" : "nav-item "}><img src="" alt=""/> Live Chat</div>
                 </Link>
+                </div>
+                <div className={router.pathname == "/contacts" ? "active-side-item" : "side-item "}>
                 <Link href={"/contacts"} >
-                    <div className={"nav-item "}><img src="" alt=""/> Contacts</div>
+                    <div className={router.pathname == "/contacts" ? "active nav-item" : "nav-item "}><img src="" alt=""/> Contacts</div>
                 </Link>
+                </div>
+                <div className={router.pathname == "/broadcast" ? "active-side-item" : "side-item "}>
                 <Link href={"/broadcast"} >
-                    <div className={"nav-item "}><img src="" alt=""/> Broadcast</div>
+                    <div className={router.pathname == "/broadcast" ? "active nav-item" : "nav-item "}><img src="" alt=""/> Broadcast</div>
                 </Link>
+                </div>
+                <div className={router.pathname == "/flowbuilder" ? "active-side-item" : "side-item "}>
                 <Link href={"/flowbuilder"} >
-                    <div className={"nav-item "}><img src="" alt=""/> Flow Builder</div>
+                    <div className={router.pathname == "/flowbuilder" ? "active nav-item" : "nav-item "}><img src="" alt=""/> Flow Builder</div>
                 </Link>
+                </div>
+                <div className={router.pathname == "/products" ? "active-side-item" : "side-item "}>
                 <Link href={"/products"} >
-                    <div className={"nav-item "}><img src="" alt=""/> Product</div>
+                    <div className={router.pathname == "/products" ? "active nav-item" : "nav-item "}><img src="" alt=""/> Product</div>
                 </Link>
+                </div>
+                <div className={router.pathname == "/organization" ?"active-side-item" : "side-item "}>
                 <Link href={"/organization"} >
-                    <div className={"nav-item "}><img src="" alt=""/> Organization</div>
+                    <div className={router.pathname == "/organization" ? "active nav-item" : "nav-item "}><img src="" alt=""/> Organization</div>
                 </Link>
+                </div>
+                <div className={router.pathname == "/admin" ? "active-side-item" : "side-item "}>
                 <Link href={"/admin"} >
-                    <div className={"nav-item "}><img src="" alt=""/> Admin</div>
+                    <div className={router.pathname == "/admin" ? "active nav-item" : "nav-item "}><img src="" alt=""/> Admin</div>
                 </Link>
+                </div>
                 {/*{navItems.map((i,index)=>{*/}
                 {/*    <Link key={index} href={i.url}>*/}
                 {/*        <div className={"nav-item"}><img src={i.icon} alt={i.name}/> {i.name} </div>*/}

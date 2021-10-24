@@ -9,11 +9,7 @@ import {PaginationControlled} from "../../components/Pagination";
 export default function Broadcast() {
     return (
         <div className="broadcast-layout">
-
-            <div className="leftMenu">MENU</div>
-
             <div className="rightContent">
-                <div className="navbar">NAVBAR</div>
                 <div className="broadcastContainer">
                     <div className="topBar">
                         <div className="searchBar">
