@@ -9,7 +9,7 @@ import {AuthContext} from "../../context/authContext";
 
 
 export default function Login(){
-    const router = useRouter()
+    // const router = useRouter()
     const {user , login} = useContext(AuthContext)
     // useEffect(()=>{
     //     if(user["authReady"]){
