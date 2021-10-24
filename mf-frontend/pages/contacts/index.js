@@ -17,6 +17,7 @@ import {TableItem} from "../../components/TableItem"
 import Avatar from "@mui/material/Avatar";
 import {Pill} from "../../components/Pill";
 import {Checkbox1, SingleBox} from "../../components/Checkbox"
+import {EditColumnPopper} from "../../components/EditColumnPopper";
 
 export default function Contacts() {
     const [isSelectRow, setSelectRow] = useState(false);
@@ -43,7 +44,7 @@ export default function Contacts() {
                     </div>
                     <div className="buttonGrp">
                         <span onClick={toggleSelectRow}><SelectButton/></span>
-                        <TextWithIconButton>Edit Column</TextWithIconButton>
+                        <EditColumnPopper />
                         <NormalButton>Import</NormalButton>
                         <NormalButton2>+ New Contact</NormalButton2>
                     </div>

@@ -18,6 +18,9 @@ export default function Account_setting() {
                     <AccountSettingPanel/>
                 </div>
             </div>
+
+        </div>
             </div>
+
     )
 }

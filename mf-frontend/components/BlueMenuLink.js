@@ -1,13 +1,24 @@
 import Link from "next/link";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
-export function BlueMenuLink (props) {
+export function BlueMenuLink ({ children ,...props}) {
+    const { link ,title, onClick, isSelect, setSelect } = props
+    const classname = isSelect?"blueLink menuSelected":"blueLink"
     return (
-        <Link href={props.link}><a><li className="blueMenuLink">{props.children}</li></a></Link>
+        <li className="blueMenuLink" onClick={onClick}><Link href={link}><a className={classname}>{title}</a></Link>{children}</li>
     )
 }
 
-export function BlueMenuDropdown (props) {
+export function BlueMenuDropdown ({ children ,...props} ) {
+    const { link ,title } = props
     return (
-        <Link href={props.link}><a><li className="blueMenuLink blueMenuLinkActive">{props.children}</li></a></Link>
+        <li className="blueMenuLink "><Link href={link}><a className="blueLink">{title}<KeyboardArrowDownIcon/></a></Link>{children}</li>
+    )
+}
+
+export function BlueMenuDropdownLink ({ children ,...props} ) {
+    const { link ,name } = props
+    return (
+        <li className="blueMenuLink"><Link href={link}><a className="blueLink">{name}</a></Link>{children}</li>
     )
 }

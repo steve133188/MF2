@@ -1,15 +1,35 @@
 .blueMenuLink {
-  padding: 11.5px 23px;
+  line-height: 60px;
   border-radius: 10px;
   font-size: 16px;
   font-weight: bold;
-}
-.blueMenuLink:hover {
-  background: #bedcf5;
-  color: #2198FA;
+  .blueLink {
+    border-radius: 10px;
+    display: block;
+    width: 100%;
+    color: #444444;
+    padding-left: 23px;
+    text-decoration: none;
+    svg {
+      position: relative;
+      top: 10px;
+      left: 116px;
+      transform: translateY(-50%);
+      transition: transform 0.4s;
+    }
+  }
+  .menuSelected {
+    background: #bedcf5;
+    color: #2198FA;
+  }
+  .blueLink:hover {
+    background: #bedcf5;
+    color: #2198FA;
+    svg {
+      transform: translateY(-50%) rotate(-180deg);
+    }
+  }
 }
 
-.blueMenuLinkActive {
-  background: #bedcf5;
-  color: #2198FA;
-}
+
+

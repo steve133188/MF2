@@ -23,7 +23,7 @@ export const AuthContextProvider = ({children}) =>{
         if(email == "wiva.wei@matrixsense.tech" && pwd == "1234"){
             console.log("login success")
             setUser({user:"Wiva", authReady: true})
-            router.push("/")
+            router.push("/testing")
         }else{
             console.log("Something went Wrong")
             return "Something went Wrong"

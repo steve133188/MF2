@@ -3,9 +3,13 @@ import Image from 'next/image'
 import React, {useContext, useEffect} from "react";
 import {LoginPanel} from "../../components/LoginPanel";
 import {ForgetPasswordPanel} from "../../components/ForgetPasswordPanel";
+
+
 import {useRouter} from "next/router";
 import {AuthContext} from "../../context/authContext";
 
+import {useRouter} from "next/router";
+import {AuthContext} from "../../context/authContext";
 
 
 export default function Login(){

@@ -122,6 +122,9 @@
     margin-bottom: 7px;
     visibility: hidden;
   }
+  .wrongPwd {
+    visibility: visible;
+  }
   .searchSVG {
     position: relative;
     border-radius: 10px;
@@ -146,6 +149,7 @@
       padding-left: 100px;
       box-shadow: 0px 3px 6px #00000029;
       color: #444444;
+      padding-right: 30px;
     }
 
     input:active {
@@ -160,6 +164,10 @@
     input:hover {
       box-shadow: 0px 3px 6px #00000029;
     }
+
+    .wrongPwd {
+      border: 1px solid #F45A56;
+    }
   }
 
   .searchSVG:before {
@@ -168,10 +176,18 @@
     left: 3rem;
     top: 0;
     bottom: 0;
-    width: 20px;
+    width: 25px;
     cursor: text;
-    background: url("../../public/icon-email.svg") center / contain no-repeat;
+    opacity: 0.6;
   }
+
+}
+// xxxSVG classes below defined the SVG logo in the input field.
+.emailSVG:before {
+  background: url("../../public/icon-email.svg") center / contain no-repeat;
+}
+.passwordSVG:before {
+  background: url("../../public/icon-lock.svg") center / contain no-repeat;
 }
 
 .logoInputContainer2 {
@@ -232,9 +248,10 @@
     left: 1rem;
     top: 0;
     bottom: 0;
-    width: 20px;
+    width: 18px;
+    opacity: 0.5;
     cursor: text;
-    background: url("../../public/icon-email.svg") center / contain no-repeat;
+    background: url("../../public/icon-search2.png") center / contain no-repeat;
   }
 }
 

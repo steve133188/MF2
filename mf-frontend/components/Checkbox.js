@@ -45,6 +45,17 @@ export function SingleBox(props) {
         </label>
     )
 }
+export function ColumnCheckbox(props) {
+    return (
+
+
+    <label className="columnCheckboxContainer"><img
+        src="icon-columnControl.svg" alt=""/>{props.children}
+        <input type="checkbox" checked={props.checked}/>
+        <span className="checkmark"></span>
+    </label>
+    )
+}
 
 {/*
 <label className="checkboxContainer">Unread

@@ -101,7 +101,7 @@ export function NormalButton3(props) {
     return (
         <div className="newNoteButton">
             <ThemeProvider theme={theme}>
-                <Button variant="contained" color="secondary">
+                <Button variant="contained" color="secondary" onClick={onClick}>
                     {props.children}
                 </Button>
             </ThemeProvider>
@@ -109,14 +109,15 @@ export function NormalButton3(props) {
     )
 }
 
-export function TextWithIconButton(props) {
+export function TextWithIconButton({ children, ...props }) {
+    const {onClick} = props
     return (
         <div className="textWithIconButton">
             <ThemeProvider theme={theme}>
-                <Button variant="contained" color="neutral">
+                <Button variant="contained" color="neutral" onClick={onClick}>
                     <img
                         src="https://uxwing.com/wp-content/themes/uxwing/download/17-internet-network-technology/robot-line.png" alt=""/>
-                    <span>{props.children}</span>
+                    <span>{children}</span>
                 </Button>
             </ThemeProvider>
         </div>
