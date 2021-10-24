@@ -3,7 +3,8 @@ import {Search2} from "./Input"
 import {NormalButton2} from "./Button"
 import {Switch} from "./Switch";
 
-export function ForgetPasswordPanel() {
+export function ForgetPasswordPanel({...props}) {
+
     return (
         <div className="container">
             <div className="forgetPasswordPanel">
