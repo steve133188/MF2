@@ -4,7 +4,6 @@ import {BlueMenuLink} from "../../components/BlueMenuLink";
 
 export default function Account_setting() {
     return (
-
         <div className="account_setting-layout">
             <div className="leftMenu">MENU</div>
 
@@ -19,6 +18,9 @@ export default function Account_setting() {
                     <AccountSettingPanel/>
                 </div>
             </div>
+
         </div>
+            </div>
+
     )
 }

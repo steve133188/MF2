@@ -3,7 +3,7 @@ import {LabelSelect, MultipleSelectPlaceholder} from "./Select";
 import Box from '@mui/material/Box';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import {CancelButton, NormalButton2} from "./Button";
-import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
+
 
 export function DeletePopper() {
 
@@ -35,7 +35,7 @@ export function DeletePopper() {
         <div className="deletePopperContainer">
             <ClickAwayListener onClickAway={handleClickAway}>
                 <Box sx={{position: 'relative'}}>
-                    <span onClick={handleClick}><DeleteForeverOutlinedIcon sx={{fontSize: 33, fill: "#fa5d5d"}} /></span>
+                    <span onClick={handleClick}></span>
                     {open ? (
                         <Box sx={deleteStyles}>
                             Delete 2 contacts? <br/>

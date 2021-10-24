@@ -53,7 +53,7 @@ export function LoginPanel() {
                     </div>
                     <div className="passwordSupportSet">
                         <span className="rememberMe"><Switch/>Remember me</span>
-                        <Link href="/"><a><span className="forgotPassword">Forgot Password?</span></a></Link>
+                        <Link href="/recovery"><a><span className="forgotPassword">Forgot Password?</span></a></Link>
                     </div>
                     <NormalButton2 disabled={!validateForm()} onClick={handleSubmit}>
                         Login
