@@ -1,6 +1,8 @@
 import Button from '@mui/material/Button'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import {useState} from "react";
+import ReactApexChart from 'react-apexcharts'
+
 
 export function Card_channel(props) {
     const [showMe, setShowMe] = useState(false);
@@ -47,3 +49,74 @@ export function Card_channel(props) {
         </div>
     )
 }
+
+export function LineChartCard() {
+    const [state, setState] = useState({
+        series1: [{
+            data: [25, 66, 41, 89, 63, 25, 44, 12, 36, 9, 54]
+        }],
+        options1: {
+            chart: {
+                type: 'line',
+                width: 100,
+                height: 35,
+                sparkline: {
+                    enabled: true
+                }
+            },
+            stroke: {
+                curve: 'smooth',
+                width: ['2']
+            },
+            colors: ['#2385FC'],
+            tooltip: {
+                fixed: {
+                    enabled: false
+                },
+                x: {
+                    show: false
+                },
+                y: {
+                    title: {
+                        formatter: function (seriesName) {
+                            return ''
+                        }
+                    }
+                },
+                marker: {
+                    show: false
+                }
+            }
+        },
+
+    })
+    return (
+        <div className="lineChartCard">
+            <div className={"lineChartCardTitle"}>Total no.of Agent</div>
+            <div className={"contentGroup"}>
+                <div className={"dataGroup"}>
+                    <div className={"number"}>50</div>
+                    <div className={"changingPercentagePos"}>+ 25%</div>
+                </div>
+                <ReactApexChart options={state.options1} series={state.series1} type="line" height={35} width={100} />
+            </div>
+        </div>
+    )
+}
+
+export function ChangingPercentageCard() {
+    return (
+        <div className={"changingPercentageCard"}>
+            <div className={"changingPercentageCardTitle"}>
+                Total Assigned Contacts
+            </div>
+            <div className={"dataGroup"}>
+                <div className={"number"}>34</div>
+                <div className="changingPercentageNeg">
+                    - 25%
+                </div>
+            </div>
+        </div>
+    )
+}
+
