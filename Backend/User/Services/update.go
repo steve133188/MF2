@@ -5,7 +5,6 @@ import (
 	"log"
 	"mf-user-servies/DB"
 	"mf-user-servies/Model"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
@@ -25,11 +24,11 @@ func UpdateUserByID(c *fiber.Ctx) error {
 		})
 	}
 
-	user.Date = time.Now()
-	user.ID = c.Params("id")
+	// user.Date = time.Now()
+	// user.ID = c.Params("id")
 	update := bson.D{{Key: "$set", Value: user}}
 
-	_, err := usersCollection.UpdateOne(c.Context(), bson.D{{Key: "id", Value: c.Params("id")}}, update)
+	_, err := usersCollection.UpdateOne(c.Context(), bson.D{{Key: "old_id", Value: c.Params("id")}}, update)
 	fmt.Println(user)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

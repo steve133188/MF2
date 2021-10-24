@@ -5,10 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
 
 	"github.com/joho/godotenv"
-	uuid "github.com/nu7hatch/gouuid"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -56,31 +54,31 @@ func MongoConnect() {
 	}
 	fmt.Println(count)
 
-	counts, err := customers.CountDocuments(context.TODO(), bson.D{})
-	if err != nil {
-		fmt.Println(err)
-	}
+	// counts, err := customers.CountDocuments(context.TODO(), bson.D{})
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
 
-	if counts > 0 {
-		res, err := customers.DeleteMany(ctx, bson.M{})
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Println(res.DeletedCount, " Deleted")
-		counts = 0
-	}
+	// if counts > 0 {
+	// 	res, err := customers.DeleteMany(ctx, bson.M{})
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 	}
+	// 	fmt.Println(res.DeletedCount, " Deleted")
+	// 	counts = 0
+	// }
 
-	if counts == 0 {
-		id, err := uuid.NewV4()
-		if err != nil {
-			fmt.Println("Failed to generate first uuid")
-		}
-		res, err := customers.InsertOne(context.TODO(), bson.M{"id": id.String(), "userId": "111", "customerFirstName": "Tom", "customerLastName": "Boy", "age": "20", "timezone": "8", "lastUpdatedTime": time.Now(), "accountCreatedTime": time.Now()})
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Println(res.InsertedID, " Added")
-	}
+	// if counts == 0 {
+	// 	id, err := uuid.NewV4()
+	// 	if err != nil {
+	// 		fmt.Println("Failed to generate first uuid")
+	// 	}
+	// 	res, err := customers.InsertOne(context.TODO(), bson.M{"id": id.String(), "userId": "111", "customerFirstName": "Tom", "customerLastName": "Boy", "age": "20", "timezone": "8", "lastUpdatedTime": time.Now(), "accountCreatedTime": time.Now()})
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 	}
+	// 	fmt.Println(res.InsertedID, " Added")
+	// }
 
 	fmt.Println("DB connected!")
 	MI = MongoInstance{

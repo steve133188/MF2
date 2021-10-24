@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"mf-user-servies/DB"
 	"mf-user-servies/Model"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
@@ -20,9 +19,9 @@ func LoginUser(c *fiber.Ctx) error {
 		return err
 	}
 
-	fmt.Println(user)
+	paramID := c.Params("id")
 
-	filter := bson.M{"email": user.Email, "password": user.Password}
+	filter := bson.M{"old_id": paramID}
 
 	findResult := usersCollection.FindOne(c.Context(), filter)
 	if err := findResult.Err(); err != nil {
@@ -33,7 +32,7 @@ func LoginUser(c *fiber.Ctx) error {
 		})
 	}
 	err := findResult.Decode(&user)
-	user.Date = user.Date.Add(time.Hour * 8)
+	// user.Date = user.Date.Add(time.Hour * 8)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"success": false,
@@ -76,9 +75,9 @@ func GetAllUsers(c *fiber.Ctx) error {
 		})
 	}
 
-	for i := range users {
-		users[i].Date = users[i].Date.Add(time.Hour * 8)
-	}
+	// for i := range users {
+	// 	users[i].Date = users[i].Date.Add(time.Hour * 8)
+	// }
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
@@ -98,7 +97,7 @@ func GetUsersById(c *fiber.Ctx) error {
 	// find todo and return
 	customer := &Model.User{}
 
-	query := bson.D{{Key: "id", Value: paramID}}
+	query := bson.D{{Key: "old_id", Value: paramID}}
 
 	err := customerCollection.FindOne(c.Context(), query).Decode(customer)
 
@@ -110,7 +109,7 @@ func GetUsersById(c *fiber.Ctx) error {
 		})
 	}
 
-	customer.Date = customer.Date.Add(time.Hour * 8)
+	// customer.Date = customer.Date.Add(time.Hour * 8)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,

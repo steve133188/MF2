@@ -5,7 +5,6 @@ import (
 	"log"
 	"mf-boardCast-services/DB"
 	"mf-boardCast-services/Model"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
@@ -25,11 +24,11 @@ func UpdateBoardCastByID(c *fiber.Ctx) error {
 		})
 	}
 
-	todo.UpdatedTime = time.Now()
-	todo.ID = c.Params("id")
+	// todo.UpdatedTime = time.Now()
+	// todo.ID = c.Params("id")
 	update := bson.D{{Key: "$set", Value: todo}}
 
-	_, err := collection.UpdateOne(c.Context(), bson.D{{Key: "id", Value: c.Params("id")}}, update)
+	_, err := collection.UpdateOne(c.Context(), bson.D{{Key: "old_id", Value: c.Params("id")}}, update)
 	fmt.Println(todo)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

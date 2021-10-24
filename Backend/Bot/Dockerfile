@@ -14,8 +14,8 @@ RUN go mod download
 
 COPY *.go ./
 
-RUN go build -o /docker-botmessage-api
+RUN go build -o /docker-bot-api
 
 EXPOSE 3005
 
-CMD [ "/docker-botmessage-api" ]
+CMD [ "/docker-bot-api" ]

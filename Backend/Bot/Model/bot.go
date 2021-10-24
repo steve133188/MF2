@@ -22,29 +22,42 @@ type BotBody struct {
 	UpdatedOn     time.Time `json:"updated_on"`
 	SenderId      string    `json:"sender_id"` //sender phone number (externalId in stella)
 	Stages        interface{}
-	Connections   struct{}
+	Connections   interface{}
 	Keyword       string `json:"keyword"`
 	ChannelIcon   string `json:"channel_icon"`
 	ChatsStarted  int    `json:"chats_starts"`
 	ChatsFinished int    `json:"chats_finished"`
 	Ctr           int    `json:"ctr"`
-	StagesCtr     struct{}
+	StagesCtr     interface{}
 	LastMessage   time.Time `json:"last_message"`
-	TeamData      struct{}
-	TeamId        string `json:"team_id"`
-	TeamName      string `json:"team_name"`
+	TeamData      interface{}
+	TeamId        string `json:"teamid"`
+	TeamName      string `json:"teamname"`
 }
 
 type Stages struct {
 	Name      string `json:"name"`
 	Id        string `json:"id"`
-	IsDefault bool   `json:"is_default"`
-	Postion   struct{}
-	Actions   struct {
-		Name  string `json:"actions_name"`
-		Id    string `json:"actions_id"`
-		IsBot bool   `json:"is_bot"`
-		Bot   string `json:"bot"`
-		Data  struct{}
-	}
+	IsDefault bool   `json:"isdefault"`
+	Postion   interface{}
+	Actions   interface{}
+}
+
+type Actions struct {
+	Name  string `json:"name"`
+	Id    string `json:"id"`
+	IsBot bool   `json:"isbot"`
+	Data  interface{}
+	Bot   string `json:"bot"`
+}
+
+type Data struct {
+	Text       string `json:"text"`
+	Attachment interface{}
+	PlainText  string `json:"plain_text"`
+}
+
+type Connection struct {
+	Source string `json:"source"`
+	Target string `json:"target"`
 }

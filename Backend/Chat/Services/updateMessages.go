@@ -5,7 +5,6 @@ import (
 	"log"
 	"mf-chat-services/DB"
 	"mf-chat-services/Model"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
@@ -15,7 +14,6 @@ func UpdateOneMessageById(c *fiber.Ctx) error {
 	collection := DB.MI.DBCol
 	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	todo := new(Model.Message)
-
 	if err := c.BodyParser(todo); err != nil {
 		log.Println(err)
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -24,12 +22,11 @@ func UpdateOneMessageById(c *fiber.Ctx) error {
 			"error":   err,
 		})
 	}
+	fmt.Println(todo)
 
-	todo.UpdatedTime = time.Now()
-	todo.Id = c.Params("id")
 	update := bson.D{{Key: "$set", Value: todo}}
-
-	_, err := collection.UpdateOne(c.Context(), bson.D{{Key: "id", Value: c.Params("id")}}, update)
+	fmt.Println(update)
+	_, err := collection.UpdateOne(c.Context(), bson.D{{Key: "old_id", Value: c.Params("id")}}, update)
 	fmt.Println(todo)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
