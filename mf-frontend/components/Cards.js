@@ -1,7 +1,7 @@
 import Button from '@mui/material/Button'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import {useState} from "react";
-import ReactApexChart from 'react-apexcharts'
+// import ReactApexChart from 'react-apexcharts'
 
 
 export function Card_channel(props) {
@@ -98,7 +98,7 @@ export function LineChartCard() {
                     <div className={"number"}>50</div>
                     <div className={"changingPercentagePos"}>+ 25%</div>
                 </div>
-                <ReactApexChart options={state.options1} series={state.series1} type="line" height={35} width={100} />
+                {/*<ReactApexChart options={state.options1} series={state.series1} type="line" height={35} width={100} />*/}
             </div>
         </div>
     )
