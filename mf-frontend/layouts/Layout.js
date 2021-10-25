@@ -9,9 +9,11 @@ import * as React from "react";
 export default function Layout({children}) {
     const router = useRouter()
     const {user, login} = useContext(AuthContext)
+
+
     let layout = (
         <div className={"layout"}><SideBar navItems={navItems}/>
-            <div className={"layout-main"}><LayoutTop page_title={"Dashboard"}/>{children}</div>
+            <div className={"layout-main"}><LayoutTop page_title={router.pathname.charAt(1).toUpperCase()+router.pathname.substring(2)}/>{children}</div>
         </div>
     )
 
