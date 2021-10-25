@@ -99,7 +99,6 @@ export function LineChartCard() {
                     <div className={"changingPercentagePos"}>+ 25%</div>
                 </div>
                 <Chart options={state.options1} series={state.series1} type="line" height={35} width={100} />
-                {/*<ReactApexChart options={state.options1} series={state.series1} type="line" height={35} width={100} />*/}
             </div>
         </div>
     )
@@ -121,3 +120,11 @@ export function ChangingPercentageCard() {
     )
 }
 
+export function AverageDailyCard() {
+    return (
+        <div className="lineChartCard">
+            <div className={"lineChartCardTitle"}>Average Daily Online Time</div>
+            <div className={"onlineTime"}>09:20:11</div>
+        </div>
+    )
+}

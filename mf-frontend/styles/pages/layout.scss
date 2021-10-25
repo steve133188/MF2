@@ -8,7 +8,7 @@
 
 .layout-sidebar {
   flex-direction: column;
-  width: 232px;
+  max-width: 232px;
   height: 100%;
   border-right: 2px solid #F1F1F1;
 
@@ -54,12 +54,22 @@
 }
 
 .side-item {
-  padding: .5rem;
+  padding: .5rem ;
+  padding: 0 .5rem ;
+  cursor: pointer;
+  &:hover,&:focus{
+    transform: translate(-2.5px,0);
+    transition: all 250ms ease-in-out;
+    color:#2198FA;
+    text-decoration: underline 2px;
+    text-underline-offset: 0.4em;
+
+  }
 }
 
 .active-side-item {
-  padding: .5rem;
-  border-right: 2px solid #2198FA;
+  padding: 0 .5rem;
+  border-right:3px solid #2198FA;
 }
 
 .page-title {
@@ -70,28 +80,29 @@
   vertical-align: center;
 }
 
+.selectStatusOnline {
+  margin: .5rem;
+  background: #23BF9B 0% 0% no-repeat padding-box;
+  opacity: 1;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  padding: 1px;
+}
+
+.selectStatusOffline {
+  margin: .5rem;
+  background: var(--unnamed-color-74788d) 0% 0% no-repeat padding-box;
+  background: #74788D 0% 0% no-repeat padding-box;
+  opacity: 1;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  padding: 1px;
+}
 .user-session {
   display: inline;
-  .online {
-    margin: .5rem;
-    background: #23BF9B 0% 0% no-repeat padding-box;
-    opacity: 1;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    padding: 1px;
-  }
 
-  .offline {
-    margin: .5rem;
-    background: var(--unnamed-color-74788d) 0% 0% no-repeat padding-box;
-    background: #74788D 0% 0% no-repeat padding-box;
-    opacity: 1;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    padding: 1px;
-  }
 
   .user-dropdown {
     flex: 1;
@@ -176,8 +187,8 @@
   vertical-align: center;
 }
 
-.layout-main-content {
-  height: 95vh;
+.main-content{
+  height: 100%;
 }
 
 .layout-main {
@@ -190,6 +201,13 @@
   height: 100%;
   overflow: scroll;
 }
+
+.main-content{
+  overflow: scroll;
+  width: 100%;
+  max-width: 95vw;
+}
+
 .notificationDropdownSet {
   margin-right: 40px;
   margin-top: 2px;
@@ -228,22 +246,10 @@
 }
 .loggingStatusDropdown {
   div {
-    padding: 0px;
-    margin-top: 1px;
+
     div {
-      background: #F5F6F8 no-repeat padding-box;
-      border-radius: 19px !important;
-      width: 100px;
-      opacity: 1;
-      padding: 0.5rem 2rem;
-      border: none;
-      display: -webkit-flex;
-      display: -moz-box;
-      display: flex;
-      justify-content: left;
-      align-items: center;
-      vertical-align: center;
       div {
+        display: flex;
       }
     }
 
