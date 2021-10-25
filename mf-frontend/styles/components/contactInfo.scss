@@ -1,9 +1,11 @@
 .contactInfoSet {
   padding: 23px 45px 17px 56px;
   color: #444444;
-  overflow-y: auto;
-  width: 406px;
-  height: 966px;
+  overflow: scroll;
+  width: 25%;
+  height: 100%;
+  //max-width: 406px;
+  //max-height: 966px;
 
   .extraInfo {
     border-bottom: 2px solid #F3F3F5;

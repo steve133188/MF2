@@ -1,12 +1,13 @@
 .contactList {
-  height: 1056px;
-  width: 474px;
-  padding: 37px 14px 20px 22px;
+  height: 100%;
+  //min-width: 180px;
+  width: 25%;
+  padding: .5rem;
   display: flex;
   flex-flow: column;
+  overflow-y: scroll;
 
   .contactContainerGrp {
-    overflow-y: auto;
   }
 
   .filterArea {

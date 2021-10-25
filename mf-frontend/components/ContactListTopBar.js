@@ -1,12 +1,12 @@
 import {Search2} from "./Input";
 import {LabelSelect} from "./Select";
+import React from "react";
 
 export function ContactListTopBar() {
     return(
         <div className="contactListTopBar">
-            <h1>Live Chat</h1>
             <div className="contactListFilterBar">
-                <Search2/>
+
                 <div className="contactListBtns">
                     <LabelSelect/>
                     <span>
@@ -16,6 +16,15 @@ export function ContactListTopBar() {
                     </span>
                 </div>
             </div>
+        </div>
+    )
+}
+
+function contactInput(){
+
+    return(
+        <div>
+            <input type="text" className={'chat-filter-input'}/>
         </div>
     )
 }
