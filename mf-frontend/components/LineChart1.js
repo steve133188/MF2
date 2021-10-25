@@ -1,5 +1,6 @@
 import {useState} from "react";
-import ReactApexChart from 'react-apexcharts'
+import dynamic from "next/dynamic";
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 export function LineChart1() {
 
@@ -58,7 +59,7 @@ export function LineChart1() {
         <div>
             <div id="wrapper">
                 <div id="chart-line">
-                    <ReactApexChart options={state.options} series={state.series} type="line" height={560} width={900}/>
+                    <Chart options={state.options} series={state.series} type="line" height={560} width={900}/>
                 </div>
             </div>
         </div>
@@ -130,7 +131,7 @@ export function MultipleLineChart() {
         <div>
             <div id="wrapper">
                 <div id="chart-line">
-                    <ReactApexChart options={state.options} series={state.series} type="line" height={560} width={900}/>
+                    <Chart options={state.options} series={state.series} type="line" height={560} width={900}/>
                 </div>
             </div>
         </div>

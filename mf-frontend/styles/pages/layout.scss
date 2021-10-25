@@ -1,4 +1,4 @@
-.layout{
+.layout {
   display: flex;
   height: 100vh;
   width: 100vw;
@@ -6,73 +6,83 @@
   padding: 0;
 }
 
-.layout-sidebar{
+.layout-sidebar {
   flex-direction: column;
   width: 232px;
   height: 100%;
   border-right: 2px solid #F1F1F1;
-  .brand-logo{
+
+  .brand-logo {
     display: flex;
-    min-height:180px ;
-    max-height:360px ;
+    min-height: 180px;
+    max-height: 360px;
     height: 20%;
-    img{
+
+    img {
       max-width: 79px;
       max-height: 50px;
       margin: auto;
     }
+
     justify-content: center;
     align-items: baseline;
     padding: 16px;
   }
-  .active{
+
+  .active {
     border-radius: 3px;
     opacity: 1;
     background-color: #D0E9FF;
-    color:#2198FA;
+    color: #2198FA;
 
   }
-  .nav-items{
+
+  .nav-items {
     margin-top: 1rem;
   }
-  .nav-item{
+
+  .nav-item {
     padding: 1rem;
     text-align: center;
   }
 }
-.navbar{
+
+.navbar {
   padding: 0.5rem 1rem;
   border-bottom: 2px solid #F3F3F5;
   opacity: 1;
 }
 
-.side-item{
-  padding: .5rem ;
-}
-.active-side-item{
+.side-item {
   padding: .5rem;
-  border-right:2px solid #2198FA;
 }
 
-.page-title{
+.active-side-item {
+  padding: .5rem;
+  border-right: 2px solid #2198FA;
+}
+
+.page-title {
   flex: 1;
-  color:#2198FA;
+  color: #2198FA;
   font-size: 2rem;
   align-items: center;
   vertical-align: center;
 }
-.user-session{
+
+.user-session {
   display: inline;
-  .online{
+  .online {
     margin: .5rem;
     background: #23BF9B 0% 0% no-repeat padding-box;
     opacity: 1;
     width: 7px;
     height: 7px;
     border-radius: 50%;
-
+    padding: 1px;
   }
-  .offline{
+
+  .offline {
     margin: .5rem;
     background: var(--unnamed-color-74788d) 0% 0% no-repeat padding-box;
     background: #74788D 0% 0% no-repeat padding-box;
@@ -80,38 +90,45 @@
     width: 7px;
     height: 7px;
     border-radius: 50%;
+    padding: 1px;
   }
 
-  .user-dropdown{
+  .user-dropdown {
     flex: 1;
     margin-left: auto;
     position: relative;
     display: inline-block;
   }
-  .user-menu{
+
+  .user-menu {
     display: inline-block;
     position: absolute;
     vertical-align: center;
     justify-content: center;
-    top:45px;
+    top: 45px;
     z-index: 1;
+    transition: opacity 289ms;
+  }
+
+  .user-menuHide {
+    opacity: 0;
+    margin-left: 400px;
   }
 
 }
 
-
-
-.notification{
+.notification {
   display: flex;
   position: relative;
   align-items: center;
   height: 100%;
   justify-content: center;
-  text-align:center;
+  text-align: center;
   padding: 0.5rem 1rem;
   border: none;
   background-color: white;
-  .badge{
+
+  .badge {
     position: absolute;
     font-size: xx-small;
     left: 2rem;
@@ -121,19 +138,34 @@
     text-align: left;
     color: #FFFFFF;
     opacity: 1;
+    margin-left: 15px;
   }
 }
-.notification-menu{
+
+.notification-menu {
   display: inline-block;
   position: absolute;
   vertical-align: center;
   justify-content: center;
-  top:45px;
+  top: 45px;
   left: -15px;
   z-index: 1;
+  opacity: 1;
+  transition: opacity 289ms;
+  transform-origin: 125px 0px;
+
+  .dropdown-item {
+    height: 34px;
+  }
 }
-.dropdown-btn{
-  background: #F5F6F8  no-repeat padding-box;
+
+.notificationHide {
+  opacity: 0;
+  margin-left: 400px;
+}
+
+.dropdown-btn {
+  background: #F5F6F8 no-repeat padding-box;
   border-radius: 19px;
   opacity: 1;
   padding: 0.5rem 2rem;
@@ -144,11 +176,11 @@
   vertical-align: center;
 }
 
-.layout-main-content{
+.layout-main-content {
   height: 95vh;
 }
 
-.layout-main{
+.layout-main {
   flex-direction: column;
   padding: 0rem;
   margin: 0;
@@ -158,4 +190,70 @@
   height: 100%;
   overflow: scroll;
 }
+.notificationDropdownSet {
+  margin-right: 40px;
+  margin-top: 2px;
+  .badge {
+    position: absolute;
+    font-size: xx-small;
+    margin-left: 13px;
+    background-color: #F46A6A;
+    border-radius: 160px;
+    text-align: left;
+    color: #FFFFFF;
+    opacity: 1;
+  }
+  .notificationDropdown {
+    div {
+      padding: 0px;
+      margin-top: 1px;
+      div {
+        padding: 9px !important;
+        background: url("../../public/bell.svg") center / contain no-repeat;
+        font-size: 0px;
+        div {
+        }
+      }
 
+      svg {
+        display: none;
+      }
+
+
+      fieldset {
+        border: none;
+      }
+    }
+  }
+}
+.loggingStatusDropdown {
+  div {
+    padding: 0px;
+    margin-top: 1px;
+    div {
+      background: #F5F6F8 no-repeat padding-box;
+      border-radius: 19px !important;
+      width: 100px;
+      opacity: 1;
+      padding: 0.5rem 2rem;
+      border: none;
+      display: -webkit-flex;
+      display: -moz-box;
+      display: flex;
+      justify-content: left;
+      align-items: center;
+      vertical-align: center;
+      div {
+      }
+    }
+
+    svg {
+      display: none;
+    }
+
+
+    fieldset {
+      border: none;
+    }
+  }
+}

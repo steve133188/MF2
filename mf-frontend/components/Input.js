@@ -47,7 +47,6 @@ export function Search2({children,...props}) {
             <label className={inputClassname}>
                 <input
                         onChange={handleChange}
-                        type
                         placeholder={children}
                         className={invalid}
                       />

@@ -71,6 +71,7 @@ const MenuProps = {
 const names = [
     // <Pill color="lightYellow" size="roundedPill size30">MF</Pill>,
     // <Pill color="lightBlue" size="roundedPill size30">AX</Pill>,
+    "Agent",
     'April Tucker',
     'Ralph Hubbard',
     'Omar Alexander',
@@ -92,7 +93,7 @@ function getStyles(name, personName, theme) {
 
 export function MultipleSelectPlaceholder() {
     const theme = useTheme();
-    const [personName, setPersonName] = React.useState([]);
+    const [personName, setPersonName] = React.useState(names);
 
     const handleChange = (event) => {
         const {
@@ -140,3 +141,52 @@ export function MultipleSelectPlaceholder() {
     );
 }
 
+export function SingleSelect({ children ,...props}) {
+    const { link ,title, onClick, isSelect, setSelect } = props
+    const [age, setAge] = React.useState('');
+
+    const handleChange = (event) => {
+        setAge(event.target.value);
+    };
+    return (
+        <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={age}
+            label="Age"
+            onChange={handleChange}
+
+        >
+
+            <MenuItem value={10}><div className={'online'}></div>username</MenuItem>
+            <MenuItem value={20}><div className={'offline'}></div>offline</MenuItem>
+            <MenuItem value={30}><div className={'offline'}></div>offline</MenuItem>
+        </Select>
+
+    )
+}
+
+export function SingleSelect2({ children ,...props}) {
+    const { link ,title, onClick, isSelect, setSelect } = props
+    const [age, setAge] = React.useState('');
+
+    const handleChange = (event) => {
+        setAge(event.target.value);
+    };
+    return (
+        <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={age}
+            label="Age"
+            onChange={handleChange}
+
+        >
+
+            <MenuItem value={10}>username</MenuItem>
+            <MenuItem value={20}>offline</MenuItem>
+            <MenuItem value={30}>offline</MenuItem>
+        </Select>
+
+    )
+}
