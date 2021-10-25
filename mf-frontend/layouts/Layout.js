@@ -8,18 +8,13 @@ import * as React from "react";
 
 export default function Layout({children}) {
     const router = useRouter()
-<<<<<<< HEAD
     const {user, login} = useContext(AuthContext)
     let layout = (
         <div className={"layout"}><SideBar navItems={navItems}/>
             <div className={"layout-main"}><LayoutTop page_title={"Dashboard"}/>{children}</div>
         </div>
-=======
-    const {user , login} = useContext(AuthContext)
-    let layout =(
-        <div className={"layout"}><SideBar navItems={navItems} /><div className={"layout-main"}><LayoutTop page_title={"Dashboard"} /><div className={"main-content"}>{children}</div></div></div>
->>>>>>> 4fc5d1a0ba164bb3d9a2bcd60b1ab3307458e16a
     )
+
     let unAuth = (<div className={"unauth"}>{children}</div>)
     // useEffect(()=>{
     //     if(!user["authReady"]){

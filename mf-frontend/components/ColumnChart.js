@@ -1,0 +1,5 @@
+export function ColumnChart() {
+    return (
+        <></>
+    )
+}

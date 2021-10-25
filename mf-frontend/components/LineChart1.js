@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import {useState} from "react";
 import dynamic from "next/dynamic";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -138,7 +137,7 @@ export function MultipleLineChart() {
         </div>
     )
 }
-=======
+
 // import {useState} from "react";
 // import dynamic from "next/dynamic";
 // // import ReactApexChart from 'react-apexcharts'
@@ -279,4 +278,4 @@ export function MultipleLineChart() {
 //         </div>
 //     )
 // }
->>>>>>> 4fc5d1a0ba164bb3d9a2bcd60b1ab3307458e16a
+
