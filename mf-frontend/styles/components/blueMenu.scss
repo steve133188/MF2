@@ -4,6 +4,7 @@
   padding: 29px 13px;
   background: #F8F9FB;
   border-radius: 15px;
+  user-select: none;
 }
 
 .blueMenuGroup {
@@ -15,7 +16,6 @@
 
 .blueMenuDropdownGroup {
   position: static;
-  display: none;
 
   .blueMenuLink {
     line-height: 42px;
@@ -24,4 +24,8 @@
       padding-left: 41px;
     }
   }
+}
+
+.clickableSpan {
+  cursor: pointer;
 }

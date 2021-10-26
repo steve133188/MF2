@@ -13,13 +13,7 @@ export default function Testing() {
 
     return (
         <>
-            {/*<LineChart1/>*/}
-            {/*<MultipleLineChart/>*/}
-            <LineChartCard/>
-            {/*<ChangingPercentageCard />*/}
-            {/*<ColumnChart*/}
-            <AverageDailyCard/>
-            {/*<EnhancedTable/>*/}
+            <importContact />
         </>
     )
 }

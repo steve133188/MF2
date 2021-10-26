@@ -57,16 +57,24 @@ export function TeamFilterSelect({children, ...props}) {
             >
                 <MenuItem value="">
 
-                    <span>Mary Foster</span><div className={"smallPill"}>20</div></MenuItem>
+                    <span>Mary Foster</span>
+                    <div className={"smallPill"}>20</div>
+                </MenuItem>
                 <MenuItem value={10}>
 
-                    <span>Ten</span><div className={"smallPill"}>20</div></MenuItem>
+                    <span>Ten</span>
+                    <div className={"smallPill"}>20</div>
+                </MenuItem>
                 <MenuItem value={20}>
 
-                    <span>Twenty</span><div className={"smallPill"}>20</div></MenuItem>
+                    <span>Twenty</span>
+                    <div className={"smallPill"}>20</div>
+                </MenuItem>
                 <MenuItem value={30}>
 
-                    <span>Thirty</span><div className={"smallPill"}>20</div></MenuItem>
+                    <span>Thirty</span>
+                    <div className={"smallPill"}>20</div>
+                </MenuItem>
             </Select>
         </FormControl>
     )
@@ -102,43 +110,43 @@ import {useTheme} from '@mui/material/styles';
 import OutlinedInput from '@mui/material/OutlinedInput';
 
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-    PaperProps: {
-        style: {
-            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-            width: 250,
+export function MultipleSelectPlaceholder({ children,...props }) {
+    const {placeholder, selectItems} = props;
+    const ITEM_HEIGHT = 48;
+    const ITEM_PADDING_TOP = 8;
+    const MenuProps = {
+        PaperProps: {
+            style: {
+                maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+                width: 250,
+            },
         },
-    },
-};
-
-const names = [
-    // <Pill color="lightYellow" size="roundedPill size30">MF</Pill>,
-    // <Pill color="lightBlue" size="roundedPill size30">AX</Pill>,
-    "Agent",
-    'April Tucker',
-    'Ralph Hubbard',
-    'Omar Alexander',
-    'Carlos Abbott',
-    'Miriam Wagner',
-    'Bradley Wilkerson',
-    'Virginia Andrews',
-    'Kelly Snyder',
-];
-
-function getStyles(name, personName, theme) {
-    return {
-        fontWeight:
-            personName.indexOf(name) === -1
-                ? theme.typography.fontWeightRegular
-                : theme.typography.fontWeightMedium,
     };
-}
 
-export function MultipleSelectPlaceholder() {
+    const names = [
+        'Oliver Hansen',
+        'Van Henry',
+        'April Tucker',
+        'Ralph Hubbard',
+        'Omar Alexander',
+        'Carlos Abbott',
+        'Miriam Wagner',
+        'Bradley Wilkerson',
+        'Virginia Andrews',
+        'Kelly Snyder',
+    ];
+
+    function getStyles(name, personName, theme) {
+        return {
+            fontWeight:
+                personName.indexOf(name) === -1
+                    ? theme.typography.fontWeightRegular
+                    : theme.typography.fontWeightMedium,
+        };
+    }
+
     const theme = useTheme();
-    const [personName, setPersonName] = React.useState(names);
+    const [personName, setPersonName] = React.useState([]);
 
     const handleChange = (event) => {
         const {
@@ -169,7 +177,7 @@ export function MultipleSelectPlaceholder() {
                         inputProps={{'aria-label': 'Without label'}}
                 >
                     <MenuItem disabled value="">
-                        <span>Agent</span>
+                        <span>Agnet</span>
                     </MenuItem>
                     {names.map((name) => (
                         <MenuItem

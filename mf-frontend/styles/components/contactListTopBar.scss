@@ -4,7 +4,6 @@
   }
   .contactListFilterBar {
     background: white;
-    margin-bottom: 9px;
     .searchSVG {
       width: 100%;
 
@@ -15,11 +14,12 @@
     }
 
     .contactListBtns {
-      padding-left: 20px;
-      padding-right: 20px;
+      padding-left: 25px;
+      padding-right: 25px;
       display: flex;
       justify-content: space-between;
       margin-top: 5px;
+      align-items: center;
 
       span {
         margin-right: 15px;
