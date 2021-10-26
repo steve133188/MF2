@@ -53,24 +53,25 @@ export function TeamFilterSelect({children, ...props}) {
                     background: "#D0E9FF",
                     border: "none",
                     textAlign: "center",
+                    color: "black",
+                    justifyContent: "space-between",
                 }}
             >
-                <MenuItem value="">
-
+                <MenuItem value="" sx={{color: "#2198FA", justifyContent: "space-between", marginLeft: "0px"}}>
                     <span>Mary Foster</span>
                     <div className={"smallPill"}>20</div>
                 </MenuItem>
-                <MenuItem value={10}>
+                <MenuItem value={10} sx={{color: "#2198FA", justifyContent: "space-between", marginLeft: "0px"}}>
 
                     <span>Ten</span>
                     <div className={"smallPill"}>20</div>
                 </MenuItem>
-                <MenuItem value={20}>
+                <MenuItem value={20} sx={{color: "#2198FA", justifyContent: "space-between", marginLeft: "0px"}}>
 
                     <span>Twenty</span>
                     <div className={"smallPill"}>20</div>
                 </MenuItem>
-                <MenuItem value={30}>
+                <MenuItem value={30} sx={{color: "#2198FA", justifyContent: "space-between", marginLeft: "0px"}}>
 
                     <span>Thirty</span>
                     <div className={"smallPill"}>20</div>

@@ -1,4 +1,17 @@
 .contactListTopBar {
+  .logoInputContainer2 {
+    .searchSVG:before {
+      left: 2vw;
+    }
+    .searchSVG {
+      input {
+        width: 95%;
+        margin: auto;
+        display: flex;
+        padding-left: 4vw;
+      }
+    }
+  }
   h4 {
     color: #2198FA;
   }
@@ -20,6 +33,22 @@
       justify-content: space-between;
       margin-top: 5px;
       align-items: center;
+      .filterIcon {
+        width: 34px;
+        height: 34px;
+        background: white;
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+      .filterIcon:hover {
+        border: 1px solid #D0E9FF;
+      }
+      .filterIconActive {
+        background: #D0E9FF;
+      }
 
       span {
         margin-right: 15px;
