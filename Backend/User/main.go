@@ -1,6 +1,7 @@
 package main
 
 import (
+	"mf-user-servies/DB"
 	"mf-user-servies/Routes"
 	"mf-user-servies/Services"
 
@@ -15,7 +16,7 @@ func main() {
 	app.Use(logger.New())
 	app.Use(cors.New())
 
-	// DB.MongoConnect()
+	DB.MongoConnect()
 
 	app.Get("/test", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{"code": 200, "message": "Hello, MF-Users-Services"})
