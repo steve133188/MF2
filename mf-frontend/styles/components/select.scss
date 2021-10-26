@@ -86,3 +86,23 @@
     }
   }
 }
+
+.teamFilterSelect {
+  div {
+    div {
+      div {
+        display: flex;
+        align-items: center;
+      }
+    }
+
+    svg {
+      display: none;
+    }
+
+
+    fieldset {
+      border: none;
+    }
+  }
+}

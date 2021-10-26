@@ -6,8 +6,15 @@
     border-bottom: #F8F9FB 2px solid;
     padding: 13px 17px 28px 21px;
 
-    .addToFavouriteBtn {
-      text-align: right;
+    #addToFavouriteBtn {
+      display: flex;
+      margin-left: auto;
+      fill: #E5E7EC;
+    }
+    #fillStarColor {
+      display: flex;
+      margin-left: auto;
+      fill: #E6B65F;
     }
 
     .contactInfoAndTime {

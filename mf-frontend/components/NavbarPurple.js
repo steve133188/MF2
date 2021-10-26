@@ -19,10 +19,10 @@ export function NavbarPurple() {
     return (
         <div className="navbarPurple">
             <div className="selectButtonGroup">
-                <MultipleSelectPlaceholder/>
-                <MultipleSelectPlaceholder/>
-                <MultipleSelectPlaceholder/>
-                <MultipleSelectPlaceholder/>
+                <MultipleSelectPlaceholder placeholder={"Agent"} />
+                <MultipleSelectPlaceholder placeholder="Team" />
+                <MultipleSelectPlaceholder placeholder="Tags" />
+                <MultipleSelectPlaceholder placeholder="Channel" />
             </div>
 
             <div className="tagsButtonGroup">

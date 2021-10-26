@@ -14,5 +14,5 @@ export function MoreImageBadge(props) {
                 +99
             </span>
         </span>
-        )
+    )
 }

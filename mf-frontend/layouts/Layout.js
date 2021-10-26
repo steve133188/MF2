@@ -12,7 +12,7 @@ export default function Layout({children}) {
 
 
     let layout = (
-        <div className={"layout"}><SideBar navItems={navItems}/>
+        <div className={"layout"}><SideBar navItems={navItems} />
             <div className={"layout-main"}><LayoutTop page_title={router.pathname.charAt(1).toUpperCase()+router.pathname.substring(2)}/>{children}</div>
         </div>
     )

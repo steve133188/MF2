@@ -1,7 +1,8 @@
 .addPopperContainer {
   div {
-    span {
+    svg {
       cursor: pointer;
+      fill: #f1b44c;
     }
     div {
       .addTagHeader {
@@ -20,6 +21,7 @@
           input {
             margin-bottom: 1px;
             padding-left: 50px;
+            padding-right: 20px;
           }
         }
         .requiredMessage {

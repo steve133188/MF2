@@ -12,7 +12,7 @@ export function BlueMenuLink ({ children ,...props}) {
 export function BlueMenuDropdown ({ children ,...props} ) {
     const { link ,title } = props
     return (
-        <li className="blueMenuLink "><Link href={link}><a className="blueLink">{title}<KeyboardArrowDownIcon/></a></Link>{children}</li>
+        <li className="blueMenuLink "><span className="blueLink clickableSpan">{title}<KeyboardArrowDownIcon/></span>{children}</li>
     )
 }
 

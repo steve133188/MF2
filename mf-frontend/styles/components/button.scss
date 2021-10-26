@@ -32,7 +32,9 @@
 
   }
   .cancelButton {
+    button {
 
+    }
   }
 }
 
@@ -53,6 +55,9 @@
     border-radius: 10px;
     text-transform: none;
   }
+  button:hover {
+    background: #e8e8e9;
+  }
 }
 
 .normalButton {
@@ -60,6 +65,16 @@
     box-shadow: none;
     border-radius: 10px;
     text-transform: none;
+    min-width: 85px;
+  }
+  button:hover {
+    background: #bedef8;
+  }
+}
+
+.newContactButton {
+  button:hover {
+    background: #2172fa;
   }
 }
 
@@ -68,6 +83,9 @@
     padding-left: 16.5px;
     padding-right: 16.5px;
     text-transform: none;
+  }
+  button:hover {
+    background: #bedef8;
   }
   img {
     margin-right: 4px;

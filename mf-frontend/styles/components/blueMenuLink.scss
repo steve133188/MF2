@@ -10,12 +10,20 @@
     color: #444444;
     padding-left: 23px;
     text-decoration: none;
+
     svg {
       position: relative;
       top: 10px;
       left: 116px;
       transform: translateY(-50%);
       transition: transform 0.4s;
+    }
+  }
+  .blueLinkActive {
+    background: #bedcf5;
+    color: #2198FA;
+    svg {
+      transform: translateY(-50%) rotate(-180deg);
     }
   }
   .menuSelected {
@@ -30,6 +38,3 @@
     }
   }
 }
-
-
-
