@@ -1,6 +1,8 @@
 package Model
 
-import "time"
+import (
+	"time"
+)
 
 // type User struct {
 // 	ID         string        `json:"id", bson:"_id"`
@@ -17,21 +19,12 @@ import "time"
 // 	Date       time.Time     `json:"date"`
 // }
 
-type User struct {
-	OldId     string      `json:"_id" bson:"old_id"`
-	CreatedAt time.Time   `json:"created_at"`
-	Services  interface{} `json:"services"`
-	UserName  string      `json:"username"`
-	Emails    interface{} `json:"emails"`
-	Profile   interface{} `json:"profile"`
+type Password struct {
+	Bcrypt string `json:"bcrypt"`
 }
 
 type Services struct {
-	Password interface{} `json:"password"`
-}
-
-type Password struct {
-	Bcrypt string `json:"bcrypt"`
+	Password `json:"password"`
 }
 
 type Emails struct {
@@ -40,11 +33,20 @@ type Emails struct {
 }
 
 type Profile struct {
-	Name         string      `json:"name"`
-	Phone        string      `json:"phone"`
-	Modules      interface{} `json:"modules"`
-	Channels     interface{} `json:"channels"`
-	Team         string      `json:"team"`
-	Organization string      `json:"organization"`
-	Enabled      bool        `json:"enabled"`
+	Name         string   `json:"name"`
+	Phone        string   `json:"phone"`
+	Modules      []string `json:"modules"`
+	Channels     []string `json:"channels"`
+	Team         string   `json:"team"`
+	Organization string   `json:"organization"`
+	Enabled      bool     `json:"enabled"`
+}
+
+type User struct {
+	OldId     string    `json:"_id" bson:"old_id"`
+	CreatedAt time.Time `json:"created_at"`
+	Services  `json:"services"`
+	UserName  string   `json:"username"`
+	Emails    []Emails `json:"emails"`
+	Profile   `json:"profile"`
 }
