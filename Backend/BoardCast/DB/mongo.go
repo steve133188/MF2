@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 
@@ -54,27 +55,27 @@ func MongoConnect() {
 	}
 	fmt.Println(count)
 
-	// counts, err := collection.CountDocuments(context.TODO(), bson.D{})
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
+	counts, err := collection.CountDocuments(context.TODO(), bson.D{})
+	if err != nil {
+		fmt.Println(err)
+	}
 
-	// if counts > 0 {
-	// 	res, err := collection.DeleteMany(ctx, bson.M{})
-	// 	if err != nil {
-	// 		fmt.Println(err)
-	// 	}
-	// 	fmt.Println(res.DeletedCount, " Deleted")
-	// 	counts = 0
-	// }
+	if counts > 0 {
+		res, err := collection.DeleteMany(ctx, bson.M{})
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println(res.DeletedCount, " Deleted")
+		counts = 0
+	}
 
-	// if counts == 0 {
-	// 	res, err := collection.InsertOne(context.TODO(), bson.M{"id": "1", "userId": "111", "customerFirstName": "Tom", "customerLastName": "Boy", "age": "20", "date": time.Now()})
-	// 	if err != nil {
-	// 		fmt.Println(err)
-	// 	}
-	// 	fmt.Println(res.InsertedID, " Added")
-	// }
+	if counts == 0 {
+		res, err := collection.InsertOne(context.TODO(), bson.M{"id": "1", "userId": "111", "customerFirstName": "Tom", "customerLastName": "Boy", "age": "20", "date": time.Now()})
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println(res.InsertedID, " Added")
+	}
 
 	fmt.Println("DB connected!")
 	MI = MongoInstance{
