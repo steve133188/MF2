@@ -3,7 +3,7 @@ package Model
 import "time"
 
 type Bot struct {
-	ID           string `json:"id"`
+	ID           string `json:"id" bson:"_id"`
 	BotName      string `json:"bot_name"`
 	Des          string `json:"description"`
 	UserId       string `json:"user_id"`
