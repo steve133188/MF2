@@ -6,7 +6,22 @@
   display: flex;
   flex-flow: column;
   overflow-y: scroll;
+ .teamFilterSelect {
+   div {
+     div {
+       div {
+         justify-content: space-between;
+         .smallPill {
+           justify-content: center;
+           margin-left: 0px;
+         }
+         div {
 
+         }
+       }
+     }
+   }
+ }
   .contactContainerGrp {
   }
 

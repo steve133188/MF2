@@ -1,26 +1,28 @@
-export function Pill(props) {
-    const name = "pill " + props.color + " " + props.size;
+export function Pill({children,...props}) {
+    const {color, size} = props;
+    const name = "pill " + color + " " + size;
     return (
         <span className="pillContainer">
-            <span className={name}>{props.children}</span>
+            <span className={name}>{children}</span>
         </span>
     )
 }
 
-export function StatusPill(props) {
-    const name = "pill " + props.color;
+export function StatusPill({children,...props}) {
+    const {color} = props;
+    const name = "pill " + color;
     return (
         <span className="pillContainer">
             <span className={name}>
-                <li>{props.children}</li>
+                <li>{children}</li>
             </span>
         </span>
     )
 }
 
-export function PillInIcon(props) {
+export function PillInIcon({children, ...props}) {
     return (
-        <span className="pillInIcon">{props.children}</span>
+        <span className="pillInIcon">{children}</span>
 
     )
 }
