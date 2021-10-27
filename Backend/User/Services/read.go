@@ -21,7 +21,7 @@ func LoginUser(c *fiber.Ctx) error {
 
 	paramID := c.Params("id")
 
-	filter := bson.M{"old_id": paramID}
+	filter := bson.M{"_id": paramID}
 
 	findResult := usersCollection.FindOne(c.Context(), filter)
 	if err := findResult.Err(); err != nil {
@@ -97,7 +97,7 @@ func GetUsersById(c *fiber.Ctx) error {
 	// find todo and return
 	customer := &Model.User{}
 
-	query := bson.D{{Key: "old_id", Value: paramID}}
+	query := bson.D{{Key: "_id", Value: paramID}}
 
 	err := customerCollection.FindOne(c.Context(), query).Decode(customer)
 

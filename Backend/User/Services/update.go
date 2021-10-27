@@ -28,7 +28,7 @@ func UpdateUserByID(c *fiber.Ctx) error {
 	// user.ID = c.Params("id")
 	update := bson.D{{Key: "$set", Value: user}}
 
-	_, err := usersCollection.UpdateOne(c.Context(), bson.D{{Key: "old_id", Value: c.Params("id")}}, update)
+	_, err := usersCollection.UpdateOne(c.Context(), bson.D{{Key: "_id", Value: c.Params("id")}}, update)
 	fmt.Println(user)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

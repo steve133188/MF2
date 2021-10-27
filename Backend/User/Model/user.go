@@ -43,7 +43,7 @@ type Profile struct {
 }
 
 type User struct {
-	OldId     string    `json:"_id" bson:"old_id"`
+	ID        string    `json:"id" bson:"_id"`
 	CreatedAt time.Time `json:"created_at"`
 	Services  `json:"services"`
 	UserName  string   `json:"username"`
