@@ -5,7 +5,6 @@ import (
 	"log"
 	"mf-bot-services/DB"
 	"mf-bot-services/Model"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
@@ -14,7 +13,7 @@ import (
 func UpdateOneBotById(c *fiber.Ctx) error {
 	collection := DB.MI.DBCol
 	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	todo := new(Model.BotMessages)
+	todo := new(Model.BotBody)
 
 	if err := c.BodyParser(todo); err != nil {
 		log.Println(err)
@@ -25,11 +24,11 @@ func UpdateOneBotById(c *fiber.Ctx) error {
 		})
 	}
 
-	todo.UpdatedTime = time.Now()
+	// todo.UpdatedTime = time.Now()
 	todo.ID = c.Params("id")
 	update := bson.D{{Key: "$set", Value: todo}}
 
-	_, err := collection.UpdateOne(c.Context(), bson.D{{Key: "id", Value: c.Params("id")}}, update)
+	_, err := collection.UpdateOne(c.Context(), bson.D{{Key: "_id", Value: c.Params("id")}}, update)
 	fmt.Println(todo)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

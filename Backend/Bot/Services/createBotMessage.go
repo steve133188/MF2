@@ -5,8 +5,6 @@ import (
 	"mf-bot-services/DB"
 	"mf-bot-services/Model"
 
-	"time"
-
 	"github.com/gofiber/fiber/v2"
 	uuid "github.com/nu7hatch/gouuid"
 	"go.mongodb.org/mongo-driver/bson"
@@ -15,7 +13,7 @@ import (
 func CreateOneBotMessage(c *fiber.Ctx) error {
 	collection := DB.MI.DBCol
 
-	data := new(Model.BotMessages)
+	data := new(Model.BotBody)
 
 	err := c.BodyParser(&data)
 	if err != nil {
@@ -25,8 +23,8 @@ func CreateOneBotMessage(c *fiber.Ctx) error {
 			"error":   err,
 		})
 	}
-	data.CreatedTime = time.Now()
-	data.UpdatedTime = time.Now()
+	// data.CreatedTime = time.Now()
+	// data.UpdatedTime = time.Now()
 	id, err := uuid.NewV4()
 	if err != nil {
 		fmt.Println("Failed to generate bot id")
@@ -44,7 +42,7 @@ func CreateOneBotMessage(c *fiber.Ctx) error {
 	}
 
 	// get the inserted data
-	todo := &Model.BotMessages{}
+	todo := &Model.BotBody{}
 	query := bson.D{{Key: "_id", Value: result.InsertedID}}
 
 	collection.FindOne(c.Context(), query).Decode(todo)

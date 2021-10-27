@@ -25,7 +25,7 @@ func GetAllBots(c *fiber.Ctx) error {
 		})
 	}
 
-	var todos []Model.BotMessages = make([]Model.BotMessages, 0)
+	var todos []Model.BotBody = make([]Model.BotBody, 0)
 
 	// iterate the cursor and decode each item into a Todo
 	err = cursor.All(c.Context(), &todos)
@@ -57,9 +57,9 @@ func GetOneBotMessageByDes(c *fiber.Ctx) error {
 	fmt.Println(paramID)
 
 	// find todo and return
-	todo := &Model.BotMessages{}
+	todo := &Model.BotBody{}
 
-	query := bson.D{{Key: "description", Value: paramID}}
+	query := bson.D{{Key: "_id", Value: paramID}}
 
 	err := collection.FindOne(c.Context(), query).Decode(todo)
 

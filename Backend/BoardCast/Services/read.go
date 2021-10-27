@@ -57,7 +57,7 @@ func GetBoardCastById(c *fiber.Ctx) error {
 	// find todo and return
 	todo := &Model.BoardCast{}
 
-	query := bson.D{{Key: "old_id", Value: paramID}}
+	query := bson.D{{Key: "_id", Value: paramID}}
 
 	err := collection.FindOne(c.Context(), query).Decode(todo)
 

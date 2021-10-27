@@ -18,7 +18,7 @@ import "time"
 // }
 
 type BoardCast struct {
-	OldId        string      `json:"_id" bson:"old_id"`
+	Id           string      `json:"id" bson:"_id"`
 	Name         string      `json:"name"`
 	Message      interface{} `json:"message"`
 	Tag          interface{} `json:"tag"`

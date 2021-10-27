@@ -3,8 +3,6 @@ package main
 import (
 	"mf-bot-services/DB"
 	"mf-bot-services/Routes"
-	"mf-bot-services/Services"
-	"net/http"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -27,10 +25,10 @@ func main() {
 	Routes.BotBuildRoute(api.Group("/botmessages"))
 
 	//listen to whtasapp response
-	go func() {
-		http.HandleFunc("/webhook", Services.HandleWhatsappResponse)
-		http.ListenAndServe(":3005", nil)
-	}()
+	// go func() {
+	// 	http.HandleFunc("/webhook", Services.HandleWhatsappResponse)
+	// 	http.ListenAndServe(":3005", nil)
+	// }()
 
 	app.Listen(":3005")
 

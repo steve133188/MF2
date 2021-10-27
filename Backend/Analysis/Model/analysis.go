@@ -3,7 +3,7 @@ package Model
 import "time"
 
 type Analysis struct {
-	ID           string `json:"id"`
+	ID           string `json:"id" bson:"_id"`
 	UserId       string `json:"user_id"`
 	Username     string `json:"username"`
 	CustomerId   string `json:"customer_id"`

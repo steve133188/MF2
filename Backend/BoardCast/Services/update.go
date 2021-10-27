@@ -25,10 +25,10 @@ func UpdateBoardCastByID(c *fiber.Ctx) error {
 	}
 
 	// todo.UpdatedTime = time.Now()
-	// todo.ID = c.Params("id")
+	todo.Id = c.Params("id")
 	update := bson.D{{Key: "$set", Value: todo}}
 
-	_, err := collection.UpdateOne(c.Context(), bson.D{{Key: "old_id", Value: c.Params("id")}}, update)
+	_, err := collection.UpdateOne(c.Context(), bson.D{{Key: "_id", Value: c.Params("id")}}, update)
 	fmt.Println(todo)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
