@@ -1,10 +1,12 @@
 package Services
 
 import (
+	"fmt"
 	"mf-chat-services/DB"
 	"mf-chat-services/Model"
 
 	"github.com/gofiber/fiber/v2"
+	uuid "github.com/nu7hatch/gouuid"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -24,11 +26,11 @@ func AddOneMessage(c *fiber.Ctx) error {
 		})
 	}
 
-	// id, err := uuid.NewV4()
-	// if err != nil {
-	// 	fmt.Println("Failed to generate UUID for message")
-	// }
-	// data.Id = primitive.NewObjectID()
+	id, err := uuid.NewV4()
+	if err != nil {
+		fmt.Println("Failed to generate UUID for message")
+	}
+	data.Id = id.String()
 
 	// data.DateTime = time.Now()
 
@@ -44,7 +46,7 @@ func AddOneMessage(c *fiber.Ctx) error {
 
 	// get the inserted data
 	todo := &Model.Message{}
-	query := bson.D{{Key: "old_id", Value: result.InsertedID}}
+	query := bson.D{{Key: "_id", Value: result.InsertedID}}
 
 	collection.FindOne(c.Context(), query).Decode(todo)
 

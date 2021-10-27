@@ -16,7 +16,7 @@ import "time"
 // }
 
 type Customer struct {
-	OldId        string      `bson:"old_id" json:"_id"`
+	ID           string      `bson:"_id" json:"id"`
 	Name         string      `json:"name"`
 	FirstName    string      `json:"first_name"`
 	LastName     string      `json:"last_name"`

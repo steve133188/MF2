@@ -25,7 +25,7 @@ func UpdateUserByID(c *fiber.Ctx) error {
 	}
 
 	// user.Date = time.Now()
-	// user.ID = c.Params("id")
+	user.ID = c.Params("id")
 	update := bson.D{{Key: "$set", Value: user}}
 
 	_, err := usersCollection.UpdateOne(c.Context(), bson.D{{Key: "_id", Value: c.Params("id")}}, update)

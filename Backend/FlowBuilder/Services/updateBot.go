@@ -5,7 +5,6 @@ import (
 	"log"
 	"mf-flowbuilder-services/DB"
 	"mf-flowbuilder-services/Model"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
@@ -14,7 +13,7 @@ import (
 func UpdateOneBotById(c *fiber.Ctx) error {
 	collection := DB.MI.DBCol
 	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	todo := new(Model.Bot)
+	todo := new(Model.BotBody)
 
 	if err := c.BodyParser(todo); err != nil {
 		log.Println(err)
@@ -25,7 +24,7 @@ func UpdateOneBotById(c *fiber.Ctx) error {
 		})
 	}
 
-	todo.UpdatedTime = time.Now()
+	// todo.UpdatedTime = time.Now()
 	todo.ID = c.Params("id")
 	update := bson.D{{Key: "$set", Value: todo}}
 

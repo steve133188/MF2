@@ -18,7 +18,7 @@ import (
 // }
 type Message struct {
 	// Id             primitive.ObjectID `bson:"_id" json:"id"`
-	OldId          string    `bson:"old_id" json:"_id"`
+	Id             string    `bson:"_id" json:"id"`
 	Conversation   string    `json:"conversation"`
 	Sender         string    `json:"sender"`
 	Text           string    `json:"text"`

@@ -2,22 +2,23 @@ package Model
 
 import "time"
 
-type Bot struct {
-	ID           string `json:"id" bson:"_id"`
-	BotName      string `json:"bot_name"`
-	Des          string `json:"description"`
-	UserId       string `json:"user_id"`
-	Username     string `json:"username"`
-	UserDes      string `json:"user_description"`
-	CustomerId   string `json:"customer_id"`
-	CustomerName string `json:"customer_name"`
-	CustomerDes  string `json:"customer_description"`
+// type Bot struct {
+// 	ID           string `json:"id" bson:"_id"`
+// 	BotName      string `json:"bot_name"`
+// 	Des          string `json:"description"`
+// 	UserId       string `json:"user_id"`
+// 	Username     string `json:"username"`
+// 	UserDes      string `json:"user_description"`
+// 	CustomerId   string `json:"customer_id"`
+// 	CustomerName string `json:"customer_name"`
+// 	CustomerDes  string `json:"customer_description"`
 
-	UpdatedTime time.Time `json:"updated_time"`
-	CreatedTime time.Time `json:"created_time"`
-}
+// 	UpdatedTime time.Time `json:"updated_time"`
+// 	CreatedTime time.Time `json:"created_time"`
+// }
 
 type BotBody struct {
+	ID            string    `json:"id" bson:"_id"`
 	BotName       string    `json:"botname"`
 	Organization  string    `json:"organization"`
 	Folder        string    `json:"folder"`
