@@ -38,6 +38,11 @@ export default function SideBar(props){
                     <div className={router.pathname == "/flowbuilder" ? "active nav-item" : "nav-item "}>   Flow Builder</div>
                 </Link>
                 </div>
+                <div className={router.pathname == "/integrations" ?"active-side-item" : "side-item "}>
+                    <Link href={"/integrations"} >
+                        <div className={router.pathname == "/integrations" ? "active nav-item" : "nav-item "}>  Integrations</div>
+                    </Link>
+                </div>
                 <div className={router.pathname == "/products" ? "active-side-item" : "side-item "}>
                 <Link href={"/products"} >
                     <div className={router.pathname == "/products" ? "active nav-item" : "nav-item "}>  Product</div>
@@ -63,13 +68,13 @@ export default function SideBar(props){
     )
 }
 
-export async function getStaticProps(context){
-    const res = await fetch(`"../data/nav.json"`)
-    const data = await res.json()
-
-    return{
-        props:{
-            data
-        }
-    }
-}
+// export async function getStaticProps(context){
+//     const res = await fetch(`"../data/nav.json"`)
+//     const data = await res.json()
+//
+//     return{
+//         props:{
+//             data
+//         }
+//     }
+// }

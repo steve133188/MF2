@@ -46,6 +46,7 @@ export function Search2({children,...props}) {
             <span className={invalidClassname}>Email or Password invalid</span>
             <label className={inputClassname}>
                 <input
+                        type={type}
                         onChange={handleChange}
                         placeholder={children}
                         className={invalid}

@@ -3,9 +3,6 @@ import {Card_channel} from "../../components/Cards";
 export default function Integrations() {
     return (
         <div className="integrations-layout">
-            <div className="leftMenu">MENU</div>
-            <div className="rightContent">
-                <div className="navbar">NAVBAR</div>
                 <div className="container-fluid cardChannelGroupContainer">
                     <div className="cardChannelGroup">
                         <h1 style={{fontSize: "24px", fontWeight: "800", marginBottom: "33px"}}>My Channels</h1>
@@ -27,6 +24,5 @@ export default function Integrations() {
                 </div>
             </div>
 
-        </div>
     )
 }
