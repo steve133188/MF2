@@ -5,6 +5,9 @@ import {AuthContext} from "../context/authContext"
 import SideBar from "./SideBar";
 import {MultipleSelectPlaceholder, SingleSelect, SingleSelect2} from "../components/Select";
 import * as React from "react";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 
 export default function Layout({children}) {
     const router = useRouter()
@@ -18,18 +21,19 @@ export default function Layout({children}) {
     )
 
     let unAuth = (<div className={"unauth"}>{children}</div>)
-    // useEffect(()=>{
-    //     if(!user["authReady"]){
-    //         router.push("/login")
-    //         layout = (<div className={"unauth"}>{children}</div>)
-    //     }
-    // },[])
+    useEffect(()=>{
+        if(!user["authReady"]){
+            router.push("/login")
+            layout = (<div className={"unauth"}>{children}</div>)
+        }
+    },[])
     return (
-        !user["authReady"] ? layout : unAuth
+        user["authReady"] ? layout : unAuth
     )
 }
 
 function LayoutTop(props) {
+    const {user} = useContext(AuthContext)
     const [isMenuShow, setIsMenuShow] = useState(false)
     const [isNotificationShow, setIsNotificationShow] = useState(false)
     const {page_title} = props
@@ -45,9 +49,50 @@ function LayoutTop(props) {
                     </div>
                 </div>
                 <div className="loggingStatusDropdown">
-                    <SingleSelect/>
+                    <UserStatusSelect username={user.user}/>
                 </div>
             </div>
         </div>
+    )
+}
+
+function UserStatusSelect({username}) {
+    const [age, setAge] = React.useState('');
+
+    const handleChange = (event) => {
+        setAge(event.target.value);
+        console.log(event.target.value);
+    };
+
+    return (
+        <FormControl sx={{m: 1, minWidth: 120}}>
+            <Select
+                value={age}
+                onChange={handleChange}
+                displayEmpty
+                inputProps={{'aria-label': 'Without label'}}
+                sx={{
+                    width: 160,
+                    height: 31,
+                    borderRadius: 19,
+                    background: "#F5F6F8",
+                    border: "none",
+                    textAlign: "center"
+                }}
+            >
+                <MenuItem value="">
+                    <div className={'selectStatusOnline'}></div>
+                    <span>{username}</span></MenuItem>
+                <MenuItem value={10}>
+                    <div className={'selectStatusOnline'}></div>
+                    <span>{username}</span></MenuItem>
+                <MenuItem value={20}>
+                    <div className={'selectStatusOffline'}></div>
+                    <span>Twenty</span></MenuItem>
+                <MenuItem value={30}>
+                    <div className={'selectStatusOffline'}></div>
+                    <span>Thirty</span></MenuItem>
+            </Select>
+        </FormControl>
     )
 }

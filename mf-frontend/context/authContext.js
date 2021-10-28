@@ -23,7 +23,16 @@ export const AuthContextProvider = ({children}) =>{
         if(email == "wiva.wei@matrixsense.tech" && pwd == "1234"){
             console.log("login success")
             setUser({user:"Wiva", authReady: true})
-            router.push("/testing")
+            router.push("/dashboard")
+        }else if (email == "steve.chak@matrixsense.tech" && pwd =="1234"){
+            setUser({user:"Steve.Chak", authReady: true})
+            router.push("/dashboard")
+        }else if(email =="ben.cheng@matrixsense.tech" && pwd == "1234"){
+            setUser({user:"Ben.cheng", authReady: true})
+            router.push("/dashboard")
+        }else if(email =="lewis.chan@matrixsense.tech"  && pwd == "1234"){
+            setUser({user:"Lewis.chan", authReady: true})
+            router.push("/dashboard")
         }else{
             console.log("Something went Wrong")
             return "Something went Wrong"
