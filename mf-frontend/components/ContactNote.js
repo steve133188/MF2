@@ -6,7 +6,7 @@ import {ContactBasicInfo} from "./ContactBasicInfo";
 
 export function ContactNote() {
     return (
-        <div className="container">
+
             <div className="contactInfoSet">
                 <ContactBasicInfo icon="https://ath2.unileverservices.com/wp-content/uploads/sites/4/2020/02/IG-annvmariv-1024x1016.jpg" name="Debra Patel" phone="+852 97650348" contactType="https://www.pngrepo.com/png/158412/512/whatsapp.png" pillColor="teamA" pillContent="Team A" />
                 <TextRadio2 />
@@ -22,6 +22,6 @@ export function ContactNote() {
                     </div>
                 </div>
             </div>
-        </div>
+
     )
 }

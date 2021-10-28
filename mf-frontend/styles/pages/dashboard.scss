@@ -1,10 +1,29 @@
-#dashbroad {
-  background-image: url("../../public/dashBackground.png");
-  /* Full height */
+.dashboard-layout {
+  -webkit-flex-direction: column;
+  -moz-box-orient: vertical;
+  -moz-box-direction: normal;
+  flex-direction: column;
+  padding: 48px 33px 20px 34px;
+  margin: 0;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  width: 95%;
+  max-width: 95vw;
   height: 100%;
-
-  /* Center and scale the image nicely */
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
+  overflow: scroll;
+  .chartGroup {
+    margin-top: 30px;
+  }
+  .dashboardRow {
+    display: flex;
+    .tableSet {
+      width: 100%;
+    }
+  }
+  .dashboardColumn {
+    float: left;
+    width: 50%;
+    margin-right: 75px;
+  }
 }

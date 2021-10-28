@@ -4,6 +4,7 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 import {NormalButton, TextWithIconButton} from "./Button";
 import {ColumnCheckbox} from "./Checkbox";
 
+
 export function EditColumnPopper() {
 
     const editColumnStyles = {

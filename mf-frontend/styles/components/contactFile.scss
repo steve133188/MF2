@@ -27,11 +27,17 @@
       .mediaGroup {
         display: flex;
         justify-content: space-between;
+        span {
+          cursor: pointer;
+        }
       }
     }
 
     .fileLinkContainer {
       .fileLinkGroup {
+        .fileLink {
+          cursor: pointer;
+        }
       }
 
       .normalButton {

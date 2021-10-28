@@ -20,11 +20,6 @@ export function ContactListTopBar({ isFilter , setIsFilter}) {
                     <span className={isFilter?"filterIcon filterIconActive":"filterIcon"} onClick={filterToggle}>
                         <img src="icon-filter.svg" width="18px" height="18px" alt=""/>
                     </span>
-                    {/*{isFilter ? (<span className="filterIcon filterIconActive" onClick={filterToggle}>*/}
-                    {/*    <img src="icon-filter.svg" width="18px" height="18px" alt=""/>*/}
-                    {/*</span>) : <span className="filterIcon" onClick={filterToggle}>*/}
-                    {/*    <img src="icon-filter.svg" width="18px" height="18px" alt=""/>*/}
-                    {/*</span>}*/}
                 </div>
             </div>
         </div>

@@ -111,14 +111,22 @@
         justify-content: space-between;
 
         .left {
+          cursor: pointer;
           span {
-            margin-right: 23px
+            margin-right: 23px;
+            img {
+
+            }
           }
         }
 
         .right {
+          cursor: pointer;
           span {
             margin-left: 15px;
+            img {
+
+            }
           }
         }
       }

@@ -24,12 +24,13 @@ export function Checkbox2(props) {
     )
 }
 
-export function CheckboxPill(props) {
+export function CheckboxPill({children,...props}) {
+    const {color, checked, checkbox, onClick} = props
     return (
         <>
-            <label className="checkboxContainer">
-                <Pill color="lightBlue">VIP</Pill>
-                <input type="checkbox" checked={props.checked}/>
+            <label className="checkboxContainer" onClick={onClick}>
+                <Pill color={color}>children</Pill>
+                <input type="checkbox" checked={checked}/>
                 <span className="checkmark"></span>
             </label>
         </>
@@ -37,10 +38,11 @@ export function CheckboxPill(props) {
 }
 
 export function SingleBox(props) {
-    const classname = "checkmark " + props.fill
+    const {fill, name, value, onClick} = props
+    const classname = "checkmark " + {fill}
     return (
         <label className="testCheckboxContainer">
-            <input type="checkbox" name={props.name} value={props.value} onClick={props.onClick} />
+            <input type="checkbox" name={name} value={value} onClick={onClick} />
             <span className={classname}></span>
         </label>
     )

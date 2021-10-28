@@ -5,7 +5,6 @@
   padding: .5rem;
   display: flex;
   flex-flow: column;
-  overflow-y: scroll;
  .teamFilterSelect {
    div {
      div {
@@ -23,6 +22,7 @@
    }
  }
   .contactContainerGrp {
+    overflow: scroll;
   }
 
   .filterArea {

@@ -2,33 +2,39 @@ import {useState} from "react";
 import dynamic from "next/dynamic";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-export function LineChart1() {
-
+export function LineChart1({children,...props}) {
+    const {title, data, yaxis} = props;
     const [state, setState] = useState({
         series: [{
             name: "Desktops",
-            data: [25, 24, 32, 36, 32, 30, 33]
+            data: data,
+            yaxis: "contacts"
         }],
         options: {
             chart: {
                 id: 'fb',
                 group: 'social',
                 type: 'line',
-                height: 160
+                height: "35%"
             },
+            subtitle: {
+                text: ['Total', "32 +5%"],
+                align: 'left',
+
+           },
             colors: ['#5B73E8'],
             stroke: {
                 curve: 'straight'
             },
             title: {
-                text: 'All Contacts',
+                text: title,
                 align: 'left'
             },
             markers: {
                 size: 6
             },
             xaxis: {
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                 title: {
                     text: 'Month'
                 },
@@ -41,7 +47,7 @@ export function LineChart1() {
             },
             yaxis: {
                 title: {
-                    text: 'Contacts'
+                    text: yaxis
                 },
                 label: {
                     style: {
@@ -59,7 +65,7 @@ export function LineChart1() {
         <div>
             <div id="wrapper">
                 <div id="chart-line">
-                    <Chart options={state.options} series={state.series} type="line" height={560} width={900}/>
+                    <Chart options={state.options} series={state.series} type="line" />
                 </div>
             </div>
         </div>
@@ -83,16 +89,15 @@ export function MultipleLineChart() {
         ],
         options: {
             subtitle: {
-                text: 'on9',
+                text: 'Longest',
                 align: 'left',
-
             },
             colors: ['#5B73E8', '#68C093', '#F1B44C'],
             chart: {
                 id: 'fb',
                 group: 'social',
                 type: 'line',
-                height: 160
+                height: "35%"
             },
             stroke: {
                 curve: 'straight'
@@ -119,7 +124,7 @@ export function MultipleLineChart() {
                 position: 'top',
                 horizontalAlign: 'right',
                 floating: true,
-                offsetY: -25,
+                offsetY: -10,
                 offsetX: -5
             }
         },
@@ -131,7 +136,7 @@ export function MultipleLineChart() {
         <div>
             <div id="wrapper">
                 <div id="chart-line">
-                    <Chart options={state.options} series={state.series} type="line" height={560} width={900}/>
+                    <Chart options={state.options} series={state.series} type="line"/>
                 </div>
             </div>
         </div>

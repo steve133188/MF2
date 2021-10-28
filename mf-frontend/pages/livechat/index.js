@@ -8,9 +8,9 @@ import {ContactFile} from "../../components/ContactFile"
 export default function Live_chat() {
     return (
         <div className="live_chat-layout">
-                    <ContactList/>
-                    <ChatArea/>
-                    <ContactInfo/>
+            <ContactList/>
+            <ChatArea/>
+            <ContactFile/>
         </div>
     )
 }

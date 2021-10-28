@@ -34,7 +34,7 @@ export function TeamFilterSelect({children, ...props}) {
     const {link, title, onClick, isSelect, setSelect} = props
     const [age, setAge] = React.useState('');
 
-    const handleChange = (event) => {
+    const handleFilterChange = (event) => {
         setAge(event.target.value);
         console.log(event.target.value);
     };
@@ -43,7 +43,7 @@ export function TeamFilterSelect({children, ...props}) {
         <FormControl sx={{m: 1, minWidth: 120}}>
             <Select
                 value={age}
-                onChange={handleChange}
+                onChange={handleFilterChange}
                 displayEmpty
                 inputProps={{'aria-label': 'Without label'}}
                 sx={{
