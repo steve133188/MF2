@@ -75,7 +75,7 @@ func MongoConnect() {
 		if err != nil {
 			fmt.Println("Failed to generate first uuid")
 		}
-		res, err := customers.InsertOne(context.TODO(), bson.M{"id": id.String(), "userId": "111", "customerFirstName": "Tom", "customerLastName": "Boy", "age": "20", "timezone": "8", "lastUpdatedTime": time.Now(), "accountCreatedTime": time.Now()})
+		res, err := customers.InsertOne(context.TODO(), bson.M{"id": id.String(), "name": "111", "first_name": "Tom", "last_name": "Boy", "first_seen": time.Now()})
 		if err != nil {
 			fmt.Println(err)
 		}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"mf-customer-services/DB"
 	"mf-customer-services/Model"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	uuid "github.com/nu7hatch/gouuid"
@@ -32,7 +33,8 @@ func AddCustomer(c *fiber.Ctx) error {
 	}
 
 	data.ID = id.String()
-	// data.LastUpdatedTime = time.Now()
+	data.FirstSeen = time.Now()
+	data.UpdatedAt = time.Now()
 	// data.AccountCreatedTime = time.Now()
 	// if data.TimeZone == "" {
 	// 	data.TimeZone = strconv.FormatInt(8, 10)

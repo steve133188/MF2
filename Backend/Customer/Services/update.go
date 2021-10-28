@@ -5,6 +5,7 @@ import (
 	"log"
 	"mf-customer-services/DB"
 	"mf-customer-services/Model"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
@@ -26,12 +27,13 @@ func UpdateCaustomerByID(c *fiber.Ctx) error {
 
 	// customer.LastUpdatedTime = time.Now()
 	customer.ID = c.Params("id")
+	customer.UpdatedAt = time.Now()
 	// if customer.TimeZone == "" {
 	// 	customer.TimeZone = strconv.FormatInt(8, 10)
 	// }
 	update := bson.D{{Key: "$set", Value: customer}}
 
-	_, err := customersCollection.UpdateOne(c.Context(), bson.D{{Key: "_id", Value: c.Params("id")}}, update)
+	_, err := customersCollection.UpdateOne(c.Context(), bson.D{{Key: "id", Value: c.Params("id")}}, update)
 	fmt.Println(customer)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

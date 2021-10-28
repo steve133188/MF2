@@ -43,10 +43,10 @@ type Profile struct {
 }
 
 type User struct {
-	ID        string    `json:"id" bson:"_id"`
-	CreatedAt time.Time `json:"created_at"`
+	ID        string    `json:"id"`
+	CreatedAt time.Time `json:"created_at" bson:"created_at"`
 	Services  `json:"services"`
-	UserName  string   `json:"username"`
-	Emails    []Emails `json:"emails"`
+	UserName  string `json:"username"`
+	Emails    string `json:"emails"`
 	Profile   `json:"profile"`
 }

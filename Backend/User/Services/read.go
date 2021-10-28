@@ -97,7 +97,7 @@ func GetUsersById(c *fiber.Ctx) error {
 	// find todo and return
 	customer := &Model.User{}
 
-	query := bson.D{{Key: "_id", Value: paramID}}
+	query := bson.D{{Key: "id", Value: paramID}}
 
 	err := customerCollection.FindOne(c.Context(), query).Decode(customer)
 

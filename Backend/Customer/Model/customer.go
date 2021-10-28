@@ -16,10 +16,10 @@ import "time"
 // }
 
 type Customer struct {
-	ID           string      `bson:"_id" json:"id"`
-	Name         string      `json:"name"`
-	FirstName    string      `json:"first_name"`
-	LastName     string      `json:"last_name"`
+	ID           string      `json:"id"`
+	Name         string      `json:"name" bson:"name"`
+	FirstName    string      `json:"first_name" bson:"first_name"`
+	LastName     string      `json:"last_name" bson:"last_name"`
 	Phone        string      `json:"phone"`
 	Identifier   string      `json:"identifier"`
 	Enabled      bool        `json:"enabled"`
@@ -27,9 +27,9 @@ type Customer struct {
 	Channel      string      `json:"channel"`
 	SourceId     string      `json:"source_id"`
 	Source       string      `json:"source"`
-	FirstSeen    time.Time   `json:"first_seen"`
+	FirstSeen    time.Time   `json:"first_seen" bson:"first_seen"`
 	LastSeen     interface{} `json:"last_seen"`
-	UpdatedAt    interface{} `json:"updated_at"`
+	UpdatedAt    time.Time   `json:"updated_at"`
 	TeamAssignee interface{} `json:"team_assignee"`
 	Tages        interface{} `json:"tages"`
 	AssignedTo   interface{} `json:"assigned_to"`
