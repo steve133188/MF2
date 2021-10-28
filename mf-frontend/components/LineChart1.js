@@ -6,7 +6,7 @@ export function LineChart1({children,...props}) {
     const {title, data, yaxis, total, percentage} = props;
     const [state, setState] = useState({
         series: [{
-            name: "Desktops",
+            name: "Contacts",
             data: data,
             yaxis: "contacts"
         }],
@@ -75,19 +75,20 @@ export function LineChart1({children,...props}) {
     )
 }
 
-export function MultipleLineChart() {
+export function MultipleLineChart({children,...props}) {
+    const {title, data1, data2, data3, min1, min2, min3, yaxis} = props;
     const [state, setState] = useState({
         series: [{
             name: "Total Contacts",
-            data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
+            data: data1,
         },
             {
                 name: "Mary Foster",
-                data: [10, 21, 45, 61, 59, 42, 39, 81, 128]
+                data: data2,
             },
             {
                 name: "Harry Stewart",
-                data: [3, 21, 35, 21, 19, 32, 49, 91, 38]
+                data: data3,
             }
         ],
         options: {
@@ -113,14 +114,14 @@ export function MultipleLineChart() {
                 size: 6,
             },
             xaxis: {
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                 title: {
                     text: 'Month'
                 }
             },
             yaxis: {
                 title: {
-                    text: 'Contacts'
+                    text: {yaxis}
                 },
             },
             legend: {
@@ -139,8 +140,8 @@ export function MultipleLineChart() {
         <div>
             <div id="wrapper">
                 <div id="chart-line">
-                    <div><p style={{color: "#495057", fontSize: "16px", fontWeight: "600"}}>Title</p>
-                        <div style={{marginLeft: "25px", fontSize: "12px", color: "#74788D"}}>Longest <div style={{color: "#6279EC", fontSize: "20px", fontWeight: "bold"}}>12 mins<span style={{color: "#34C38F", fontSize: "20px", fontWeight: "bold", marginLeft: "20px"}}>12 mins</span><span style={{color: "#F1B44C", fontSize: "20px", fontWeight: "bold", marginLeft: "20px"}}>12 mins</span></div></div>
+                    <div><p style={{color: "#495057", fontSize: "16px", fontWeight: "600"}}>{title}</p>
+                        <div style={{marginLeft: "25px", fontSize: "12px", color: "#74788D"}}>Longest <div style={{color: "#6279EC", fontSize: "20px", fontWeight: "bold"}}>{min1} mins<span style={{color: "#34C38F", fontSize: "20px", fontWeight: "bold", marginLeft: "20px"}}>{min2} mins</span><span style={{color: "#F1B44C", fontSize: "20px", fontWeight: "bold", marginLeft: "20px"}}>{min3} mins</span></div></div>
                     </div>
                     <Chart options={state.options} series={state.series} type="line"/>
                 </div>
