@@ -23,35 +23,6 @@ export function BlueMenu({children, ...props}) {
     }
 
     return (
-
-        // <nav className="blueMenu">
-        //     <BlueMenuGroup>
-        //         <BlueMenuLink link="" title="Dashboard" onClick={toggleIsSelect} isSelect={isSelect}
-        //                       setSelect={setSelect}></BlueMenuLink>
-        //         <BlueMenuDropdown link="" title="Features">
-        //             <BlueMenuGroup name="blueMenuDropdownGroup">
-        //                 {isShow ? (
-        //                         <BlueMenuLink link="" title="Pages" onClick={toggleIsSelect}></BlueMenuLink>)
-        //                     : null
-        //                 }
-        //                 {isShow ?
-        //                     (<BlueMenuLink link="" title="Element" onClick={toggleIsSelect}></BlueMenuLink>)
-        //                     : null
-        //                 }
-        //             </BlueMenuGroup>
-        //         </BlueMenuDropdown>
-        //         <BlueMenuDropdown link="" title="Services">
-        //             <BlueMenuGroup name="blueMenuDropdownGroup">
-        //                 <BlueMenuLink link="" title="App Design" onClick={toggleIsSelect}></BlueMenuLink>
-        //                 <BlueMenuLink link="" title="Web Design" onClick={toggleIsSelect}></BlueMenuLink>
-        //             </BlueMenuGroup>
-        //         </BlueMenuDropdown>
-        //         <BlueMenuLink link="" title="Portfolio" onClick={toggleIsSelect}></BlueMenuLink>
-        //         <BlueMenuLink link="" title="Overview" onClick={toggleIsSelect}></BlueMenuLink>
-        //         <BlueMenuLink link="" title="Shortcuts" onClick={toggleIsSelect}></BlueMenuLink>
-        //         <BlueMenuLink link="" title="Feedback" onClick={toggleIsSelect}></BlueMenuLink>
-        //     </BlueMenuGroup>
-        // </nav>
         <nav className="blueMenu">
             <ul className="blueMenuGroup">
                 <li className="blueMenuLink blueLinkActive"><Link href=""><a className={"blueLink"}>Dashboard</a></Link></li>
@@ -76,12 +47,40 @@ export function BlueMenu({children, ...props}) {
     )
 }
 
-export function BlueMenuGroup({children, ...props}) {
-    const {name, onClick} = props
-    const classname = "blueMenuGroup " + name
+export function BlueMenu2({children, ...props}) {
+    const [isSelect, setSelect] = useState(false)
+
+    function toggleIsSelect() {
+        setSelect(!isSelect);
+    }
+
+    const [isShow, setShow] = useState(false)
+
+    function toggleIsShow() {
+        setShow(!isShow);
+    }
+
+    const [isShow2, setShow2] = useState(false)
+
+    function toggleIsShow2() {
+        setShow2(!isShow2);
+    }
+
     return (
-        <ul className={classname} onClick={onClick}>
-            {children}
-        </ul>
+        <nav className="blueMenu">
+            <ul className="blueMenuGroup">
+                <li className="blueMenuLink"><span className="blueLink clickableSpan" onClick={toggleIsShow}>Agent & Terms<KeyboardArrowDownIcon/></span>
+                    {isShow ? (<ul className="blueMenuGroup blueMenuDropdownGroup">
+                        <li className="blueMenuLink"><Link href=""><a className="blueLink">Agent</a></Link></li>
+                        <li className="blueMenuLink"><Link href=""><a className="blueLink">Role</a></Link></li>
+                    </ul>):null}
+                </li>
+                <li className="blueMenuLink"><Link href=""><a className={"blueLink"}>Contact Groups</a></Link></li>
+                <li className="blueMenuLink"><Link href=""><a className={"blueLink"}>Standard Reply</a></Link></li>
+                <li className="blueMenuLink"><Link href=""><a className={"blueLink"}>Tags</a></Link></li>
+                <li className="blueMenuLink"><Link href=""><a className={"blueLink"}>Assignment Role</a></Link></li>
+                <li className="blueMenuLink"><Link href=""><a className={"blueLink"}>Message API</a></Link></li>
+            </ul>
+        </nav>
     )
 }

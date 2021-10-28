@@ -14,7 +14,7 @@ export default function Dashboard() {
             <div className="chartGroup">
                 <div className="dashboardRow">
                     <div className="dashboardColumn"><LineChart1 title={"All Contacts"} data={[25, 24, 32, 36, 32, 30, 33, 33, 20, 17, 19, 34]} yaxis={"Contacts"} total={"34"} percentage={"+5%"} /></div>
-                    <div className="dashboardColumn"><LineChart1 title={"Active Contacts"} data={[12, 17, 19, 22, 24, 20, 18, 26, 20, 17, 15, 19]} yaxis={"Contacts"} total={"19"} percentage={"+5%"} /></div>
+                    <div className="dashboardColumn"><LineChart1 title={"Active Contacts"} dgitata={[12, 17, 19, 22, 24, 20, 18, 26, 20, 17, 15, 19]} yaxis={"Contacts"} total={"19"} percentage={"+5%"} /></div>
                 </div>
                 <div className="dashboardRow">
                     <div className="dashboardColumn"><LineChart1 title={"Total Messages Sent"} data={[23, 38, 30, 17, 26, 18, 34, 13, 19, 39, 22, 14]} yaxis={"Messages"} total={"14"} percentage={"+5%"} /></div>

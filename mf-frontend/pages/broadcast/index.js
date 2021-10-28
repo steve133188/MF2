@@ -17,7 +17,7 @@ export default function Broadcast() {
                         </div>
                         <div className="buttonGrp">
                             <NormalButton>Select</NormalButton>
-                            <NormalButton2>+ New Boardcast</NormalButton2>
+                            <NormalButton2>+ New Broadcast</NormalButton2>
                         </div>
                     </div>
                     <NavbarPurple/>
