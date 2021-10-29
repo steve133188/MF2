@@ -31,6 +31,14 @@ func AddUser(c *fiber.Ctx) error {
 	}
 	data.ID = id.String()
 	data.CreatedAt = time.Now()
+	data.Password  ,err = HashPassword(data.Password)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Cannot insert user",
+			"error":   err,
+		})
+	}
 	result, err := usersCollection.InsertOne(c.Context(), data)
 
 	if err != nil {

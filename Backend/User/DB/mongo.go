@@ -82,7 +82,8 @@ func MongoConnect() {
 		if err != nil {
 			fmt.Println("Failed to generate first ID")
 		}
-		res1, err := users.InsertOne(ctx, bson.M{"id": id.String(), "username": "steve", "password": "12345", "emails": "stevechakcy@gmail.com", "created_at": time.Now()})
+
+		res1, err := users.InsertOne(ctx, bson.M{"id": id.String(), "username": "steve", "password": "12345", "email": "stevechakcy@gmail.com", "created_at": time.Now()})
 		if err != nil {
 			fmt.Println(err)
 		}

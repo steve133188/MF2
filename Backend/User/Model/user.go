@@ -19,13 +19,13 @@ import (
 // 	Date       time.Time     `json:"date"`
 // }
 
-type Password struct {
-	Bcrypt string `json:"bcrypt"`
-}
+//type Password struct {
+//	Bcrypt string `json:"bcrypt"`
+//}
 
-type Services struct {
-	Password `json:"password"`
-}
+//type Services struct {
+//	Password `json:"password"`
+//}
 
 type Emails struct {
 	Address  string `json:"address"`
@@ -45,8 +45,8 @@ type Profile struct {
 type User struct {
 	ID        string    `json:"id"`
 	CreatedAt time.Time `json:"created_at" bson:"created_at"`
-	Services  `json:"services"`
+	Password  string`json:"password"`
 	UserName  string `json:"username"`
-	Emails    string `json:"emails"`
-	Profile   `json:"profile"`
+	Email    string `json:"email"`
+	//Profile   `json:"profile"`
 }
