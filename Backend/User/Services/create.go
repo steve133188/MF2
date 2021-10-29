@@ -16,6 +16,7 @@ func AddUser(c *fiber.Ctx) error {
 	usersCollection := DB.MI.DBCol
 
 	data := new(Model.User)
+	exist := new(Model.User)
 
 	err := c.BodyParser(&data)
 	if err != nil {
@@ -40,8 +41,25 @@ func AddUser(c *fiber.Ctx) error {
 			"error":   err,
 		})
 	}
-	result, err := usersCollection.InsertOne(c.Context(), data)
 
+	emailExisted := usersCollection.FindOne(c.Context(), bson.D{{Key: "email", Value: data.Email}}).Decode(exist)
+	if (emailExisted) == nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "User email exist",
+		})
+	}
+
+	userNameExisted := usersCollection.FindOne(c.Context(), bson.D{{Key: "username", Value: data.UserName}}).Decode(exist)
+	fmt.Println(userNameExisted)
+	if userNameExisted == nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "User name exist",
+		})
+	}
+
+	result, err := usersCollection.InsertOne(c.Context(), data)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
