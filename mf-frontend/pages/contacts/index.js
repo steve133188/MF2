@@ -149,16 +149,35 @@ export default function Contacts() {
     ];
     const selects = [
         {
-            selectTitle: 'Agent'
+            selectTitle: 'Agent',
+            selectItems: [
+                'Oliver Hansen',
+                'Van Henry',
+                'April Tucker',
+
+            ]
         },
         {
-            selectTitle: 'Team'
+            selectTitle: 'Team',
+            selectItems: [
+                'Ralph Hubbard',
+                'Omar Alexander',
+            ]
         },
         {
-            selectTitle: 'Tags'
+            selectTitle: 'Tags',
+            selectItems: [
+                'Carlos Abbott',
+                'Miriam Wagner',
+            ]
         },
         {
-            selectTitle: 'Channel'
+            selectTitle: 'Channel',
+            selectItems: [
+                'Bradley Wilkerson',
+                'Virginia Andrews',
+                'Kelly Snyder',
+            ]
         }
     ];
 
@@ -287,11 +306,6 @@ export default function Contacts() {
                     </div>
                     <div className="navbarPurple">
                         <div className="selectButtonGroup">
-                            {/*<MultipleSelectPlaceholder/>*/}
-                            {/*<MultipleSelectPlaceholder/>*/}
-                            {/*<MultipleSelectPlaceholder/>*/}
-                            {/*<MultipleSelectPlaceholder/>*/}
-
                             {selects.map(({selectTitle}) => {
                                 return (
                                     <div className="multipleSelectPlaceholder" key={selectTitle}>

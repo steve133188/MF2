@@ -5,6 +5,7 @@ import {LoginPanel} from "../../components/LoginPanel";
 import {ForgetPasswordPanel} from "../../components/ForgetPasswordPanel";
 import {useRouter} from "next/router";
 import {AuthContext} from "../../context/authContext";
+import AuthService from "../../services/auth";
 
 
 

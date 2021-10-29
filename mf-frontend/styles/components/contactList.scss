@@ -28,6 +28,11 @@
   .filterArea {
     display: flex;
     flex-flow: column;
+    .buttonGrp {
+      .newContactButton {
+        margin-right: 20px;
+      }
+    }
     .agentFilter {
       p {
         margin-left: 12px;

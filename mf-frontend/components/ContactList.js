@@ -13,6 +13,7 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import {Checkbox1, Checkbox2} from "./Checkbox";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import {CancelButton, NormalButton2} from "./Button";
 
 export function ContactList() {
@@ -78,11 +79,33 @@ export function ContactList() {
     const filterToggle = () => {
         setIsFilter(!isFilter)
     }
-    const [age, setAge] = React.useState('');
+    const [age, setAge] = React.useState('all');
     const handleFilterChange = (event) => {
         setAge(event.target.value);
         console.log(event.target.value);
     };
+    const teamsSelect = [
+        {
+            value: "all",
+            title: "All Team",
+            number: 20
+        },
+        {
+            value: "teamA",
+            title: "Team A",
+            number: "12"
+        },
+        {
+            value: "teamB",
+            title: "Team B",
+            number: "6"
+        },
+        {
+            value: "teamC",
+            title: "Team C",
+            number: "2"
+        }
+    ];
     return (
         <div className="contactList">
             <div className="contactListTopBar">
@@ -95,7 +118,6 @@ export function ContactList() {
                 <div className="contactListFilterBar">
                     <div className="contactListBtns">
                         <div className="teamFilterSelect">
-
                             <FormControl sx={{m: 1, minWidth: 120}}>
                                 <Select
                                     value={age}
@@ -105,57 +127,37 @@ export function ContactList() {
                                     sx={{
                                         width: 160,
                                         height: 31,
-                                        borderRadius: 19,
                                         background: "#D0E9FF",
                                         border: "none",
                                         textAlign: "center",
                                         color: "black",
                                         justifyContent: "space-between",
+                                        borderRadius: "10px"
                                     }}
                                 >
-                                    <MenuItem value="" sx={{
-                                        color: "#2198FA",
-                                        justifyContent: "space-between",
-                                        marginLeft: "0px"
-                                    }}>
-                                        <span>Mary Foster</span>
-                                        <div className={"smallPill"}>20</div>
-                                    </MenuItem>
-                                    <MenuItem value={10} sx={{
-                                        color: "#2198FA",
-                                        justifyContent: "space-between",
-                                        marginLeft: "0px"
-                                    }}>
-
-                                        <span>Ten</span>
-                                        <div className={"smallPill"}>20</div>
-                                    </MenuItem>
-                                    <MenuItem value={20} sx={{
-                                        color: "#2198FA",
-                                        justifyContent: "space-between",
-                                        marginLeft: "0px"
-                                    }}>
-
-                                        <span>Twenty</span>
-                                        <div className={"smallPill"}>20</div>
-                                    </MenuItem>
-                                    <MenuItem value={30} sx={{
-                                        color: "#2198FA",
-                                        justifyContent: "space-between",
-                                        marginLeft: "0px"
-                                    }}>
-
-                                        <span>Thirty</span>
-                                        <div className={"smallPill"}>20</div>
-                                    </MenuItem>
+                                    {teamsSelect.map(({
+                                        value,
+                                        title,
+                                        number
+                                    }) => {
+                                        return (
+                                            <MenuItem value={value} key={title} sx={{
+                                                color: "#2198FA",
+                                                justifyContent: "space-between",
+                                                marginLeft: "0px"
+                                            }}>
+                                                <span>{title}</span>
+                                                <div className={"smallPill"}>{number}</div>
+                                            </MenuItem>
+                                        );
+                                    })}
                                 </Select>
                             </FormControl>
-                            {/*    */}
                         </div>
                         <span className={isFilter ? "filterIcon filterIconActive" : "filterIcon"}
                               onClick={filterToggle}>
-                        <img src="icon-filter.svg" width="18px" height="18px" alt=""/>
-                    </span>
+                            <img src="icon-filter.svg" width="18px" height="18px" alt=""/>
+                        </span>
                     </div>
                 </div>
             </div>
