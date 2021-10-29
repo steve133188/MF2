@@ -50,3 +50,10 @@ type User struct {
 	Email     string    `json:"email"`
 	//Profile   `json:"profile"`
 }
+
+// type Token struct {
+// 	Password string `json:"password"`
+// 	UserName string `json:"username"`
+// 	Email    string `json:"email"`
+// 	jwt.StandardClaims
+// }

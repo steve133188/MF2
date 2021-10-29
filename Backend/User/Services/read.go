@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"mf-user-servies/DB"
 	"mf-user-servies/Model"
-	"mf-user-servies/Util"
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
@@ -184,31 +183,31 @@ func GetUserByEmail(c *fiber.Ctx) error {
 	})
 }
 
-func GetValidPassword(c *fiber.Ctx) error {
-	collection := DB.MI.DBCol
-	paramPassword := c.Params("password")
-	paramEmail := c.Params("email")
-	user := &Model.User{}
+// func GetValidPassword(c *fiber.Ctx) error {
+// 	collection := DB.MI.DBCol
+// 	paramPassword := c.Params("password")
+// 	paramEmail := c.Params("email")
+// 	user := &Model.User{}
 
-	query := bson.D{{Key: "email", Value: paramEmail}}
+// 	query := bson.D{{Key: "email", Value: paramEmail}}
 
-	err := collection.FindOne(c.Context(), query).Decode(user)
-	if err != nil {
-		fmt.Println(err)
-	}
+// 	err := collection.FindOne(c.Context(), query).Decode(user)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
 
-	match := Util.CheckPasswordHash(paramPassword, user.Password)
+// 	match := Util.CheckPasswordHash(paramPassword, user.Password)
 
-	if !match {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-		})
-	}
+// 	if !match {
+// 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+// 			"success": false,
+// 		})
+// 	}
 
-	// customer.Date = customer.Date.Add(time.Hour * 8)
+// 	// customer.Date = customer.Date.Add(time.Hour * 8)
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-	})
+// 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+// 		"success": true,
+// 	})
 
-}
+// }

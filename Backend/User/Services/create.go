@@ -7,6 +7,7 @@ import (
 	"mf-user-servies/Util"
 	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 	uuid "github.com/nu7hatch/gouuid"
 	"go.mongodb.org/mongo-driver/bson"
@@ -80,4 +81,58 @@ func AddUser(c *fiber.Ctx) error {
 			"user": user,
 		},
 	})
+}
+
+func Login(c *fiber.Ctx) error {
+	collection := DB.MI.DBCol
+	// paramPassword := c.Params("password")
+	// paramEmail := c.Params("email")
+	user := &Model.User{}
+	find := new(Model.User)
+
+	err := c.BodyParser(&user)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Cannot parse JSON",
+			"error":   err,
+		})
+	}
+	query := bson.D{{Key: "email", Value: user.Email}}
+
+	err = collection.FindOne(c.Context(), query).Decode(find)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	match := Util.CheckPasswordHash(user.Password, find.Password)
+
+	if !match {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"success":  false,
+			"response": "failed to login",
+		})
+	}
+
+	token := jwt.New(jwt.SigningMethodHS256)
+	claims := token.Claims.(jwt.MapClaims)
+	claims["exp"] = time.Now().Add(time.Hour * 24 * 7)
+	claims["username"] = user.UserName
+	claims["password"] = user.Password
+	claims["email"] = user.Email
+
+	Secret := Util.GoDotEnvVariable("Token_pwd")
+	s, err := token.SignedString([]byte(Secret))
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(s)
+	// token := jwt.NewWithClaims(jwt.SigningMethodPS256, tk)
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success":  true,
+		"response": "login success",
+		"token":    s,
+	})
+
 }
