@@ -27,26 +27,26 @@ import (
 //	Password `json:"password"`
 //}
 
-type Emails struct {
-	Address  string `json:"address"`
-	Verified bool   `json:"verified"`
-}
+// type Emails struct {
+// 	Address  string `json:"address"`
+// 	Verified bool   `json:"verified"`
+// }
 
-type Profile struct {
-	Name         string   `json:"name"`
-	Phone        string   `json:"phone"`
-	Modules      []string `json:"modules"`
-	Channels     []string `json:"channels"`
-	Team         string   `json:"team"`
-	Organization string   `json:"organization"`
-	Enabled      bool     `json:"enabled"`
-}
+// type Profile struct {
+// 	Name         string   `json:"name"`
+// 	Phone        string   `json:"phone"`
+// 	Modules      []string `json:"modules"`
+// 	Channels     []string `json:"channels"`
+// 	Team         string   `json:"team"`
+// 	Organization string   `json:"organization"`
+// 	Enabled      bool     `json:"enabled"`
+// }
 
 type User struct {
 	ID        string    `json:"id"`
 	CreatedAt time.Time `json:"created_at" bson:"created_at"`
-	Password  string`json:"password"`
-	UserName  string `json:"username"`
-	Email    string `json:"email"`
+	Password  string    `json:"password"`
+	UserName  string    `json:"username"`
+	Email     string    `json:"email"`
 	//Profile   `json:"profile"`
 }

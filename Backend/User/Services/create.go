@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"mf-user-servies/DB"
 	"mf-user-servies/Model"
+	"mf-user-servies/Util"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -31,7 +32,7 @@ func AddUser(c *fiber.Ctx) error {
 	}
 	data.ID = id.String()
 	data.CreatedAt = time.Now()
-	data.Password  ,err = HashPassword(data.Password)
+	data.Password, err = Util.HashPassword(data.Password)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
