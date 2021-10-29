@@ -193,14 +193,15 @@ func GetValidPassword(c *fiber.Ctx) error {
 	query := bson.D{{Key: "email", Value: paramEmail}}
 
 	err := collection.FindOne(c.Context(), query).Decode(user)
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	match := Util.CheckPasswordHash(paramPassword, user.Password)
 
 	if !match {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"success": false,
-			"message": "User Not found",
-			"error":   err,
 		})
 	}
 
@@ -208,9 +209,6 @@ func GetValidPassword(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
-		"data": fiber.Map{
-			"user": user,
-		},
 	})
 
 }
