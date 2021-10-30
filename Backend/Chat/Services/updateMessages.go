@@ -26,7 +26,7 @@ func UpdateOneMessageById(c *fiber.Ctx) error {
 	todo.Id = c.Params("id")
 	update := bson.D{{Key: "$set", Value: todo}}
 	fmt.Println(update)
-	_, err := collection.UpdateOne(c.Context(), bson.D{{Key: "_id", Value: c.Params("id")}}, update)
+	_, err := collection.UpdateOne(c.Context(), bson.D{{Key: "id", Value: c.Params("id")}}, update)
 	fmt.Println(todo)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

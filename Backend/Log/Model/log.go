@@ -19,10 +19,10 @@ type UserLog struct {
 }
 
 type CustomerLog struct {
-	ID              string    `json:"id"`
-	Des             string    `json:"description"` // Activity
-	CusId           string    `json:"customer_id"`
-	CustomerLogType string    `json:"customer_log_type"`
-	Handler         string    `json:"handler"` // system or user_id
-	Date            time.Time `json:"date"`
+	ID              string    `json:"id" bson:"id"`
+	Des             string    `json:"description" bson:"description"` // Activity
+	CusId           string    `json:"customer_id" bson:"customer_id"`
+	CustomerLogType string    `json:"type" bson:"type"`
+	UserID          string    `json:"user_id" bson:"user_id"` // system or user_id
+	Date            time.Time `json:"date" bson:"date"`
 }

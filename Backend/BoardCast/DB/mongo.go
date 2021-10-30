@@ -3,11 +3,8 @@ package DB
 import (
 	"context"
 	"fmt"
-	"log"
-	"os"
+	"mf-boardCast-services/Util"
 	"time"
-
-	"github.com/joho/godotenv"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -29,19 +26,8 @@ type MongoInstance struct {
 
 var MI MongoInstance
 
-func goDotEnvVariable(key string) string {
-
-	err := godotenv.Load(".env")
-
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
-
-	return os.Getenv(key)
-}
-
 func MongoConnect() {
-	url, name, c := goDotEnvVariable("DB_URL"), goDotEnvVariable("DB_NAME"), goDotEnvVariable("DB_COLLECTION")
+	url, name, c := Util.GoDotEnvVariable("DB_URL"), Util.GoDotEnvVariable("DB_NAME"), Util.GoDotEnvVariable("DB_COLLECTION")
 
 	ctx := context.Background()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(url))

@@ -8,12 +8,12 @@ import (
 
 func BotBuildRoute(route fiber.Router) {
 	route.Get("/", Services.GetAllBots)
-	route.Get("/:id", Services.GetOneBotMessageByDes)
+	route.Get("/id/:id", Services.GetOneBotMessageByDes)
 
 	route.Post("/", Services.CreateOneBotMessage)
 
-	route.Put("/:id", Services.UpdateOneBotById)
+	route.Put("/id/:id", Services.UpdateOneBotById)
 
-	route.Delete("/:id", Services.DeleteOneBotById)
+	route.Delete("/id/:id", Services.DeleteOneBotById)
 
 }

@@ -3,7 +3,7 @@ package Model
 import "time"
 
 type Admin struct {
-	ID          string `json:"id" bson:"_id"`
+	ID          string `json:"id" bson:"id"`
 	AdminName   string `json:"username"`
 	Description string `json:"description"`
 	LastAction  string `json:"last_action"`

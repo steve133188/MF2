@@ -118,6 +118,7 @@ func Login(c *fiber.Ctx) error {
 	claims["password"] = find.Password
 	claims["email"] = find.Email
 	claims["role"] = find.Role
+	claims["status"] = find.Status
 
 	Secret := Util.GoDotEnvVariable("Token_pwd")
 	s, err := token.SignedString([]byte(Secret))

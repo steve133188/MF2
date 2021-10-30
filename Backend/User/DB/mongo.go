@@ -4,9 +4,7 @@ import (
 	"context"
 	"fmt"
 	"mf-user-servies/Util"
-	"time"
 
-	uuid "github.com/nu7hatch/gouuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -60,39 +58,39 @@ func MongoConnect() {
 	}
 	fmt.Println(count)
 
-	counts, err := users.CountDocuments(context.TODO(), bson.D{})
-	if err != nil {
-		fmt.Println(err)
-	}
+	// counts, err := users.CountDocuments(context.TODO(), bson.D{})
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
 
 	//test data insert start
 
-	if counts > 0 {
-		res, err := users.DeleteMany(ctx, bson.M{})
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Println(res.DeletedCount, " Deleted")
-		counts = 0
-	}
-	if counts == 0 {
-		id, err := uuid.NewV4()
-		if err != nil {
-			fmt.Println("Failed to generate first ID")
-		}
+	// if counts > 0 {
+	// 	res, err := users.DeleteMany(ctx, bson.M{})
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 	}
+	// 	fmt.Println(res.DeletedCount, " Deleted")
+	// 	counts = 0
+	// }
+	// if counts == 0 {
+	// 	id, err := uuid.NewV4()
+	// 	if err != nil {
+	// 		fmt.Println("Failed to generate first ID")
+	// 	}
 
-		password := "12345"
-		password, err = Util.HashPassword(password)
-		if err != nil {
-			fmt.Println(err)
-		}
+	// 	password := "12345"
+	// 	password, err = Util.HashPassword(password)
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 	}
 
-		res1, err := users.InsertOne(ctx, bson.M{"id": id.String(), "username": "steve", "password": password, "email": "stevechakcy@gmail.com", "created_at": time.Now()})
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Println(res1.InsertedID, " Added")
-	}
+	// 	res1, err := users.InsertOne(ctx, bson.M{"id": id.String(), "username": "steve", "password": password, "email": "stevechakcy@gmail.com", "created_at": time.Now()})
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 	}
+	// 	fmt.Println(res1.InsertedID, " Added")
+	// }
 
 	//end of test data insert
 

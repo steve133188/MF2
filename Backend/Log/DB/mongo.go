@@ -35,10 +35,7 @@ package DB
 import (
 	"context"
 	"fmt"
-	"log"
-	"os"
-
-	"github.com/joho/godotenv"
+	"mf-log-servies/Util"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -67,19 +64,8 @@ var MI MongoInstance
 // 	return &DB{url: url, name: name, collection: c}
 // }
 
-func goDotEnvVariable(key string) string {
-
-	err := godotenv.Load(".env")
-
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
-
-	return os.Getenv(key)
-}
-
 func MongoConnect() {
-	url, name, c := goDotEnvVariable("DB_URL"), goDotEnvVariable("DB_NAME"), goDotEnvVariable("DB_COLLECTION")
+	url, name, c := Util.GoDotEnvVariable("DB_URL"), Util.GoDotEnvVariable("DB_NAME"), Util.GoDotEnvVariable("DB_COLLECTION")
 
 	ctx := context.Background()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(url))
@@ -93,26 +79,26 @@ func MongoConnect() {
 	}
 	fmt.Println(count)
 
-	counts, err := logs.CountDocuments(context.TODO(), bson.D{})
-	if err != nil {
-		fmt.Println(err)
-	}
+	// counts, err := logs.CountDocuments(context.TODO(), bson.D{})
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
 
-	if counts > 0 {
-		res, err := logs.DeleteMany(ctx, bson.M{})
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Println(res.DeletedCount, " Deleted")
-		counts = 0
-	}
-	if counts == 0 {
-		res, err := logs.InsertOne(context.TODO(), bson.M{"id": "1", "userId": "111"})
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Println(res.InsertedID, " Added")
-	}
+	// if counts > 0 {
+	// 	res, err := logs.DeleteMany(ctx, bson.M{})
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 	}
+	// 	fmt.Println(res.DeletedCount, " Deleted")
+	// 	counts = 0
+	// }
+	// if counts == 0 {
+	// 	res, err := logs.InsertOne(context.TODO(), bson.M{"id": "1", "userId": "111"})
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 	}
+	// 	fmt.Println(res.InsertedID, " Added")
+	// }
 
 	fmt.Println("DB connected!")
 	MI = MongoInstance{

@@ -8,8 +8,13 @@ import (
 
 func BoardCastRoute(route fiber.Router) {
 	route.Get("/", Services.GetAllBoardCasts)
-	route.Get("/:id", Services.GetBoardCastById)
+	route.Get("/id/:id", Services.GetBoardCastById)
+	route.Get("/name/:name", Services.GetBoardCastByName)
+	route.Get("/group/:group", Services.GetBoardCastsByGroup)
+
 	route.Post("/", Services.AddBoardCast)
-	route.Put("/:id", Services.UpdateBoardCastByID)
-	route.Delete("/:id", Services.DeleteBoardCastById)
+
+	route.Put("/id/:id", Services.UpdateBoardCastByID)
+
+	route.Delete("/id/:id", Services.DeleteBoardCastById)
 }

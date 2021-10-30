@@ -59,7 +59,7 @@ func GetOneBotMessageByDes(c *fiber.Ctx) error {
 	// find todo and return
 	todo := &Model.BotBody{}
 
-	query := bson.D{{Key: "_id", Value: paramID}}
+	query := bson.D{{Key: "id", Value: paramID}}
 
 	err := collection.FindOne(c.Context(), query).Decode(todo)
 

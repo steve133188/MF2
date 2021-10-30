@@ -13,7 +13,7 @@ import "time"
 // }
 
 type BotBody struct {
-	ID            string    `json:"id" bson:"_id"`
+	ID            string    `json:"id" bson:"id"`
 	BotName       string    `json:"botname"`
 	Organization  string    `json:"organization"`
 	Folder        string    `json:"folder"`
