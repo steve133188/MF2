@@ -6,29 +6,18 @@ import {AuthContext} from "../context/authContext";
 import {useContext , useState} from "react";
 
 export function LoginPanel() {
-    const { login,user } = useContext(AuthContext);
+    const { loginUser,user ,customerFetching } = useContext(AuthContext);
     const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [pwd, setPwd] = useState("");
     const [isInvalid, setInvalid] = useState("");
 
     function validateForm() {
-        return email.length > 0 && password.length > 0;
+        return email.length > 0 && pwd.length > 0;
     }
 
     function handleSubmit(event) {
         event.preventDefault()
-        console.log('clicked log in')
-        login(email,password)
-        validatePassword()
-    }
-    function validatePassword() {
-        if (login(email,password)=="Something went Wrong") {
-            console.log("Email or password invalid")
-            setInvalid("wrongPwd")
-        } else {
-            console.log("Email and password are valid")
-            return ""
-        }
+        loginUser(email,pwd)
     }
     return (
         <div className="container">
@@ -44,11 +33,9 @@ export function LoginPanel() {
                     <div className="inputSet">
                         <Search2 type="text" value={email} svg={"emailSVG"} invalid={isInvalid} handleChange={(e)=> {
                             setEmail(e.target.value)
-                            console.log(email)
                         }}>Email or Username</Search2>
-                        <Search2 type="password"  value={password} svg={"passwordSVG"} invalid={isInvalid} handleChange={(e)=> {
-                            setPassword(e.target.value);
-                            console.log(password);
+                        <Search2 type="password"  value={pwd} svg={"passwordSVG"} invalid={isInvalid} handleChange={(e)=> {
+                            setPwd(e.target.value);
                         }}>Password</Search2>
                     </div>
                     <div className="passwordSupportSet">

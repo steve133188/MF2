@@ -36,12 +36,13 @@ export function IconButton() {
     )
 }
 
-export function NormalButton(props) {
+export function NormalButton({children,...props}) {
+    const {onClick} = props
     return (
         <div className="normalButton">
             <ThemeProvider theme={theme}>
-                <Button variant="contained" color="neutral">
-                    {props.children}
+                <Button variant="contained" color="neutral" onClick={onClick}>
+                    {children}
                 </Button>
             </ThemeProvider>
         </div>
