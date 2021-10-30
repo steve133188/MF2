@@ -9,47 +9,17 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func LoginUser(c *fiber.Ctx) error {
-	usersCollection := DB.MI.DBCol
-	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-
-	user := new(Model.User)
-
-	if err := c.BodyParser(&user); err != nil {
-		return err
-	}
-
-	paramID := c.Params("id")
-
-	filter := bson.M{"id": paramID}
-
-	findResult := usersCollection.FindOne(c.Context(), filter)
-	if err := findResult.Err(); err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "User Not found",
-			"error":   err,
-		})
-	}
-	err := findResult.Decode(&user)
-	// user.Date = user.Date.Add(time.Hour * 8)
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "User Not found",
-			"error":   err,
-		})
-	}
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"data":    user,
-		"success": true,
-	})
-
-}
-
 func GetAllUsers(c *fiber.Ctx) error {
-	usersCollection := DB.MI.DBCol
+	fmt.Println("getall")
+	// token := c.Request().Header.Peek("Authorization")
+	// _, err := Util.ParseToken(string(token))
+	// if err != nil {
+	// 	return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+	// 		"error": "Unauthorized",
+	// 	})
+	// }
 
+	usersCollection := DB.MI.DBCol
 	// Query to filter
 	query := bson.D{{}}
 
@@ -81,9 +51,7 @@ func GetAllUsers(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
-		"data": fiber.Map{
-			"users": users,
-		},
+		"data":    users,
 	})
 }
 
@@ -104,7 +72,7 @@ func GetUsersById(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"success": false,
-			"message": "Customer Not found",
+			"message": "User Not found",
 			"error":   err,
 		})
 	}
@@ -113,9 +81,7 @@ func GetUsersById(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
-		"data": fiber.Map{
-			"customer": customer,
-		},
+		"data":    customer,
 	})
 }
 
@@ -127,9 +93,9 @@ func GetUserByUsername(c *fiber.Ctx) error {
 	fmt.Println(paramID)
 
 	// find todo and return
-	customer := &Model.User{}
+	customer := new(Model.User)
 
-	query := bson.D{{Key: "id", Value: paramID}}
+	query := bson.D{{Key: "username", Value: paramID}}
 
 	err := customerCollection.FindOne(c.Context(), query).Decode(customer)
 
@@ -145,9 +111,7 @@ func GetUserByUsername(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
-		"data": fiber.Map{
-			"customer": customer,
-		},
+		"data":    customer,
 	})
 }
 
@@ -177,9 +141,7 @@ func GetUserByEmail(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
-		"data": fiber.Map{
-			"customer": customer,
-		},
+		"data":    customer,
 	})
 }
 

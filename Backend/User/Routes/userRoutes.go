@@ -7,13 +7,12 @@ import (
 )
 
 func UsersRoute(route fiber.Router) {
-	route.Get("/:id", Services.GetUsersById)
-	route.Get("/:username", Services.GetUserByUsername)
+	route.Get("/id/:id", Services.GetUsersById)
+	route.Get("/username/:username", Services.GetUserByUsername)
+	route.Get("/email/:email", Services.GetUserByEmail)
+
 	route.Get("/", Services.GetAllUsers)
 
-	route.Post("/", Services.AddUser)
-	route.Post("/login", Services.Login)
-
-	route.Put("/:id", Services.UpdateUserByID)
-	route.Delete("/:id", Services.DeleteUserById)
+	route.Put("/id/:id", Services.UpdateUserByID)
+	route.Delete("/id/:id", Services.DeleteUserById)
 }

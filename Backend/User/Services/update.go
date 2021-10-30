@@ -39,8 +39,6 @@ func UpdateUserByID(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"success": true,
-		"data": fiber.Map{
-			"user": user,
-		},
+		"data":    user,
 	})
 }

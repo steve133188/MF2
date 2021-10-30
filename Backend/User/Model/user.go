@@ -45,9 +45,11 @@ import (
 type User struct {
 	ID        string    `json:"id"`
 	CreatedAt time.Time `json:"created_at" bson:"created_at"`
-	Password  string    `json:"password"`
-	UserName  string    `json:"username"`
-	Email     string    `json:"email"`
+	Password  string    `json:"password" bson:"password"`
+	UserName  string    `json:"username" bson:"username"`
+	Email     string    `json:"email" bson:"email"`
+	Role      string    `json:"role" bson:"role"`
+	Status    string    `json:"status" bson:"status"`
 	//Profile   `json:"profile"`
 }
 

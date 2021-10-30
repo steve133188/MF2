@@ -21,7 +21,7 @@ func AddUser(c *fiber.Ctx) error {
 
 	err := c.BodyParser(&data)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false,
 			"message": "Cannot parse JSON",
 			"error":   err,
@@ -52,7 +52,6 @@ func AddUser(c *fiber.Ctx) error {
 	}
 
 	userNameExisted := usersCollection.FindOne(c.Context(), bson.D{{Key: "username", Value: data.UserName}}).Decode(exist)
-	fmt.Println(userNameExisted)
 	if userNameExisted == nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
@@ -72,22 +71,20 @@ func AddUser(c *fiber.Ctx) error {
 	// get the inserted data
 	user := &Model.User{}
 	query := bson.D{{Key: "_id", Value: result.InsertedID}}
-	fmt.Println(result.InsertedID)
 	usersCollection.FindOne(c.Context(), query).Decode(user)
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"success": true,
-		"data": fiber.Map{
-			"user": user,
-		},
+		"data":    user,
 	})
 }
 
 func Login(c *fiber.Ctx) error {
+	fmt.Println("Login")
 	collection := DB.MI.DBCol
 	// paramPassword := c.Params("password")
 	// paramEmail := c.Params("email")
-	user := &Model.User{}
+	user := new(Model.User)
 	find := new(Model.User)
 
 	err := c.BodyParser(&user)
@@ -116,23 +113,36 @@ func Login(c *fiber.Ctx) error {
 
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
-	claims["exp"] = time.Now().Add(time.Hour * 24 * 7)
-	claims["username"] = user.UserName
-	claims["password"] = user.Password
-	claims["email"] = user.Email
+	claims["exp"] = time.Now().Add(time.Hour * 24 * 7).Unix()
+	claims["username"] = find.UserName
+	claims["password"] = find.Password
+	claims["email"] = find.Email
+	claims["role"] = find.Role
 
 	Secret := Util.GoDotEnvVariable("Token_pwd")
 	s, err := token.SignedString([]byte(Secret))
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(s)
 	// token := jwt.NewWithClaims(jwt.SigningMethodPS256, tk)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success":  true,
-		"response": "login success",
-		"token":    s,
+		"success": true,
+		"data":    find,
+		"token":   s,
 	})
 
 }
+
+// func TestLogin(c *fiber.Ctx) error {
+// 	token := c.Request().Header.Peek("Authorization")
+// 	_, err := Util.ParseToken(string(token))
+// 	if err != nil {
+// 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+// 			"success": false,
+// 		})
+// 	}
+// 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+// 		"success": true,
+// 	})
+// }
