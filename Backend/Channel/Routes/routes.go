@@ -13,7 +13,7 @@ func CustomersRoute(route fiber.Router) {
 
 	route.Post("/", Services.AddChannel)
 
-	route.Put("/:id", Services.UpdateChannelById)
+	route.Put("/id/:id", Services.UpdateChannelById)
 
 	route.Delete("/id/:id", Services.DeleteChannelById)
 }

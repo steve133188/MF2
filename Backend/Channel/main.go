@@ -31,6 +31,6 @@ func main() {
 
 	Routes.CustomersRoute(api.Group("/channel"))
 
-	app.Listen(":3011")
+	app.Listen(":3012")
 
 }

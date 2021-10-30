@@ -8,7 +8,7 @@ import (
 
 func BoardCastRoute(route fiber.Router) {
 	route.Get("/", Services.GetAllAnalysisRecords)
-	route.Get("/:id", Services.GetAnalysisRecordById)
+	route.Get("/id/:id", Services.GetAnalysisRecordById)
 	route.Post("/", Services.AddAnalysis)
 	route.Put("/id/:id", Services.UpdateAnalysisRecordByID)
 	route.Delete("/id/:id", Services.DeleteAnalysisById)
