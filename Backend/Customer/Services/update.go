@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func UpdateCaustomerByID(c *fiber.Ctx) error {
+func UpdateCustomerByID(c *fiber.Ctx) error {
 	customersCollection := DB.MI.DBCol
 	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	customer := new(Model.Customer)
@@ -44,9 +44,6 @@ func UpdateCaustomerByID(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"success": true,
-		"message": "Updated success",
-		"data": fiber.Map{
-			"customer": customer,
-		},
+		"data":    customer,
 	})
 }

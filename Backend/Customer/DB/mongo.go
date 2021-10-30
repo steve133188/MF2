@@ -3,12 +3,8 @@ package DB
 import (
 	"context"
 	"fmt"
-	"log"
-	"os"
-	"time"
 
-	"github.com/joho/godotenv"
-	uuid "github.com/nu7hatch/gouuid"
+	"mf-customer-services/Util"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -30,19 +26,8 @@ type MongoInstance struct {
 
 var MI MongoInstance
 
-func goDotEnvVariable(key string) string {
-
-	err := godotenv.Load(".env")
-
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
-
-	return os.Getenv(key)
-}
-
 func MongoConnect() {
-	url, name, c := goDotEnvVariable("DB_URL"), goDotEnvVariable("DB_NAME"), goDotEnvVariable("DB_COLLECTION")
+	url, name, c := Util.GoDotEnvVariable("DB_URL"), Util.GoDotEnvVariable("DB_NAME"), Util.GoDotEnvVariable("DB_COLLECTION")
 
 	ctx := context.Background()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(url))
@@ -56,31 +41,31 @@ func MongoConnect() {
 	}
 	fmt.Println(count)
 
-	counts, err := customers.CountDocuments(context.TODO(), bson.D{})
-	if err != nil {
-		fmt.Println(err)
-	}
+	// counts, err := customers.CountDocuments(context.TODO(), bson.D{})
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
 
-	if counts > 0 {
-		res, err := customers.DeleteMany(ctx, bson.M{})
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Println(res.DeletedCount, " Deleted")
-		counts = 0
-	}
+	// if counts > 0 {
+	// 	res, err := customers.DeleteMany(ctx, bson.M{})
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 	}
+	// 	fmt.Println(res.DeletedCount, " Deleted")
+	// 	counts = 0
+	// }
 
-	if counts == 0 {
-		id, err := uuid.NewV4()
-		if err != nil {
-			fmt.Println("Failed to generate first uuid")
-		}
-		res, err := customers.InsertOne(context.TODO(), bson.M{"id": id.String(), "name": "111", "first_name": "Tom", "last_name": "Boy", "first_seen": time.Now()})
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Println(res.InsertedID, " Added")
-	}
+	// if counts == 0 {
+	// 	id, err := uuid.NewV4()
+	// 	if err != nil {
+	// 		fmt.Println("Failed to generate first uuid")
+	// 	}
+	// 	res, err := customers.InsertOne(context.TODO(), bson.M{"id": id.String(), "name": "111", "first_name": "Tom", "last_name": "Boy", "created_at": time.Now()})
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 	}
+	// 	fmt.Println(res.InsertedID, " Added")
+	// }
 
 	fmt.Println("DB connected!")
 	MI = MongoInstance{

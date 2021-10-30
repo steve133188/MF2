@@ -20,7 +20,7 @@ func AddCustomer(c *fiber.Ctx) error {
 
 	// if error
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false,
 			"message": "Cannot parse JSON",
 			"error":   err,
@@ -33,8 +33,8 @@ func AddCustomer(c *fiber.Ctx) error {
 	}
 
 	data.ID = id.String()
-	data.FirstSeen = time.Now()
 	data.UpdatedAt = time.Now()
+	data.CreatedAt = time.Now()
 	// data.AccountCreatedTime = time.Now()
 	// if data.TimeZone == "" {
 	// 	data.TimeZone = strconv.FormatInt(8, 10)
@@ -42,7 +42,7 @@ func AddCustomer(c *fiber.Ctx) error {
 	result, err := customersCollection.InsertOne(c.Context(), data)
 
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false,
 			"message": "Cannot insert customer",
 			"error":   err,
@@ -55,10 +55,8 @@ func AddCustomer(c *fiber.Ctx) error {
 
 	customersCollection.FindOne(c.Context(), query).Decode(customer)
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
-		"data": fiber.Map{
-			"customer": customer,
-		},
+		"data":    customer,
 	})
 }

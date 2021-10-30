@@ -8,8 +8,12 @@ import (
 
 func CustomersRoute(route fiber.Router) {
 	route.Get("/", Services.GetAllCustomers)
-	route.Get("/:id", Services.GetCustomersById)
+	route.Get("/id/:id", Services.GetCustomersById)
+	route.Get("/name/:name", Services.GetCustomersByName)
+
 	route.Post("/", Services.AddCustomer)
-	route.Put("/:id", Services.UpdateCaustomerByID)
-	route.Delete("/:id", Services.DeleteCustomerById)
+
+	route.Put("/id/:id", Services.UpdateCustomerByID)
+
+	route.Delete("/id/:id", Services.DeleteCustomerById)
 }

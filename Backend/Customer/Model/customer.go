@@ -20,20 +20,15 @@ type Customer struct {
 	Name         string      `json:"name" bson:"name"`
 	FirstName    string      `json:"first_name" bson:"first_name"`
 	LastName     string      `json:"last_name" bson:"last_name"`
-	Phone        string      `json:"phone"`
-	Identifier   string      `json:"identifier"`
-	Enabled      bool        `json:"enabled"`
-	Organization string      `json:"organization"`
-	Channel      string      `json:"channel"`
-	SourceId     string      `json:"source_id"`
-	Source       string      `json:"source"`
-	FirstSeen    time.Time   `json:"first_seen" bson:"first_seen"`
-	LastSeen     interface{} `json:"last_seen"`
-	UpdatedAt    time.Time   `json:"updated_at"`
-	TeamAssignee interface{} `json:"team_assignee"`
-	Tages        interface{} `json:"tages"`
-	AssignedTo   interface{} `json:"assigned_to"`
-	MetaFields   interface{} `json:"meta_fields"`
-	TeamListing  interface{} `json:"team_listing"`
-	IsHandled    interface{} `json:"is_handled"`
+	Phone        interface{} `json:"phone" bson:"phone"`
+	Organization string      `json:"organization" bson:"organization"`
+	Channel      string      `json:"channel" bson:"channel"`
+	UserID       string      `json:"user_id" bson:"user_id"`
+	Tags         interface{} `json:"tags" bson:"tags"`
+	Assignee     interface{} `json:"assignee" bson:"assignee"`
+	Birthday     string      `json:"birthday" bson:"birthday"`
+	Country      string      `json:"country" bson:"country"`
+	Address      string      `json:"address" bson:"address"`
+	CreatedAt    time.Time   `json:"created_at" bson:"created_at"`
+	UpdatedAt    time.Time   `json:"updated_at" bson:"updated_at"`
 }
