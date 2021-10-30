@@ -50,6 +50,7 @@ type User struct {
 	Email     string    `json:"email" bson:"email"`
 	Role      string    `json:"role" bson:"role"`
 	Status    string    `json:"status" bson:"status"`
+	Interface string    `json:"interface" bson:"interface"`
 }
 
 // type Token struct {
