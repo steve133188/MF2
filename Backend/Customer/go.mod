@@ -8,6 +8,7 @@ require (
 	github.com/gofiber/jwt/v2 v2.2.7
 	github.com/joho/godotenv v1.4.0
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
+	github.com/rs/xid v1.3.0
 	go.mongodb.org/mongo-driver v1.7.2
 )
 
@@ -18,6 +19,7 @@ require (
 	github.com/golang/snappy v0.0.3 // indirect
 	github.com/klauspost/compress v1.13.4 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/sony/sonyflake v1.0.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.29.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect

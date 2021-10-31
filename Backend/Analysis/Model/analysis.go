@@ -1,7 +1,5 @@
 package Model
 
-import "time"
-
 type Analysis struct {
 	ID           string `json:"id" bson:"id"`
 	UserId       string `json:"user_id"`
@@ -11,6 +9,6 @@ type Analysis struct {
 	Description  string `json:"description"`
 	Duration     int    `json:"duration"`
 
-	UpdatedTime time.Time `json:"updated_time"`
-	CreatedTime time.Time `json:"created_time"`
+	UpdatedTime string `json:"updated_time"`
+	CreatedTime string `json:"created_time"`
 }

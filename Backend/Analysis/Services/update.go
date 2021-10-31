@@ -16,7 +16,7 @@ func UpdateAnalysisRecordByID(c *fiber.Ctx) error {
 	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	todo := new(Model.Analysis)
 
-	if err := c.BodyParser(todo); err != nil {
+	if err := c.BodyParser(&todo); err != nil {
 		log.Println(err)
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
@@ -25,7 +25,7 @@ func UpdateAnalysisRecordByID(c *fiber.Ctx) error {
 		})
 	}
 
-	todo.UpdatedTime = time.Now()
+	todo.UpdatedTime = time.Now().Format("January 2, 2006")
 	todo.ID = c.Params("id")
 	update := bson.D{{Key: "$set", Value: todo}}
 

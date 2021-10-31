@@ -17,4 +17,5 @@ func BoardCastRoute(route fiber.Router) {
 	route.Put("/id/:id", Services.UpdateBoardCastByID)
 
 	route.Delete("/id/:id", Services.DeleteBoardCastById)
+	route.Delete("/name/:name", Services.DeleteBoardCastByName)
 }

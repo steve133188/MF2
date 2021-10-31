@@ -14,5 +14,9 @@ func UsersRoute(route fiber.Router) {
 	route.Get("/", Services.GetAllUsers)
 
 	route.Put("/id/:id", Services.UpdateUserByID)
+	route.Put("/name/:name", Services.UpdateUserByName)
+	route.Put("/division/:div/team/:team/name/:name", Services.UpdateDivisionAndTeam)
+
 	route.Delete("/id/:id", Services.DeleteUserById)
+	route.Delete("/name/:name", Services.DeleteUserByName)
 }

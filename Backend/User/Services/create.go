@@ -9,11 +9,11 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
-	uuid "github.com/nu7hatch/gouuid"
+	"github.com/rs/xid"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func AddUser(c *fiber.Ctx) error {
+func AddAgent(c *fiber.Ctx) error {
 	usersCollection := DB.MI.DBCol
 
 	data := new(Model.User)
@@ -28,17 +28,15 @@ func AddUser(c *fiber.Ctx) error {
 		})
 	}
 
-	id, err := uuid.NewV4()
-	if err != nil {
-		fmt.Println("Failed to generate ID in POST")
-	}
+	id := xid.New()
+
 	data.ID = id.String()
-	data.CreatedAt = time.Now()
+	data.CreatedAt = time.Now().Format("January 2, 2006")
 	data.Password, err = Util.HashPassword(data.Password)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
-			"message": "Cannot insert user",
+			"message": "Cannot insert agent",
 			"error":   err,
 		})
 	}
@@ -47,7 +45,7 @@ func AddUser(c *fiber.Ctx) error {
 	if (emailExisted) == nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
-			"message": "User email exist",
+			"message": "Agent email exist",
 		})
 	}
 
@@ -55,7 +53,7 @@ func AddUser(c *fiber.Ctx) error {
 	if userNameExisted == nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
-			"message": "User name exist",
+			"message": "Agent name exist",
 		})
 	}
 
@@ -119,6 +117,7 @@ func Login(c *fiber.Ctx) error {
 	claims["email"] = find.Email
 	claims["role"] = find.Role
 	claims["status"] = find.Status
+	claims["assign_to"] = find.AssignTo
 
 	Secret := Util.GoDotEnvVariable("Token_pwd")
 	s, err := token.SignedString([]byte(Secret))

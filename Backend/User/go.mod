@@ -8,6 +8,7 @@ require (
 	github.com/gofiber/jwt v0.2.0
 	github.com/joho/godotenv v1.4.0
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
+	github.com/rs/xid v1.3.0
 	go.mongodb.org/mongo-driver v1.7.2
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
 )

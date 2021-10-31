@@ -1,13 +1,12 @@
 package Services
 
 import (
-	"fmt"
 	"mf-customer-services/DB"
 	"mf-customer-services/Model"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	uuid "github.com/nu7hatch/gouuid"
+	"github.com/rs/xid"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -27,14 +26,11 @@ func AddCustomer(c *fiber.Ctx) error {
 		})
 	}
 
-	id, err := uuid.NewV4()
-	if err != nil {
-		fmt.Println("Failed to generate UUID")
-	}
+	id := xid.New()
 
 	data.ID = id.String()
-	data.UpdatedAt = time.Now()
-	data.CreatedAt = time.Now()
+	data.UpdatedAt = time.Now().Format("January 2, 2006")
+	data.CreatedAt = time.Now().Format("January 2, 2006")
 	// data.AccountCreatedTime = time.Now()
 	// if data.TimeZone == "" {
 	// 	data.TimeZone = strconv.FormatInt(8, 10)

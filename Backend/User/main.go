@@ -21,11 +21,9 @@ func main() {
 		return c.JSON(fiber.Map{"code": 200, "message": "Hello, MF-Users-Services"})
 	})
 
-	app.Get("/test/add", Services.AddUser)
-	// app.Get("/all", Services.GetAllUsers)
-
 	app.Post("/api/users/login", Services.Login)
-	app.Post("/api/users", Services.AddUser)
+	app.Post("/api/users", Services.AddAgent)
+	app.Put("/api/users/chpassword/:email", Services.ChangeUserPassword)
 
 	// app.Use(jwtware.New(jwtware.Config{
 	// 	SigningKey: []byte(Util.GoDotEnvVariable("Token_pwd")),

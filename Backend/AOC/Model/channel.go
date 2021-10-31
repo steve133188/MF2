@@ -1,7 +1,5 @@
 package Model
 
-import "time"
-
 type Channel struct {
 	ID                       string `json:"id" bson:"id"`
 	Name                     string `json:"name" bson:"name"`
@@ -41,6 +39,6 @@ type Admin struct {
 	TargetCustomerName  string `json:"target_custmer_name"`
 	TargetCustomerPhone string `json:"target_customer_phone"`
 
-	UpdatedTime time.Time `json:"updated_time"`
-	CreatedTime time.Time `json:"created_time"`
+	UpdatedTime string `json:"updated_time"`
+	CreatedTime string `json:"created_time"`
 }

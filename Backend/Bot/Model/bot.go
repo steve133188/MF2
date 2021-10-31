@@ -1,7 +1,5 @@
 package Model
 
-import "time"
-
 // type BotMessages struct {
 // 	ID          string `json:"id"`
 // 	BotName     string `json:"bot_name"`
@@ -13,15 +11,15 @@ import "time"
 // }
 
 type BotBody struct {
-	ID            string    `json:"id" bson:"id"`
-	BotName       string    `json:"botname"`
-	Organization  string    `json:"organization"`
-	Folder        string    `json:"folder"`
-	Activated     bool      `json:"actived"`
-	Enabled       bool      `json:"enabled"`
-	CreatedOn     time.Time `json:"created_on"`
-	UpdatedOn     time.Time `json:"updated_on"`
-	SenderId      string    `json:"sender_id"` //sender phone number (externalId in stella)
+	ID            string `json:"id" bson:"id"`
+	BotName       string `json:"botname"`
+	Organization  string `json:"organization"`
+	Folder        string `json:"folder"`
+	Activated     bool   `json:"actived"`
+	Enabled       bool   `json:"enabled"`
+	CreatedOn     string `json:"created_on"`
+	UpdatedOn     string `json:"updated_on"`
+	SenderId      string `json:"sender_id"` //sender phone number (externalId in stella)
 	Stages        interface{}
 	Connections   interface{}
 	Keyword       string `json:"keyword"`
@@ -30,7 +28,7 @@ type BotBody struct {
 	ChatsFinished int    `json:"chats_finished"`
 	Ctr           int    `json:"ctr"`
 	StagesCtr     interface{}
-	LastMessage   time.Time `json:"last_message"`
+	LastMessage   string `json:"last_message"`
 	TeamData      interface{}
 	TeamId        string `json:"teamid"`
 	TeamName      string `json:"teamname"`

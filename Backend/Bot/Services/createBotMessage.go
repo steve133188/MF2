@@ -1,12 +1,12 @@
 package Services
 
 import (
-	"fmt"
 	"mf-bot-services/DB"
 	"mf-bot-services/Model"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
-	uuid "github.com/nu7hatch/gouuid"
+	"github.com/rs/xid"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -23,12 +23,9 @@ func CreateOneBotMessage(c *fiber.Ctx) error {
 			"error":   err,
 		})
 	}
-	// data.CreatedTime = time.Now()
-	// data.UpdatedTime = time.Now()
-	id, err := uuid.NewV4()
-	if err != nil {
-		fmt.Println("Failed to generate bot id")
-	}
+	data.CreatedOn = time.Now().Format("January 2, 2006")
+	data.UpdatedOn = time.Now().Format("January 2, 2006")
+	id := xid.New()
 	data.ID = id.String()
 
 	result, err := collection.InsertOne(c.Context(), data)

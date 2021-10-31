@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/rs/xid"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -22,7 +23,10 @@ func CreateUserLog(c *fiber.Ctx) error {
 			"error":   err,
 		})
 	}
-	data.Date = time.Now()
+
+	id := xid.New()
+	data.ID = id.String()
+	data.Date = time.Now().Format("January 2, 2006")
 
 	result, err := logCollection.InsertOne(c.Context(), data)
 
@@ -64,7 +68,9 @@ func CreateCustomerLog(c *fiber.Ctx) error {
 		})
 	}
 
-	data.Date = time.Now()
+	id := xid.New()
+	data.ID = id.String()
+	data.Date = time.Now().Format("January 2, 2006")
 
 	result, err := logCollection.InsertOne(c.Context(), data)
 
@@ -106,7 +112,9 @@ func CreateSystemLog(c *fiber.Ctx) error {
 		})
 	}
 
-	data.Date = time.Now()
+	id := xid.New()
+	data.ID = id.String()
+	data.Date = time.Now().Format("January 2, 2006")
 
 	result, err := logCollection.InsertOne(c.Context(), data)
 

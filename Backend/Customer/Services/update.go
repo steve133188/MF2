@@ -16,7 +16,7 @@ func UpdateCustomerByID(c *fiber.Ctx) error {
 	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	customer := new(Model.Customer)
 
-	if err := c.BodyParser(customer); err != nil {
+	if err := c.BodyParser(&customer); err != nil {
 		log.Println(err)
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
@@ -27,11 +27,11 @@ func UpdateCustomerByID(c *fiber.Ctx) error {
 
 	// customer.LastUpdatedTime = time.Now()
 	customer.ID = c.Params("id")
-	customer.UpdatedAt = time.Now()
+	customer.UpdatedAt = time.Now().Format("January 2, 2006")
 	// if customer.TimeZone == "" {
 	// 	customer.TimeZone = strconv.FormatInt(8, 10)
 	// }
-	update := bson.D{{Key: "$set", Value: customer}}
+	update := bson.D{{Key: "$set", Value: &customer}}
 
 	_, err := customersCollection.UpdateOne(c.Context(), bson.D{{Key: "id", Value: c.Params("id")}}, update)
 	fmt.Println(customer)

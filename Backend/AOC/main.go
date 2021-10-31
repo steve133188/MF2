@@ -26,7 +26,7 @@ func main() {
 	// }))
 
 	api := app.Group("/api")
-	Routes.CustomersRoute(api.Group("/channel"))
+	Routes.ChannelRoute(api.Group("/channel"))
 
 	api = app.Group("/api")
 	Routes.AdminRoute(api.Group("/admin"))

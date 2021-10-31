@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func CustomersRoute(route fiber.Router) {
+func ChannelRoute(route fiber.Router) {
 	route.Get("/", Services.GetAllChannelInfo)
 	route.Get("/id/:id", Services.GetChannelInfoById)
 	// route.Get("/name/:name", Services.GetOrganizationByName)

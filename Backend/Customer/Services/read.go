@@ -37,15 +37,6 @@ func GetAllCustomers(c *fiber.Ctx) error {
 		})
 	}
 
-	// for i := range customers {
-	// 	timezone, err := strconv.ParseInt(customers[i].TimeZone, 10, 64)
-	// 	if err != nil {
-	// 		fmt.Println("Failed to parse TimeZone to int64")
-	// 	}
-	// 	customers[i].AccountCreatedTime = customers[i].AccountCreatedTime.Add(time.Hour * time.Duration(timezone))
-	// 	customers[i].LastUpdatedTime = customers[i].LastUpdatedTime.Add(time.Hour * time.Duration(timezone))
-	// }
-
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
 		"data":    customers,
@@ -55,21 +46,15 @@ func GetAllCustomers(c *fiber.Ctx) error {
 func GetCustomersById(c *fiber.Ctx) error {
 	customerCollection := DB.MI.DBCol
 
-	// get parameter value
-	// paramID, err := primitive.ObjectIDFromHex(c.Params("id")) //valid id: 24 hex
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-
 	paramID := c.Params("id")
 	fmt.Println(paramID)
 
 	// find todo and return
-	customer := &Model.Customer{}
+	customer := new(Model.Customer)
 
 	query := bson.D{{Key: "id", Value: paramID}}
 
-	err := customerCollection.FindOne(c.Context(), query).Decode(customer)
+	err := customerCollection.FindOne(c.Context(), query).Decode(&customer)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"success": false,
@@ -77,15 +62,6 @@ func GetCustomersById(c *fiber.Ctx) error {
 			"error":   err,
 		})
 	}
-
-	// timezone, err := strconv.ParseInt(customer.TimeZone, 10, 64)
-	// if err != nil {
-	// 	fmt.Println("Failed to parse TimeZone to int64, using default Time Zone UTC +8")
-	// 	timezone = 8
-	// }
-
-	// customer.AccountCreatedTime = customer.AccountCreatedTime.Add(time.Hour * time.Duration(timezone))
-	// customer.LastUpdatedTime = customer.LastUpdatedTime.Add(time.Hour * time.Duration(timezone))
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
@@ -100,11 +76,11 @@ func GetCustomersByName(c *fiber.Ctx) error {
 	fmt.Println(paramID)
 
 	// find todo and return
-	customer := &Model.Customer{}
+	customer := new(Model.Customer)
 
 	query := bson.D{{Key: "name", Value: paramID}}
 
-	err := customerCollection.FindOne(c.Context(), query).Decode(customer)
+	err := customerCollection.FindOne(c.Context(), query).Decode(&customer)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"success": false,
@@ -116,5 +92,143 @@ func GetCustomersByName(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
 		"data":    customer,
+	})
+}
+
+func GetAllByTeamSorting(c *fiber.Ctx) error {
+	customerCollection := DB.MI.DBCol
+
+	paramID := c.Params("team")
+	fmt.Println(paramID)
+
+	// find todo and return
+	var customers []Model.Customer = make([]Model.Customer, 0)
+
+	query := bson.D{{Key: "team", Value: paramID}}
+
+	cursor, err := customerCollection.Find(c.Context(), query)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"message": "Customer Not found",
+			"error":   err,
+		})
+	}
+
+	err = cursor.All(c.Context(), &customers)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Something went wrong",
+			"error":   err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": true,
+		"data":    customers,
+	})
+}
+
+func GetAgentSorting(c *fiber.Ctx) error {
+	customerCollection := DB.MI.DBCol
+
+	data := new(Model.Sort)
+	_ = c.BodyParser(&data)
+	fmt.Println(data.Name)
+
+	// find todo and return
+	var customers []Model.Customer = make([]Model.Customer, 0)
+	filter := bson.D{{Key: "agent", Value: data.Name}}
+
+	cursor, err := customerCollection.Find(c.Context(), filter)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"message": "Customer Not found",
+			"error":   err,
+		})
+	}
+
+	err = cursor.All(c.Context(), &customers)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Something went wrong",
+			"error":   err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": true,
+		"data":    customers,
+	})
+}
+
+func GetTagsSorting(c *fiber.Ctx) error {
+	customerCollection := DB.MI.DBCol
+
+	data := new(Model.Sort)
+	_ = c.BodyParser(&data)
+
+	// find todo and return
+	var customers []Model.Customer = make([]Model.Customer, 0)
+	filter := bson.D{{Key: "tags", Value: data.Name}}
+	cursor, err := customerCollection.Find(c.Context(), filter)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"message": "Customer Not found",
+			"error":   err,
+		})
+	}
+
+	err = cursor.All(c.Context(), &customers)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Something went wrong",
+			"error":   err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": true,
+		"data":    customers,
+	})
+}
+
+func GetChannelSorting(c *fiber.Ctx) error {
+	customerCollection := DB.MI.DBCol
+
+	data := new(Model.Sort)
+	_ = c.BodyParser(&data)
+	fmt.Println(data.Name)
+
+	// find todo and return
+	var customers []Model.Customer = make([]Model.Customer, 0)
+	filter := bson.D{{Key: "channel", Value: data.Name}}
+
+	cursor, err := customerCollection.Find(c.Context(), filter)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"message": "Customer Not found",
+			"error":   err,
+		})
+	}
+
+	err = cursor.All(c.Context(), &customers)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Something went wrong",
+			"error":   err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": true,
+		"data":    customers,
 	})
 }

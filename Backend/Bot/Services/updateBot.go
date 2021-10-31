@@ -5,6 +5,7 @@ import (
 	"log"
 	"mf-bot-services/DB"
 	"mf-bot-services/Model"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
@@ -24,7 +25,7 @@ func UpdateOneBotById(c *fiber.Ctx) error {
 		})
 	}
 
-	// todo.UpdatedTime = time.Now()
+	todo.UpdatedOn = time.Now().Format("January 2, 2006")
 	todo.ID = c.Params("id")
 	update := bson.D{{Key: "$set", Value: todo}}
 

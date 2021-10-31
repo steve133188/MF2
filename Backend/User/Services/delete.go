@@ -15,7 +15,7 @@ func DeleteUserById(c *fiber.Ctx) error {
 	paramID := c.Params("id")
 
 	// find and delete todo
-	query := bson.M{ "id": paramID}
+	query := bson.M{"id": paramID}
 
 	err := userCollection.FindOneAndDelete(c.Context(), query).Err()
 
@@ -37,5 +37,37 @@ func DeleteUserById(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": "Delete user (ID = " + paramID + ") success",
+	})
+}
+
+func DeleteUserByName(c *fiber.Ctx) error {
+	userCollection := DB.MI.DBCol
+
+	// get param
+	paramID := c.Params("name")
+
+	// find and delete todo
+	query := bson.M{"username": paramID}
+
+	err := userCollection.FindOneAndDelete(c.Context(), query).Err()
+
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"success": false,
+				"message": "agent Not found",
+				"error":   err,
+			})
+		}
+
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Cannot delete agent",
+			"error":   err,
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": "Delete agent (ID = " + paramID + ") success",
 	})
 }

@@ -1,7 +1,5 @@
 package Model
 
-import "time"
-
 // type Customer struct {
 // 	Id                 string    `json:"id"`
 // 	UserId             string    `json:"user_id"`
@@ -23,12 +21,17 @@ type Customer struct {
 	Phone        interface{} `json:"phone" bson:"phone"`
 	Organization string      `json:"organization" bson:"organization"`
 	Channel      string      `json:"channel" bson:"channel"`
-	UserID       string      `json:"user_id" bson:"user_id"`
+	Team         string      `json:"team" bson:"team"`
+	Agent        interface{} `json:"agent" bson:"agent"`
 	Tags         interface{} `json:"tags" bson:"tags"`
 	Assignee     interface{} `json:"assignee" bson:"assignee"`
 	Birthday     string      `json:"birthday" bson:"birthday"`
 	Country      string      `json:"country" bson:"country"`
 	Address      string      `json:"address" bson:"address"`
-	CreatedAt    time.Time   `json:"created_at" bson:"created_at"`
-	UpdatedAt    time.Time   `json:"updated_at" bson:"updated_at"`
+	CreatedAt    string      `json:"created_at" bson:"created_at"`
+	UpdatedAt    string      `json:"updated_at" bson:"updated_at"`
+}
+
+type Sort struct {
+	Name []string `json:"name"`
 }

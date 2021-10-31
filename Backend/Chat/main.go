@@ -10,13 +10,18 @@ import (
 	"gopkg.in/mgo.v2"
 )
 
+type test struct {
+	Phone   string `json:"phone"`
+	Message string `json:"message"`
+}
+
 func main() {
 
 	http.HandleFunc("/message", func(rw http.ResponseWriter, r *http.Request) {
 		var data Model.Message
 		json.NewDecoder(r.Body).Decode(&data)
 		session, err := mgo.Dial("mongodb://localhost:27017")
-		// mongodb+srv://backend-api:248E176vFbD09zeB@backend-mongodb-9bf339a5.mongo.ondigitalocean.com/chat?authSource=admin&replicaSet=backend-mongodb&tls=true&tlsCAFile=./tlsCAFile/ca-certificate.cer
+		//
 		if err != nil {
 			panic(err)
 		}
@@ -28,17 +33,29 @@ func main() {
 		}
 		rw.WriteHeader(http.StatusOK)
 
-		val, err := json.Marshal(data)
+		// val, err := json.Marshal(data)
+		// if err != nil {
+		// 	fmt.Println(err)
+		// }
+
+		var test1 test
+		test1.Phone = "85292443663@c.us"
+		test1.Message = "知咩料啦"
+
+		val, err := json.Marshal(test1)
 		if err != nil {
 			fmt.Println(err)
 		}
 
-		newReq, err := http.NewRequest(http.MethodPost, "http://62e4-118-140-230-94.ngrok.io", bytes.NewBuffer(val))
+		// t, _ := json.Marshal(test)
+
+		newReq, err := http.NewRequest(http.MethodPost, "https://mf-whatsapp-js.herokuapp.com/send-message", bytes.NewBuffer(val))
 		if err != nil {
 			fmt.Println(err)
 		}
 		clt := http.Client{}
-		clt.Do(newReq)
+		fmt.Println(bytes.NewBuffer(val))
+		fmt.Println(clt.Do(newReq))
 
 		// rw.Header().Set("Content-Type", "application/json")
 		// rw.WriteHeader(http.StatusOK)

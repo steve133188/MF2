@@ -1,13 +1,12 @@
 package Services
 
 import (
-	"fmt"
 	"mf-aoc-service/DB"
 	"mf-aoc-service/Model"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	uuid "github.com/nu7hatch/gouuid"
+	"github.com/rs/xid"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -25,10 +24,7 @@ func AddChannel(c *fiber.Ctx) error {
 		})
 	}
 
-	id, err := uuid.NewV4()
-	if err != nil {
-		fmt.Println("Failed to generate ID in POST")
-	}
+	id := xid.New()
 	data.ID = id.String()
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -74,12 +70,9 @@ func AddAdmin(c *fiber.Ctx) error {
 		})
 	}
 
-	data.CreatedTime = time.Now()
-	data.UpdatedTime = time.Now()
-	id, err := uuid.NewV4()
-	if err != nil {
-		fmt.Println("Failed to generate ID for admin")
-	}
+	data.CreatedTime = time.Now().Format("January 2, 2006")
+	data.UpdatedTime = time.Now().Format("January 2, 2006")
+	id := xid.New()
 	data.ID = id.String()
 	result, err := collection.InsertOne(c.Context(), data)
 
@@ -119,10 +112,7 @@ func AddAgent(c *fiber.Ctx) error {
 		})
 	}
 
-	id, err := uuid.NewV4()
-	if err != nil {
-		fmt.Println("Failed to generate ID in POST")
-	}
+	id := xid.New()
 	data.ID = id.String()
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{

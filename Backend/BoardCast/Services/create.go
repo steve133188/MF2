@@ -1,12 +1,12 @@
 package Services
 
 import (
-	"fmt"
 	"mf-boardCast-services/DB"
 	"mf-boardCast-services/Model"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
-	uuid "github.com/nu7hatch/gouuid"
+	"github.com/rs/xid"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -26,12 +26,9 @@ func AddBoardCast(c *fiber.Ctx) error {
 		})
 	}
 
-	// data.CreatedTime = time.Now()
-	// data.UpdatedTime = time.Now()
-	id, err := uuid.NewV4()
-	if err != nil {
-		fmt.Println("Failed to generate ID for boardcast")
-	}
+	data.CreatedDate = time.Now().Format("January 2, 2006")
+	id := xid.New()
+
 	data.Id = id.String()
 	result, err := collection.InsertOne(c.Context(), data)
 

@@ -61,7 +61,7 @@ func UpdateAdminByID(c *fiber.Ctx) error {
 		})
 	}
 
-	todo.UpdatedTime = time.Now()
+	todo.UpdatedTime = time.Now().Format("January 2, 2006")
 	todo.ID = c.Params("id")
 	update := bson.D{{Key: "$set", Value: todo}}
 
@@ -96,7 +96,6 @@ func UpdateOraganizationByPhone(c *fiber.Ctx) error {
 		})
 	}
 
-	// user.Date = time.Now()
 	user.ID = c.Params("phone")
 	update := bson.D{{Key: "$set", Value: user}}
 
