@@ -33,6 +33,9 @@ import TableContainer from "@mui/material/TableContainer";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import {AuthContext, checkTokenExpirationMiddleware} from "../../context/authContext";
+import {MSelect2} from "../../components/multiSelects/MSelect2";
+import {MSelect3} from "../../components/multiSelects/MSelect3";
+import {MSelect4} from "../../components/multiSelects/MSelect4";
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -362,14 +365,14 @@ export default function Contacts() {
         }
     ];
 
-    function getStyles(name, personName, theme) {
-        return {
-            fontWeight:
-                personName.indexOf(name) === -1
-                    ? theme.typography.fontWeightRegular
-                    : theme.typography.fontWeightMedium,
-        };
-    }
+    // function getStyles(name, personName, theme) {
+    //     return {
+    //         fontWeight:
+    //             personName.indexOf(name) === -1
+    //                 ? theme.typography.fontWeightRegular
+    //                 : theme.typography.fontWeightMedium,
+    //     };
+    // }
 
     const theme = useTheme();
     const [personName, setPersonName] = React.useState([]);
@@ -507,51 +510,77 @@ export default function Contacts() {
                     </div>
                     <div className="navbarPurple">
                         <div className="selectButtonGroup">
-                            {selects.map(({selectTitle}) => {
-                                return (
-                                    <div className="multipleSelectPlaceholder" key={selectTitle}>
-                                        <FormControl sx={{m: 0, width: 171, mt: 1}}>
+                            <div className="multipleSelectPlaceholder">
+                                <FormControl sx={{m: 0, width: 171, mt: 1}}>
 
-                                            <Select sx={{
-                                                height: 28,
-                                                marginBottom: 0.3,
-                                                marginRight: 3,
-                                                borderRadius: 2,
-                                                background: "white"
+                                    <Select sx={{
+                                        height: 28,
+                                        marginBottom: 0.3,
+                                        marginRight: 3,
+                                        borderRadius: 2,
+                                        background: "white"
+                                    }}
+                                            multiple
+                                            displayEmpty
+                                            value={personName}
+                                            onChange={handleChange}
+                                            input={<OutlinedInput/>}
+                                            renderValue={(selected) => {
+                                                if (selected.length === 0) {
+                                                    return <span>Agnet</span>;
+                                                }
+                                                return selected.join('');
                                             }}
-                                                    multiple
-                                                    displayEmpty
-                                                    value={personName}
-                                                    onChange={handleChange}
-                                                    input={<OutlinedInput/>}
-                                                    renderValue={(selected) => {
-                                                        if (selected.length === 0) {
-                                                            return <span>{selectTitle}</span>;
-                                                        }
-                                                        return selected.join('');
-                                                    }}
-                                                    MenuProps={MenuProps}
-                                                    inputProps={{'aria-label': 'Without label'}}
-                                            >
-                                                <MenuItem disabled value="">
-                                                    <span>{selectTitle}</span>
-                                                </MenuItem>
-                                                {names.map((name) => (
-                                                    <MenuItem
-                                                        key={name}
-                                                        value={name}
-                                                        style={getStyles(name, personName, theme)}
-                                                    >
-                                                        {name}
-                                                    </MenuItem>
-                                                ))}
-                                            </Select>
+                                            MenuProps={MenuProps}
+                                            inputProps={{'aria-label': 'Without label'}}
+                                    >
+                                        <MenuItem disabled value="">
+                                            <span>Agnet</span>
+                                        </MenuItem>
 
-                                        </FormControl>
-                                    </div>
-                                );
-                            })}
-                            {/*    */}
+                                            <MenuItem
+                                                value={"Mary Foster"}
+                                                // style={getStyles(personeName, personName, theme)}
+                                            >
+                                                {"Mary Foster"}
+                                            </MenuItem>
+                                        <MenuItem
+                                            value={"Harry Stewart"}
+                                            // style={getStyles(personeName, personName, theme)}
+                                        >
+                                            {"Harry Stewart"}
+                                        </MenuItem>
+                                        <MenuItem
+                                            value={"Jasmine Miller"}
+                                            // style={getStyles(personeName, personName, theme)}
+                                        >
+                                            {"Jasmine Miller"}
+                                        </MenuItem>
+                                        <MenuItem
+                                            value={"Chris Chavez"}
+                                            // style={getStyles(personeName, personName, theme)}
+                                        >
+                                            {"Chris Chavez"}
+                                        </MenuItem>
+                                        <MenuItem
+                                            value={"Kathy Collins"}
+                                            // style={getStyles(personeName, personName, theme)}
+                                        >
+                                            {"Kathy Collins"}
+                                        </MenuItem>
+                                        <MenuItem
+                                            value={"Joan Wallace"}
+                                            // style={getStyles(personeName, personName, theme)}
+                                        >
+                                            {"Joan Wallace"}
+                                        </MenuItem>
+                                    </Select>
+
+                                </FormControl>
+                                <MSelect2 />
+                                <MSelect3 />
+                                <MSelect4 />
+                            </div>
                         </div>
 
                         <div className="tagsButtonGroup">
@@ -580,8 +609,6 @@ export default function Contacts() {
                                                         <CheckboxPill color={"vip"} checked={""}>VIP</CheckboxPill>
                                                     </div>
                                                 </div>
-
-
                                             </Box>
                                         ) : null}
                                     </Box>
