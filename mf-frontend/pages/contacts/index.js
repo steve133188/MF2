@@ -1,221 +1,40 @@
-import {Search3} from "../../components/Input";
+import Head from 'next/head'
+import Image from 'next/image'
+import {CheckboxGroup2, Search3} from "../../components/Input";
 import {
     CancelButton,
+    ToggleButton,
     SelectButton,
     NormalButton,
     NormalButton2,
+    TextWithIconButton
 } from "../../components/Button";
+import {NavbarPurple} from "../../components/NavbarPurple";
+import {NormalTable} from "../../components/Table";
 import {PaginationControlled} from "../../components/Pagination";
-import {useContext, useEffect, useState} from "react";
+import {useState} from "react";
+import {TableItem} from "../../components/Table"
 import Avatar from "@mui/material/Avatar";
 import {Pill} from "../../components/Pill";
-import { CheckboxPill, SingleBox} from "../../components/Checkbox"
+import {Checkbox1, CheckboxPill, SingleBox} from "../../components/Checkbox"
+import {EditColumnPopper} from "../../components/EditColumnPopper";
+import {MultipleSelectPlaceholder} from "../../components/Select";
+import {AddPopper} from "../../components/AddPopper";
+import {DeletePopper} from "../../components/DeletePopper";
 import * as React from "react";
 import {Dropzone} from "../../components/ImportContact";
+import Box from '@mui/material/Box';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
+import {ColumnCheckbox} from "../../components/Checkbox";
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
 import OutlinedInput from "@mui/material/OutlinedInput";
-import {ThemeProvider, useTheme} from "@mui/material/styles";
+import {useTheme} from "@mui/material/styles";
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
-import Button from "@mui/material/Button";
-import {createTheme} from '@mui/material/styles';
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import TableCell from "@mui/material/TableCell";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import Box from "@mui/material/Box";
-import {visuallyHidden} from "@mui/utils";
-import PropTypes from "prop-types";
-import Paper from "@mui/material/Paper";
-import TableContainer from "@mui/material/TableContainer";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import {AuthContext, checkTokenExpirationMiddleware} from "../../context/authContext";
-
-function descendingComparator(a, b, orderBy) {
-    if (b[orderBy] < a[orderBy]) {
-        return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-        return 1;
-    }
-    return 0;
-}
-
-function getComparator(order, orderBy) {
-    return order === 'desc'
-        ? (a, b) => descendingComparator(a, b, orderBy)
-        : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-// This method is created for cross-browser compatibility, if you don't
-// need to support IE11, you can use Array.prototype.sort() directly
-function stableSort(array, comparator) {
-    const stabilizedThis = array.map((el, index) => [el, index]);
-    stabilizedThis.sort((a, b) => {
-        const order = comparator(a[0], b[0]);
-        if (order !== 0) {
-            return order;
-        }
-        return a[1] - b[1];
-    });
-    return stabilizedThis.map((el) => el[0]);
-}
-
-// useEffect()
-
-function EnhancedTable2Head(props) {
-    const { order, orderBy, onRequestSort } =
-        props;
-    const createSortHandler = (property) => (event) => {
-        onRequestSort(event, property);
-    };
-
-    const headCells2 = [
-        {
-            id: 'customerID',
-            numeric: false,
-            disablePadding: false,
-            label: 'Customer ID',
-        },
-        {
-            id: 'name',
-            numeric: true,
-            disablePadding: false,
-            label: 'Name',
-        },
-        {
-            id: 'team',
-            numeric: true,
-            disablePadding: false,
-            label: 'Team',
-        },
-        {
-            id: 'channel',
-            numeric: true,
-            disablePadding: false,
-            label: 'Channel',
-        },
-        {
-            id: 'tags',
-            numeric: true,
-            disablePadding: false,
-            label: 'Tags'
-        },
-        {
-            id: 'assignee',
-            numeric: true,
-            disablePadding: false,
-            label: 'Assignee'
-        }
-    ];
-
-    return (
-        <TableHead>
-            <TableRow >
-                <th style={{ width: "30px", textAlign: "center", borderBottom: "1px solid #e0e0e0"}}><SingleBox /></th>
-                {headCells2.map((headCell2) => (
-                    <TableCell
-                        key={headCell2.id}
-                        align="left"
-                        padding={headCell2.disablePadding ? 'none' : 'normal'}
-                        sortDirection={orderBy === headCell2.id ? order : false}
-                        sx={{padding: "26px"}}
-                    >
-                        <TableSortLabel
-                            sx={{ fontWeight: "bold", color: "#495057"}}
-                            active={orderBy === headCell2.id}
-                            direction={orderBy === headCell2.id ? order : 'asc'}
-                            onClick={createSortHandler(headCell2.id)}
-                        >
-                            {headCell2.label}
-                            {orderBy === headCell2.id ? (
-                                <Box component="span" sx={visuallyHidden}>
-                                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                </Box>
-                            ) : null}
-                        </TableSortLabel>
-                    </TableCell>
-
-                ))}
-            </TableRow>
-        </TableHead>
-    );
-}
-
-EnhancedTable2Head.propTypes = {
-    onRequestSort: PropTypes.func.isRequired,
-    order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-    orderBy: PropTypes.string.isRequired,
-    rowCount: PropTypes.number.isRequired,
-};
 
 export default function Contacts() {
-    const {user} = useContext(AuthContext)
-    useEffect(() => {
-
-    });
-    const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('role');
-
-    function createData(customerID, name, team, channel, tags, assignee) {
-        return {
-            customerID,
-            name,
-            team,
-            channel,
-            tags,
-            assignee
-        };
-    }
-
-    const rows = [
-        createData("0000001",<div style={{display: "flex", alignItems: "center"}}><Avatar alt="Remy Sharp"
-                                                                src="https://ath2.unileverservices.com/wp-content/uploads/sites/4/2020/02/IG-annvmariv-1024x1016.jpg"/><span style={{marginLeft: "11px"}}>Debra Patel</span>
-        </div>, <Pill color="teamA">Team A</Pill>, <div className="channel"><img
-            width="24px" height="24px" src="./whatsappChannel.svg"
-            alt=""/></div>, <div className="tagsGroup"><Pill color="lightBlue">VIP</Pill><Pill color="lightPurple">New
-            Customer</Pill></div>, <div className="assigneeGroup">
-            <Pill color="lightYellow" size="roundedPill size30">MF</Pill>
-            <Pill color="lightBlue" size="roundedPill size30">AX</Pill>
-            <Pill color="lightGreen" size="roundedPill size30">DS</Pill>
-            <Pill color="lightPurple" size="roundedPill size30">EW</Pill>
-            <Pill color="lightRed" size="roundedPill size30">KA</Pill>
-        </div>),
-
-
-    ];
-
-    const handleRequestSort = (event, property) => {
-        const isAsc = orderBy === property && order === 'asc';
-        setOrder(isAsc ? 'desc' : 'asc');
-        setOrderBy(property);
-    };
-
-    const theme2 = createTheme({
-        palette: {
-            neutral: {
-                main: '#DEF0FF',
-                contrastText: '#2198FA',
-            },
-            primary: {
-                main: '#2198FA',
-                contrastText: 'white',
-            },
-            secondary: {
-                main: '#F1B44C',
-                contrastText: 'white',
-            },
-            cancel: {
-                main: '#F5F6F8',
-                contrastText: '#444444',
-            }
-        },
-    });
-
-    const [isSelectRow, setSelectRow] = useState({"all": false});
+    const [isSelectRow, setSelectRow] = useState({"all": true});
 
     function toggleSelectRow() {
         setSelectRow(!isSelectRow);
@@ -417,27 +236,14 @@ export default function Contacts() {
         updateColumns(items);
     }
 
-    const [isShowDropzone, setIsShowDropzone] = useState(false);
-    function showDropzone() {
-        setIsShowDropzone(true);
-    }
-    function closeDropzone() {
-        setIsShowDropzone(false);
-    }
-
     return (
         <div className="contacts-layout">
-            <span style={{display: isShowDropzone ? "block" : "none"}}><Dropzone onClick={closeDropzone} isShowDropzone={isShowDropzone} setIsShowDropzone={setIsShowDropzone}/></span>
+            {/*<Dropzone/>*/}
             <div className="rightContent">
                 <div className="contactsContainer">
                     <div className="topBar">
                         <div className="searchBar">
-                            <div className="logoInputContainer2">
-                                <span className="requiredMessage">This field is required.</span>
-                                <label className="searchSVG">
-                                    <input placeholder="Search"/>
-                                </label>
-                            </div>
+                            <Search3 type="search">Search</Search3>
                         </div>
                         <div className="buttonGrp">
                             {isSelectRow ? (
@@ -445,21 +251,13 @@ export default function Contacts() {
                             ) : (
                                 <span onClick={toggleSelectRow}><SelectButton/></span>
                             )}
+                            {/*<EditColumnPopper/>*/}
                             <div className="editColumnPopperContainer">
                                 <ClickAwayListener onClickAway={handleClickAway}>
                                     <Box sx={{position: 'relative'}}>
-                                        <div className="textWithIconButton">
-                                            <ThemeProvider theme={theme2}>
-                                                <Button variant="contained" color="neutral">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                                         className="bi bi-pencil" viewBox="0 0 16 16" style={{marginRight: "4px"}}>
-                                                        <path
-                                                            d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
-                                                    </svg>
-                                                    <span>Edit Column</span>
-                                                </Button>
-                                            </ThemeProvider>
-                                        </div>
+
+                                        <TextWithIconButton onClick={handleClick}>Edit Column</TextWithIconButton>
+
                                         {open ? (
                                             <Box sx={editColumnStyles}>
                                                 <div className="topSide">
@@ -501,7 +299,8 @@ export default function Contacts() {
                                     </Box>
                                 </ClickAwayListener>
                             </div>
-                            <NormalButton onClick={showDropzone}>Import</NormalButton>
+                            {/**/}
+                            <NormalButton>Import</NormalButton>
                             <NormalButton2>+ New Contact</NormalButton2>
                         </div>
                     </div>
@@ -555,6 +354,8 @@ export default function Contacts() {
                         </div>
 
                         <div className="tagsButtonGroup">
+                            {/*<AddPopper/>*/}
+
                             <div className="addPopperContainer">
                                 <ClickAwayListener onClickAway={handleClickAwayAddPopper}>
                                     <Box sx={{position: 'relative'}}>
@@ -573,20 +374,17 @@ export default function Contacts() {
                                                     <NormalButton2>Confirm</NormalButton2>
                                                 </div>
                                                 <Search3 type="search">Search</Search3>
-                                                <div className="checkboxGroup2">
-                                                    <p></p>
-                                                    <div className="checkboxGrp">
-                                                        <CheckboxPill color={"vip"} checked={"checked"}>VIP</CheckboxPill>
-                                                        <CheckboxPill color={"vip"} checked={""}>VIP</CheckboxPill>
-                                                    </div>
-                                                </div>
-
-
+                                                <CheckboxGroup2>
+                                                    <CheckboxPill color={"vip"} checked={"checked"}>VIP</CheckboxPill>
+                                                    <CheckboxPill color={"vip"} checked={""}>VIP</CheckboxPill>
+                                                </CheckboxGroup2>
                                             </Box>
                                         ) : null}
                                     </Box>
                                 </ClickAwayListener>
                             </div>
+
+                            {/**/}
                             <div>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="#2198fa"
                                      cursor="pointer"
@@ -597,6 +395,8 @@ export default function Contacts() {
                                         d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
                                 </svg>
                             </div>
+
+                            {/*<DeletePopper/>*/}
                             <div className="deletePopperContainer">
                                 <ClickAwayListener onClickAway={handleClickAwayDeletePopper}>
                                     <Box sx={{position: 'relative'}}>
@@ -627,46 +427,142 @@ export default function Contacts() {
                             {/*    */}
                         </div>
                     </div>
-                    <Box sx={{ maxWidth: '1925px' }}>
-                        <Paper sx={{ width: '100%', mb: 2, boxShadow: "none" }}>
-                            <TableContainer>
-                                <Table
-                                    sx={{ minWidth: 750 }}
-                                    aria-labelledby="tableTitle"
-                                >
-                                    <EnhancedTable2Head
-                                        order={order}
-                                        orderBy={orderBy}
-                                        onRequestSort={handleRequestSort}
-                                        rowCount={rows.length}
-                                    />
-                                    <TableBody>
-                                        {stableSort(rows, getComparator(order, orderBy))
-                                            .map((d) => {
-                                                const labelId = `enhanced-table-checkbox-${d.index}`;
-                                                return (
-                                                    <TableRow
-                                                        hover
-                                                        role="checkbox"
-                                                        tabIndex={-1}
-                                                        key={d.name}
-                                                    >
-                                                        <td style={{ width: "30px", textAlign: "center", borderBottom: "1px #e0e0e0 solid"}}><SingleBox /></td>
-                                                        <TableCell sx={{padding: "26px", fontSize: "16px"}} align="left">{d.customerID}</TableCell>
-                                                        <TableCell sx={{padding: "26px", fontSize: "16px"}} align="left">{d.name}</TableCell>
-                                                        <TableCell sx={{padding: "26px", fontSize: "16px"}} align="left">{d.team}</TableCell>
-                                                        <TableCell sx={{padding: "26px", fontSize: "16px"}} align="left">{d.channel}</TableCell>
-                                                        <TableCell sx={{padding: "26px", fontSize: "16px"}} align="left">{d.tags}</TableCell>
-                                                        <TableCell sx={{padding: "26px", fontSize: "16px"}} align="left">{d.assignee}</TableCell>
-
-                                                    </TableRow>
-                                                );
-                                            })}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </Paper>
-                    </Box>
+                    {/*<NormalTable classname={isSelectRow ? null : "checkBox"}>*/}
+                    <table className="normalTable">
+                        <tr>
+                            <th className={isSelectRow ? null : "checkBox"}><SingleBox key={"all"} isSelect={false}
+                                                                                       onClick={toggleFill}
+                                                                                       onChange={e => handleSelect(e.target.key, e.target.isSelect)}></SingleBox>
+                            </th>
+                            <th>Customer ID</th>
+                            <th>Name</th>
+                            <th>Team</th>
+                            <th>Channel</th>
+                            <th>Tags</th>
+                            <th>Assignee</th>
+                        </tr>
+                        <tr>
+                            <TableItem classname={isSelectRow ? null : "checkBox"}><SingleBox
+                                fill={isFillCheckbox ? "fillCheckbox" : null}></SingleBox></TableItem>
+                            <TableItem>0000001</TableItem>
+                            <TableItem>
+                                <div className="nameGroup"><Avatar alt="Remy Sharp"
+                                                                   src="https://ath2.unileverservices.com/wp-content/uploads/sites/4/2020/02/IG-annvmariv-1024x1016.jpg"/>Debra
+                                    Patel
+                                </div>
+                            </TableItem>
+                            <TableItem><Pill color="teamA">Team A</Pill></TableItem>
+                            <TableItem>
+                                <div className="channel"><img
+                                    src="https://www.ethnicmusical.com/wp-content/uploads/2021/02/Whatsapp-PNG-Image-79477.png"
+                                    alt=""/></div>
+                            </TableItem>
+                            <TableItem>
+                                <div className="tagsGroup"><Pill color="lightBlue">VIP</Pill><Pill color="lightPurple">New
+                                    Customer</Pill></div>
+                            </TableItem>
+                            <TableItem>
+                                <div className="assigneeGroup">
+                                    <Pill color="lightYellow" size="roundedPill size30">MF</Pill>
+                                    <Pill color="lightBlue" size="roundedPill size30">AX</Pill>
+                                    <Pill color="lightGreen" size="roundedPill size30">DS</Pill>
+                                    <Pill color="lightPurple" size="roundedPill size30">EW</Pill>
+                                    <Pill color="lightRed" size="roundedPill size30">KA</Pill>
+                                </div>
+                            </TableItem>
+                        </tr>
+                        <tr>
+                            <TableItem classname={isSelectRow ? null : "checkBox"}><SingleBox
+                                fill={isFillCheckbox ? "fillCheckbox" : null}></SingleBox></TableItem>
+                            <TableItem>0000001</TableItem>
+                            <TableItem>
+                                <div className="nameGroup"><Avatar alt="Remy Sharp"
+                                                                   src="https://ath2.unileverservices.com/wp-content/uploads/sites/4/2020/02/IG-annvmariv-1024x1016.jpg"/>Debra
+                                    Patel
+                                </div>
+                            </TableItem>
+                            <TableItem><Pill color="teamA">Team A</Pill></TableItem>
+                            <TableItem>
+                                <div className="channel"><img
+                                    src="https://www.ethnicmusical.com/wp-content/uploads/2021/02/Whatsapp-PNG-Image-79477.png"
+                                    alt=""/></div>
+                            </TableItem>
+                            <TableItem>
+                                <div className="tagsGroup"><Pill color="lightBlue">VIP</Pill><Pill color="lightPurple">New
+                                    Customer</Pill></div>
+                            </TableItem>
+                            <TableItem>
+                                <div className="assigneeGroup">
+                                    <Pill color="lightYellow" size="roundedPill size30">MF</Pill>
+                                    <Pill color="lightBlue" size="roundedPill size30">AX</Pill>
+                                    <Pill color="lightGreen" size="roundedPill size30">DS</Pill>
+                                    <Pill color="lightPurple" size="roundedPill size30">EW</Pill>
+                                    <Pill color="lightRed" size="roundedPill size30">KA</Pill>
+                                </div>
+                            </TableItem>
+                        </tr>
+                        <tr>
+                            <TableItem classname={isSelectRow ? null : "checkBox"}><SingleBox
+                                fill={isFillCheckbox ? "fillCheckbox" : null}></SingleBox></TableItem>
+                            <TableItem>0000001</TableItem>
+                            <TableItem>
+                                <div className="nameGroup"><Avatar alt="Remy Sharp"
+                                                                   src="https://ath2.unileverservices.com/wp-content/uploads/sites/4/2020/02/IG-annvmariv-1024x1016.jpg"/>Debra
+                                    Patel
+                                </div>
+                            </TableItem>
+                            <TableItem><Pill color="teamA">Team A</Pill></TableItem>
+                            <TableItem>
+                                <div className="channel"><img
+                                    src="https://www.ethnicmusical.com/wp-content/uploads/2021/02/Whatsapp-PNG-Image-79477.png"
+                                    alt=""/></div>
+                            </TableItem>
+                            <TableItem>
+                                <div className="tagsGroup"><Pill color="lightBlue">VIP</Pill><Pill color="lightPurple">New
+                                    Customer</Pill></div>
+                            </TableItem>
+                            <TableItem>
+                                <div className="assigneeGroup">
+                                    <Pill color="lightYellow" size="roundedPill size30">MF</Pill>
+                                    <Pill color="lightBlue" size="roundedPill size30">AX</Pill>
+                                    <Pill color="lightGreen" size="roundedPill size30">DS</Pill>
+                                    <Pill color="lightPurple" size="roundedPill size30">EW</Pill>
+                                    <Pill color="lightRed" size="roundedPill size30">KA</Pill>
+                                </div>
+                            </TableItem>
+                        </tr>
+                        <tr>
+                            <TableItem classname={isSelectRow ? null : "checkBox"}><SingleBox
+                                fill={isFillCheckbox ? "fillCheckbox" : null}></SingleBox></TableItem>
+                            <TableItem>0000001</TableItem>
+                            <TableItem>
+                                <div className="nameGroup"><Avatar alt="Remy Sharp"
+                                                                   src="https://ath2.unileverservices.com/wp-content/uploads/sites/4/2020/02/IG-annvmariv-1024x1016.jpg"/>Debra
+                                    Patel
+                                </div>
+                            </TableItem>
+                            <TableItem><Pill color="teamA">Team A</Pill></TableItem>
+                            <TableItem>
+                                <div className="channel"><img
+                                    src="https://www.ethnicmusical.com/wp-content/uploads/2021/02/Whatsapp-PNG-Image-79477.png"
+                                    alt=""/></div>
+                            </TableItem>
+                            <TableItem>
+                                <div className="tagsGroup"><Pill color="lightBlue">VIP</Pill><Pill color="lightPurple">New
+                                    Customer</Pill></div>
+                            </TableItem>
+                            <TableItem>
+                                <div className="assigneeGroup">
+                                    <Pill color="lightYellow" size="roundedPill size30">MF</Pill>
+                                    <Pill color="lightBlue" size="roundedPill size30">AX</Pill>
+                                    <Pill color="lightGreen" size="roundedPill size30">DS</Pill>
+                                    <Pill color="lightPurple" size="roundedPill size30">EW</Pill>
+                                    <Pill color="lightRed" size="roundedPill size30">KA</Pill>
+                                </div>
+                            </TableItem>
+                        </tr>
+                    </table>
+                    {/*</NormalTable>*/}
                     <PaginationControlled/>
                 </div>
             </div>

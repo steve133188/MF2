@@ -14,15 +14,16 @@ export default function Layout({children}) {
     const [userSelect , setUserSelect] = useState("")
     const router = useRouter()
     const {user} = useContext(AuthContext)
-    const { stateAuth, dispatchAuth } = useContext(AuthContext);
+
+
     let layout = (
         <div className={"layout"}><SideBar navItems={navItems} />
             <div className={"layout-main"}><div className={'navbar container-fluid'}>
                 <div className={"page-title"}> {router.pathname.charAt(1).toUpperCase()+router.pathname.substring(2)}</div>
                 <div className={'d-flex user-session'}>
                     <div className={'notificationDropdownSet'}>
-                        {/*{user.userInfo.notification!=0? <div className={'badge'}> 10</div>: null}*/}
-                        {user}
+                        {user.userInfo.notification!=0? <div className={'badge'}> 10</div>: null}
+
                         <div className="notificationDropdown">
                             <SingleSelect2/>
                         </div>
@@ -34,7 +35,7 @@ export default function Layout({children}) {
                                 // onChange={handleChange}
                                 displayEmpty
                                 label={`<div className={'selectStatusOnline'}></div>
-                                    <span>{user.userInfo.username}</span></MenuItem>`}
+                                    <span>{user.userInfo.name}</span></MenuItem>`}
                                 inputProps={{'aria-label': 'Without label'}}
                                 sx={{
                                     width: 160,
@@ -47,10 +48,10 @@ export default function Layout({children}) {
                             >
                                 <MenuItem value={""}>
                                     <div className={'selectStatusOnline'}></div>
-                                    <span>{user.userInfo.username}</span></MenuItem>
+                                    <span>{user.userInfo.name}</span></MenuItem>
                                 <MenuItem value={"offine"}>
                                     <div className={'selectStatusOffline'}></div>
-                                    <span>{user.userInfo.username}</span></MenuItem>
+                                    <span>{user.userInfo.name}</span></MenuItem>
                                 <MenuItem value={"other"}>
                                     <div className={''}></div>
                                     <span>User preference</span></MenuItem>

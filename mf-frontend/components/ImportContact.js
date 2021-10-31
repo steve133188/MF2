@@ -2,8 +2,7 @@ import React, {useMemo} from 'react';
 import {useDropzone} from 'react-dropzone';
 import {NormalButton, NormalButton2, CancelButton} from './Button';
 
-export function Dropzone({children,...props}) {
-    const {onClick} = props;
+export function Dropzone(props) {
     const {
         getRootProps,
         getInputProps,
@@ -70,7 +69,7 @@ export function Dropzone({children,...props}) {
                     <span>Import Contacts</span>
                     <div className="buttonGrp">
                         <NormalButton2>Confirm</NormalButton2>
-                        <span style={{marginLeft: "30px"}} onClick={onClick}><CancelButton>Cancel</CancelButton></span>
+                        <span style={{marginLeft: "30px"}}><CancelButton>Cancel</CancelButton></span>
                     </div>
                 </div>
                 <div {...getRootProps({style})}>

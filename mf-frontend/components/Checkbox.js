@@ -12,13 +12,12 @@ export function Checkbox1(props) {
     )
 }
 
-export function Checkbox2({children, ...props}) {
-    const {src, checked} = props;
+export function Checkbox2(props) {
     return (
         <>
             <label className="checkboxContainer"><img
-                src={src} alt=""/>{children}
-                <input type="checkbox" checked={checked}/>
+                src={props.src} alt=""/>{props.children}
+                <input type="checkbox" checked={props.checked}/>
                 <span className="checkmark"></span>
             </label>
         </>
@@ -30,7 +29,7 @@ export function CheckboxPill({children,...props}) {
     return (
         <>
             <label className="checkboxContainer" onClick={onClick}>
-                <Pill color={color}>{children}</Pill>
+                <Pill color={color}>children</Pill>
                 <input type="checkbox" checked={checked}/>
                 <span className="checkmark"></span>
             </label>

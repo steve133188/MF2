@@ -34,7 +34,11 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
+
+
+
             <div className="navbarPurple">
+
             </div>
             <div className="chartGroup">
                 <div className="dashboardRow">
