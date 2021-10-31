@@ -27,11 +27,13 @@ func AdminRoute(route fiber.Router) {
 }
 
 func OrgRoute(route fiber.Router) {
-	route.Get("/", Services.GetAllOrganization)
+	// route.Get("/", Services.GetAllOrganization)
 	// route.Get("/id/:id", Services.GetCustomersById)
 	// route.Get("/name/:name", Services.GetOrganizationByName)
 
-	route.Post("/agent", Services.AddAgent)
+	// route.Post("/agent", Services.AddAgent)
+	route.Post("/create/division", Services.CreateDivision)
+	route.Post("/create/team", Services.CreateTeam)
 
 	route.Put("/phone/:phone", Services.UpdateOraganizationByPhone)
 
