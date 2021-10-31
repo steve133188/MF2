@@ -49,12 +49,12 @@ type User struct {
 	Interface    string   `json:"interface" bson:"interface"`
 	AssignTo     string   `json:"assign_to" bson:"assign_to"`
 	Leads        string   `json:"leads" bson:"leads"`
-	TeamName     string   `json:"team_name" bson:"team_name"`
+	Team         string   `json:"team" bson:"team"`
 	DivisionName string   `json:"division_name" bson:"division_name"`
 	LastLogin    string   `json:"last_login" bson:"last_login"`
 	Right        []string `json:"right" bson:"right"`
 	Channels     []string `json:"channels" bson:"channels"`
-	Team         string   `json:"team" bson:"team"`
+	Phone        string   `json:"phone" bson:"phone"`
 }
 
 // type Token struct {
