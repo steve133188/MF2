@@ -2,9 +2,30 @@ import {TextRadio2} from "./Input";
 import {ContactFileImage} from "./Image"
 import {MoreImageBadge} from "./Badge";
 import {FileLink} from "./FileLink";
-import {NormalButton} from "./Button";
+import {IconButton, NormalButton} from "./Button";
 import {ContactBasicInfo} from "./ContactBasicInfo";
-
+import {createTheme, ThemeProvider} from "@mui/material/styles";
+import Button from "@mui/material/Button";
+const theme = createTheme({
+    palette: {
+        neutral: {
+            main: '#DEF0FF',
+            contrastText: '#2198FA',
+        },
+        primary: {
+            main: '#2198FA',
+            contrastText: 'white',
+        },
+        secondary: {
+            main: '#F1B44C',
+            contrastText: 'white',
+        },
+        cancel: {
+            main: '#F5F6F8',
+            contrastText: '#444444',
+        }
+    },
+});
 export function ContactFile() {
     return (
             <div className="contactInfoSet">
@@ -28,12 +49,40 @@ export function ContactFile() {
                         <div className="fileLinkContainer">
                             <div className="fileSubHeader">
                                 <div>Files & Links</div>
-                                <span className="fileAmount">2 File, 1 Link</span>
+                                <span className="fileAmount">2 File, 0 Link</span>
                             </div>
                             <div className="fileLinkGroup">
-                                <FileLink />
-                                <FileLink />
-                                <FileLink />
+                                <div className="fileLink">
+                                    <div className="iconButtonContainer">
+                                        <ThemeProvider theme={theme}>
+                                            <Button variant="contained" color="neutral">
+                                                <img
+                                                    src="fileLogo.svg"
+                                                    width="17px" height="17px" alt=""/>
+                                            </Button>
+                                        </ThemeProvider>
+                                    </div>
+                                    <div className="fileLinkInfo">
+                                        <span className="fileLinkName">Attachment.pdf</span>
+                                        <div className=""><span className="fileDate">3 June, 2021</span><span className="fileSize">224KB</span></div>
+                                    </div>
+                                </div>
+
+                                <div className="fileLink">
+                                    <div className="iconButtonContainer">
+                                        <ThemeProvider theme={theme}>
+                                            <Button variant="contained" color="neutral">
+                                                <img
+                                                    src="/fileLogo.svg"
+                                                    width="17px" height="17px" alt=""/>
+                                            </Button>
+                                        </ThemeProvider>
+                                    </div>
+                                    <div className="fileLinkInfo">
+                                        <span className="fileLinkName">Attachment2.pdf</span>
+                                        <div className=""><span className="fileDate">3 June, 2021</span><span className="fileSize">200KB</span></div>
+                                    </div>
+                                </div>
                             </div>
                             <NormalButton>
                                 View All Files & Links

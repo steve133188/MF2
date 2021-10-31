@@ -33,7 +33,7 @@ export function LoginPanel() {
     }
     return (
         <div className="container">
-            <Alert />
+            {/*<Alert />*/}
             <div className="loginPanel">
                 <div className="companyLogo">
                     <img src="MS_logo-square.svg" alt=""/>

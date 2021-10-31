@@ -22,13 +22,14 @@ const theme = createTheme({
     },
 });
 
-export function IconButton() {
+export function IconButton({children,...props}) {
+    const {logo} = props;
     return (
         <div className="iconButtonContainer">
             <ThemeProvider theme={theme}>
                 <Button variant="contained" color="neutral">
                     <img
-                        src="https://uxwing.com/wp-content/themes/uxwing/download/17-internet-network-technology/robot-line.png"
+                        src={logo}
                         width="17px" height="17px" alt=""/>
                 </Button>
             </ThemeProvider>
