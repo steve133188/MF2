@@ -24,4 +24,14 @@
     width: 50%;
     margin-right: 75px;
   }
+  .lineCardGroupSet {
+    margin-bottom: 44px;
+    .lineCardGroup1 {
+      display: flex;
+      .lineChartCard {
+        margin-right: 50px;
+      }
+    }
+  }
+
 }

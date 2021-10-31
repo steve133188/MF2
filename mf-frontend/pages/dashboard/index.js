@@ -3,6 +3,7 @@ import {SingleSelect2} from "../../components/Select";
 import {EnhancedTable} from "../../components/Table";
 import {EnhancedTable2} from "../../components/EnhancedTable2";
 import {EnhancedTable3} from "../../components/EnhancedTable3";
+import {LineChartCard} from "../../components/Cards";
 
 export default function Dashboard() {
 
@@ -63,6 +64,20 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
+
+            <div className="navbarPurple"></div>
+            <div className="lineCardGroupSet">
+                <div className="lineCardGroup1">
+                    <LineChartCard />
+                    <LineChartCard />
+                    <LineChartCard />
+                    <LineChartCard />
+                </div>
+                <div className="lineCardGroup2">
+
+                </div>
+            </div>
+
         </div>
 
     )
