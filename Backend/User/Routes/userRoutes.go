@@ -10,6 +10,7 @@ func UsersRoute(route fiber.Router) {
 	route.Get("/id/:id", Services.GetUsersById)
 	route.Get("/username/:username", Services.GetUserByUsername)
 	route.Get("/email/:email", Services.GetUserByEmail)
+	route.Get("/team/:team", Services.GetUserByTeam)
 
 	route.Get("/", Services.GetAllUsers)
 

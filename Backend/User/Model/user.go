@@ -54,6 +54,7 @@ type User struct {
 	LastLogin    string   `json:"last_login" bson:"last_login"`
 	Right        []string `json:"right" bson:"right"`
 	Channels     []string `json:"channels" bson:"channels"`
+	Team         string   `json:"team" bson:"team"`
 }
 
 // type Token struct {

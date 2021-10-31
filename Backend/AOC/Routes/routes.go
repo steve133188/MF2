@@ -35,7 +35,7 @@ func OrgRoute(route fiber.Router) {
 	route.Post("/create/division", Services.CreateDivision)
 	route.Post("/create/team", Services.CreateTeam)
 
-	route.Put("/phone/:phone", Services.UpdateOraganizationByPhone)
+	// route.Put("/phone/:phone", Services.UpdateOraganizationByPhone)
 
 	route.Delete("/phone/:phone", Services.DeleteOrganizationByPhone)
 }

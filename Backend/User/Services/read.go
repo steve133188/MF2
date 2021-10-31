@@ -85,6 +85,36 @@ func GetUsersById(c *fiber.Ctx) error {
 	})
 }
 
+func GetUsersByTeam(c *fiber.Ctx) error {
+	customerCollection := DB.MI.DBCol
+
+	// get parameter value
+	paramID := c.Params("team")
+	fmt.Println(paramID)
+
+	// find todo and return
+	customer := &Model.User{}
+
+	query := bson.D{{Key: "team", Value: paramID}}
+
+	err := customerCollection.FindOne(c.Context(), query).Decode(customer)
+
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"message": "User Not found",
+			"error":   err,
+		})
+	}
+
+	// customer.Date = customer.Date.Add(time.Hour * 8)
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": true,
+		"data":    customer,
+	})
+}
+
 func GetUserByUsername(c *fiber.Ctx) error {
 	customerCollection := DB.MI.DBCol
 
