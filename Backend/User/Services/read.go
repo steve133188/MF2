@@ -85,7 +85,7 @@ func GetUsersById(c *fiber.Ctx) error {
 	})
 }
 
-func GetUsersByTeam(c *fiber.Ctx) error {
+func GetUserByTeam(c *fiber.Ctx) error {
 	customerCollection := DB.MI.DBCol
 
 	// get parameter value
