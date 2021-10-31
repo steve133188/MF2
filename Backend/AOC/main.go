@@ -3,7 +3,7 @@ package main
 import (
 	"mf-aoc-service/DB"
 	"mf-aoc-service/Routes"
-	"mf-log-servies/Util"
+	"mf-aoc-service/Util"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
