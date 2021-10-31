@@ -32,9 +32,9 @@ type MongoInstance struct {
 var MI MongoInstance
 
 func MongoConnect() {
-	adminCol := Util.GoDotEnvVariable("ADMIN_DB_COLLECTION")
-	chanUrl, channelDB, chanCol := Util.GoDotEnvVariable("CHAN_DB_URL"), Util.GoDotEnvVariable("CHAN_DB_NAME"), Util.GoDotEnvVariable("CHAN_DB_COLLECTION")
-	orgCol := Util.GoDotEnvVariable("ORG_DB_COLLECTION")
+	adminCol := Util.GoDotEnvVariable("ADMIN_COLLECTION")
+	chanUrl, channelDB, chanCol := Util.GoDotEnvVariable("CHAN_URL"), Util.GoDotEnvVariable("CHAN_NAME"), Util.GoDotEnvVariable("CHAN_COLLECTION")
+	orgCol := Util.GoDotEnvVariable("ORG_COLLECTION")
 
 	ctx := context.Background()
 	admin, err := mongo.Connect(ctx, options.Client().ApplyURI(chanUrl))
