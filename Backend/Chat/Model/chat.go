@@ -1,31 +1,14 @@
 package Model
 
-import (
-	"time"
-)
-
-// type Message struct {
-// 	Id                string    `json:"id"`
-// 	SenderUsername    string    `json:"sender_username"`
-// 	SenderUserId      string    `json:"sender_user_id"`
-// 	SenderUserPhone   string    `json:"sender_user_phone"`
-// 	ReceiverUserName  string    `json:"receiver_user_name"`
-// 	ReceiverUserId    string    `json:"receiver_user_id"`
-// 	ReceiverUserPhone string    `json:"receiver_user_phone"`
-// 	MessageType       string    `json:"content_type"`
-// 	UpdatedTime       time.Time `json:"updated_time"`
-// 	CreatedTime       time.Time `json:"created_time"`
-// }
 type Message struct {
-	// Id             primitive.ObjectID `bson:"_id" json:"id"`
-	Id             string    `json:"id" bson:"id"`
-	Conversation   string    `json:"conversation"`
-	Sender         string    `json:"sender"`
-	Text           string    `json:"text"`
-	DateTime       time.Time `json:"datetime"`
-	Enabled        bool      `json:"enabled"`
-	Status         string    `json:"status"`
-	PlainText      string    `json:"plaintext"`
-	WhatsapppMsgId string    `json:"whatsappmsgid"`
-	SentStatus     string    `json:"sentstatus"`
+	MediaKey  string      `json:"media_key" bson:"media_key"`
+	Id        interface{} `json:"id" bson:"id"`
+	Ack       int         `json:"ack" bson:"ack"`
+	HasMedia  bool        `json:"has_media" bson:"has_media"`
+	Body      interface{} `json:"body" bson:"body"`
+	Type      string      `json:"type" bson:"type"`
+	TimeStamp uint64      `json:"timestamp" bson:"timestamp"`
+	From      string      `json:"from" bson:"from"`
+	To        string      `json:"to" bson:"to"`
+	VCards    interface{} `json:"vcards" bson:"vcards"`
 }
