@@ -50,8 +50,9 @@ export function Card_channel(props) {
     )
 }
 
-export function LineChartCard() {
-    const [state, setState] = useState({
+export function LineChartCard({children,...props}) {
+    const {lineColor} = props;
+    const [chartState, setChartState] = useState({
         series1: [{
             data: [25, 66, 41, 89, 63, 25, 44, 12, 36, 9, 54]
         }],
@@ -98,7 +99,7 @@ export function LineChartCard() {
                     <div className={"number"}>50</div>
                     <div className={"changingPercentagePos"}>+ 25%</div>
                 </div>
-                <Chart options={state.options1} series={state.series1} type="line" height={35} width={100} />
+                <Chart options={chartState.options1} series={chartState.series1} type="line" height={35} width={100} />
             </div>
         </div>
     )
@@ -124,7 +125,10 @@ export function AverageDailyCard() {
     return (
         <div className="lineChartCard">
             <div className={"lineChartCardTitle"}>Average Daily Online Time</div>
-            <div className={"onlineTime"}>09:20:11</div>
+            <div className={"dataGroup"}>
+                <div className={"onlineTime"}>09:20:11</div>
+
+            </div>
         </div>
     )
 }

@@ -4,7 +4,8 @@ import {TextRadio2, LogoInputField} from "./Input";
 import {Note} from "./Note"
 import {ContactBasicInfo} from "./ContactBasicInfo";
 
-export function ContactNote() {
+export function ContactNote({children,...props}) {
+    const {pillColor, pillSize, pillContent, name, time} = props;
     return (
 
             <div className="contactInfoSet">
@@ -14,7 +15,16 @@ export function ContactNote() {
                     <p>Note <b>3</b></p>
                     <LogoInputField>Write a note...</LogoInputField>
                     <div className="noteSet">
-                        <Note pillColor="lightYellow" pillSize="roundedPill" pillContent="MF" name="Mary Foster" time="1 Jun, 11:00 AM" >Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy</Note>
+                        <div className="noteContainer">
+                            <Pill color={pillColor} size={pillSize}>{pillContent}</Pill>
+                            <div className="noteDetails">
+                                <div className="nameAndTime">
+                                    <span className="name">{name}</span>
+                                    <span className="time">{time}</span>
+                                </div>
+                                <div className="noteContent">{children}</div>
+                            </div>
+                        </div>
                         <Note pillColor="lightBlue" pillSize="roundedPill" pillContent="AX" name="Mary Foster" time="1 Jun, 11:00 AM" >Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy</Note>
                         <Note pillColor="lightGreen" pillSize="roundedPill" pillContent="DS" name="Mary Foster" time="1 Jun, 11:00 AM" >Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy</Note>
                         <Note pillColor="lightPurple" pillSize="roundedPill" pillContent="EW" name="Mary Foster" time="1 Jun, 11:00 AM" >Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy</Note>

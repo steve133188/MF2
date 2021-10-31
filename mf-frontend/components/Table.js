@@ -111,13 +111,6 @@ export function NormalTable(props) {
     )
 }
 
-// export function TableItem({children,...props}) {
-//     const {classname} = props
-//     return(
-//         <td className={classname}>{children}</td>
-//     )
-// }
-
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
         return -1;

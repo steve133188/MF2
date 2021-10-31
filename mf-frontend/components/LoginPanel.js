@@ -5,6 +5,7 @@ import {Switch} from "./Switch";
 import {AuthContext} from "../context/authContext";
 import {useContext , useState} from "react";
 import {Alert} from "./Alert";
+import {Note} from "./Note";
 
 export function LoginPanel() {
     const { login,user } = useContext(AuthContext);

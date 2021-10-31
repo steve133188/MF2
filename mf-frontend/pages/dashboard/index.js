@@ -3,10 +3,15 @@ import {SingleSelect2} from "../../components/Select";
 import {EnhancedTable} from "../../components/Table";
 import {EnhancedTable2} from "../../components/EnhancedTable2";
 import {EnhancedTable3} from "../../components/EnhancedTable3";
-import {LineChartCard} from "../../components/Cards";
+import {AverageDailyCard, LineChartCard} from "../../components/Cards";
 
 export default function Dashboard() {
 
+    const lineChartCardCell = [
+        {
+
+        }
+    ]
 
     return (
         <div className="dashboard-layout">
@@ -37,10 +42,6 @@ export default function Dashboard() {
             </div>
 
 
-
-            <div className="navbarPurple">
-
-            </div>
             <div className="chartGroup">
                 <div className="dashboardRow">
                     <div className="dashboardColumn"><MultipleLineChart title={"All Contacts"} yaxis={"Contacts"} data1={[25, 24, 32, 36, 32, 30, 33, 33, 20, 17, 19, 34]} data2={[10, 15, 8, 20, 17, 15, 13, 17, 16, 14, 5, 27]} data3={[15,9,24,16,15,15,20,16,4,3,14,7]} min1={"12"} min2={12} min3={12} /></div>
@@ -65,13 +66,13 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            <div className="navbarPurple"></div>
             <div className="lineCardGroupSet">
                 <div className="lineCardGroup1">
                     <LineChartCard />
                     <LineChartCard />
                     <LineChartCard />
                     <LineChartCard />
+                    <AverageDailyCard />
                 </div>
                 <div className="lineCardGroup2">
 

@@ -23,7 +23,6 @@ export const AuthContextProvider = ({children}) =>{
         authReady : false,
     })
 
-
     const router = useRouter()
     useEffect(()=>{
         if(!user){
@@ -31,9 +30,6 @@ export const AuthContextProvider = ({children}) =>{
         }
     },[])
     const login = (email , pwd)=>{
-        console.log(email)
-        console.log(pwd)
-
         if(email == "wiva.wei@matrixsense.tech" && pwd == "1234"){
             console.log("login success")
             setUser({userInfo:{name:"Wiva " , email: email , role:"super admin" , organization: {"Matrixsense":"CEO"}}, authReady: true})
@@ -51,13 +47,6 @@ export const AuthContextProvider = ({children}) =>{
             console.log("Something went Wrong")
             return "Something went Wrong"
         }
-
-        // AuthService.login(email, pwd).then(
-        //     () => {
-        //         setUser({userInfo:{name:"Lewis.chan " , email: email , role:"admin" , organization: {"Matrixsense":"Developer"}}, authReady: true});
-        //         router.push("/profile");
-        //     }
-        // )
     }
     return(
         <AuthContext.Provider value={{user, login}}>{children}</AuthContext.Provider>
