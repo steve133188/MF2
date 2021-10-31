@@ -4,6 +4,7 @@ import {NormalButton2} from "./Button"
 import {Switch} from "./Switch";
 import {AuthContext} from "../context/authContext";
 import {useContext , useState} from "react";
+import {Alert} from "./Alert";
 
 export function LoginPanel() {
     const { login,user } = useContext(AuthContext);
@@ -32,6 +33,7 @@ export function LoginPanel() {
     }
     return (
         <div className="container">
+            <Alert />
             <div className="loginPanel">
                 <div className="companyLogo">
                     <img src="MS_logo-square.svg" alt=""/>
