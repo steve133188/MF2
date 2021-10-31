@@ -33,8 +33,8 @@ var MI MongoInstance
 
 func MongoConnect() {
 	chanUrl, channelDB, chanCol := Util.GoDotEnvVariable("CHAN_URL"), Util.GoDotEnvVariable("CHAN_NAME"), Util.GoDotEnvVariable("CHAN_COLLECTION")
-	adminUrl, adminDB, adminCol := Util.GoDotEnvVariable("CHAN_URL"), Util.GoDotEnvVariable("CHAN_NAME"), Util.GoDotEnvVariable("CHAN_COLLECTION")
-	orgUrl, orgDB, orgCol := Util.GoDotEnvVariable("CHAN_URL"), Util.GoDotEnvVariable("CHAN_NAME"), Util.GoDotEnvVariable("CHAN_COLLECTION")
+	adminUrl, adminDB, adminCol := Util.GoDotEnvVariable("ADMIN_URL"), Util.GoDotEnvVariable("ADMIN_NAME"), Util.GoDotEnvVariable("ADMIN_COLLECTION")
+	orgUrl, orgDB, orgCol := Util.GoDotEnvVariable("ORG_URL"), Util.GoDotEnvVariable("ORG_NAME"), Util.GoDotEnvVariable("ORG_COLLECTION")
 	// adminCol := Util.GoDotEnvVariable("ADMIN_COLLECTION")
 	// orgCol := Util.GoDotEnvVariable("ORG_COLLECTION")
 
