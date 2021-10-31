@@ -4,10 +4,12 @@ import (
 	"mf-flowbuilder-services/DB"
 	"mf-flowbuilder-services/Routes"
 	"mf-flowbuilder-services/Services"
+	"mf-flowbuilder-services/Util"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	jwtware "github.com/gofiber/jwt/v2"
 )
 
 func main() {
@@ -22,9 +24,9 @@ func main() {
 	// 	return c.JSON(fiber.Map{"code": 200, "message": "Hello, MF-BOtBuilds-Services"})
 	// })
 
-	// app.Use(jwtware.New(jwtware.Config{
-	// 	SigningKey: []byte(Util.GoDotEnvVariable("Token_pwd")),
-	// }))
+	app.Use(jwtware.New(jwtware.Config{
+		SigningKey: []byte(Util.GoDotEnvVariable("Token_pwd")),
+	}))
 
 	app.Post("/", Services.Testing)
 	api := app.Group("/api")
