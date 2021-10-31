@@ -32,16 +32,16 @@ type MongoInstance struct {
 var MI MongoInstance
 
 func MongoConnect() {
-	adminUrl, adminDB, adminCol := Util.GoDotEnvVariable("ADMIN_DB_URL"), Util.GoDotEnvVariable("ADMIN_DB_NAME"), Util.GoDotEnvVariable("ADMIN_DB_COLLECTION")
+	adminCol := Util.GoDotEnvVariable("ADMIN_DB_COLLECTION")
 	chanUrl, channelDB, chanCol := Util.GoDotEnvVariable("CHAN_DB_URL"), Util.GoDotEnvVariable("CHAN_DB_NAME"), Util.GoDotEnvVariable("CHAN_DB_COLLECTION")
-	orgUrl, orgDB, orgCol := Util.GoDotEnvVariable("ORG_DB_URL"), Util.GoDotEnvVariable("ORG_DB_NAME"), Util.GoDotEnvVariable("ORG_DB_COLLECTION")
+	orgCol := Util.GoDotEnvVariable("ORG_DB_COLLECTION")
 
 	ctx := context.Background()
-	admin, err := mongo.Connect(ctx, options.Client().ApplyURI(adminUrl))
+	admin, err := mongo.Connect(ctx, options.Client().ApplyURI(chanUrl))
 	if err != nil {
 		fmt.Println("Cannot connect database")
 	}
-	admins := admin.Database(adminDB).Collection(adminCol)
+	admins := admin.Database(channelDB).Collection(adminCol)
 
 	channel, err := mongo.Connect(ctx, options.Client().ApplyURI(chanUrl))
 	if err != nil {
@@ -49,11 +49,11 @@ func MongoConnect() {
 	}
 	channels := channel.Database(channelDB).Collection(chanCol)
 
-	org, err := mongo.Connect(ctx, options.Client().ApplyURI(orgUrl))
+	org, err := mongo.Connect(ctx, options.Client().ApplyURI(chanUrl))
 	if err != nil {
 		fmt.Println("Cannot connect database")
 	}
-	orgs := org.Database(orgDB).Collection(orgCol)
+	orgs := org.Database(channelDB).Collection(orgCol)
 
 	id, err := uuid.NewV4()
 	if err != nil {

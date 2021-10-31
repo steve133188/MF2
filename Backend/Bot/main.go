@@ -17,9 +17,9 @@ func main() {
 
 	DB.MongoConnect()
 
-	app.Get("/test", func(c *fiber.Ctx) error {
-		return c.JSON(fiber.Map{"code": 200, "message": "Hello, MF-BotMessages-Services"})
-	})
+	// app.Get("/test", func(c *fiber.Ctx) error {
+	// 	return c.JSON(fiber.Map{"code": 200, "message": "Hello, MF-BotMessages-Services"})
+	// })
 
 	api := app.Group("/api")
 	Routes.BotBuildRoute(api.Group("/botmessages"))
