@@ -39,12 +39,12 @@ export function Search(props) {
 
 export function Search2({children,...props}) {
     const {handleChange ,type, svg, invalid } = props
-    const inputClassname = "searchSVG " + svg;
-    const invalidClassname = "requiredMessage " + invalid;
+    const inputClassName = "searchSVG " + svg;
+    const invalidClassName = "requiredMessage " + invalid;
     return (
         <div className="logoInputContainer">
-            <span className={invalidClassname}>Email or Password invalid</span>
-            <label className={inputClassname}>
+            <span className={invalidClassName}>Email or Password invalid</span>
+            <label className={inputClassName}>
                 <input
                         type={type}
                         onChange={handleChange}

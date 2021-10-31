@@ -39,11 +39,11 @@ export function CheckboxPill({children,...props}) {
 
 export function SingleBox(props) {
     const {fill, name, value, onClick} = props
-    const classname = "checkmark " + {fill}
+    const classnamee = "checkmark " + {fill}
     return (
         <label className="testCheckboxContainer">
             <input type="checkbox" name={name} value={value} onClick={onClick} />
-            <span className={classname}></span>
+            <span className={classnamee}></span>
         </label>
     )
 }

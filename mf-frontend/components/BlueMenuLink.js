@@ -3,9 +3,9 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 export function BlueMenuLink ({ children ,...props}) {
     const { link ,title, onClick, isSelect, setSelect } = props
-    const classname = isSelect?"blueLink menuSelected":"blueLink"
+    const classnamee = isSelect?"blueLink menuSelected":"blueLink"
     return (
-        <li className="blueMenuLink" onClick={onClick}><Link href={link}><a className={classname}>{title}</a></Link>{children}</li>
+        <li className="blueMenuLink" onClick={onClick}><Link href={link}><a className={classnamee}>{title}</a></Link>{children}</li>
     )
 }
 

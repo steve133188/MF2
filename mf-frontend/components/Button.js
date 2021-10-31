@@ -50,18 +50,6 @@ export function NormalButton({children,...props}) {
     )
 }
 
-export function ToggleButton(props) {
-     return(
-         <div className={props.classname}>
-             <ThemeProvider theme={theme}>
-                 <Button variant="contained" color="neutral">
-                     {props.children}
-                 </Button>
-             </ThemeProvider>
-         </div>
-     )
-}
-
 export function SelectButton() {
     return (
         <div className="normalButton">

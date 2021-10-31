@@ -3,7 +3,6 @@ import Image from 'next/image'
 import {CheckboxGroup2, Search3} from "../../components/Input";
 import {
     CancelButton,
-    ToggleButton,
     SelectButton,
     NormalButton,
     NormalButton2,
@@ -13,7 +12,6 @@ import {NavbarPurple} from "../../components/NavbarPurple";
 import {NormalTable} from "../../components/Table";
 import {PaginationControlled} from "../../components/Pagination";
 import {useState} from "react";
-import {TableItem} from "../../components/Table"
 import Avatar from "@mui/material/Avatar";
 import {Pill} from "../../components/Pill";
 import {Checkbox1, CheckboxPill, SingleBox} from "../../components/Checkbox"
