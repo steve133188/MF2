@@ -11,13 +11,6 @@ import (
 
 func GetAllUsers(c *fiber.Ctx) error {
 	fmt.Println("getall")
-	// token := c.Request().Header.Peek("Authorization")
-	// _, err := Util.ParseToken(string(token))
-	// if err != nil {
-	// 	return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-	// 		"error": "Unauthorized",
-	// 	})
-	// }
 
 	usersCollection := DB.MI.DBCol
 	// Query to filter
@@ -97,8 +90,7 @@ func GetUserByTeam(c *fiber.Ctx) error {
 
 	query := bson.D{{Key: "team", Value: paramID}}
 
-	err := customerCollection.FindOne(c.Context(), query).Decode(customer)
-
+	cursor, err := customerCollection.Find(c.Context(), query)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"success": false,
@@ -106,8 +98,17 @@ func GetUserByTeam(c *fiber.Ctx) error {
 			"error":   err,
 		})
 	}
+	var users []Model.User = make([]Model.User, 0)
 
-	// customer.Date = customer.Date.Add(time.Hour * 8)
+	// iterate the cursor and decode each item into a Todo
+	err = cursor.All(c.Context(), &users)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Error to interate cursor into result",
+			"error":   err.Error(),
+		})
+	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
