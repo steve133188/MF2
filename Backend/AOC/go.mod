@@ -1,4 +1,4 @@
-module mf-channel-service
+module mf-aoc-service
 
 go 1.17
 

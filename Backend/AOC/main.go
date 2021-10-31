@@ -1,9 +1,9 @@
 package main
 
 import (
-	"mf-channel-service/DB"
-	"mf-channel-service/Routes"
-	"mf-channel-service/Util"
+	"mf-aoc-service/DB"
+	"mf-aoc-service/Routes"
+	"mf-aoc-service/Util"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -28,9 +28,14 @@ func main() {
 	}))
 
 	api := app.Group("/api")
-
 	Routes.CustomersRoute(api.Group("/channel"))
 
-	app.Listen(":3012")
+	api = app.Group("/api")
+	Routes.AdminRoute(api.Group("/admin"))
+
+	api = app.Group("/api")
+	Routes.OrgRoute(api.Group("/organization"))
+
+	app.Listen(":3010")
 
 }

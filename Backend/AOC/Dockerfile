@@ -14,8 +14,8 @@ RUN go mod download
 
 COPY *.go ./
 
-RUN go build -o /docker-channel-api
+RUN go build -o /docker-aoc-api
 
-EXPOSE 3012
+EXPOSE 3010
 
-CMD [ "/docker-channel-api" ]
+CMD [ "/docker-aoc-api" ]
