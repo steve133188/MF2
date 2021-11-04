@@ -167,7 +167,7 @@ func ChangeUserPassword(c *fiber.Ctx) error {
 	}
 	update := bson.M{"$set": bson.M{"password": password}}
 
-	err = usersCollection.FindOneAndUpdate(c.Context(), bson.D{{Key: "email", Value: c.Params("email")}}, update).Decode(&user)
+	err = usersCollection.FindOneAndUpdate(c.Context(), bson.D{{Key: "email", Value: user.Email}}, update).Decode(&user)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false,

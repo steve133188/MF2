@@ -17,7 +17,8 @@ func CustomersRoute(route fiber.Router) {
 	route.Get("/sort/tag", Services.GetTagsSorting)
 	route.Get("/sort/channel", Services.GetChannelSorting)
 
-	route.Post("/create", Services.AddCustomer)
+	route.Post("/", Services.AddCustomer)
+	route.Post("/addMany", Services.AddManyCustomer)
 
 	route.Put("/id/:id", Services.UpdateCustomerByID)
 	route.Put("/tags", Services.UpdateCustomerTags)

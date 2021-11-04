@@ -13,6 +13,35 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
+func AddManyAgent(c *fiber.Ctx) error {
+	usersCollection := DB.MI.DBCol
+
+	// var datas []Model.User = make([]Model.User, 0)
+	type data []interface{}
+	var datas data
+	err := c.BodyParser(&datas)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Cannot parse JSON",
+			"error":   err,
+		})
+	}
+	// err := json.Unmarshal(c.Body(), &datas)
+	_, err = usersCollection.InsertMany(c.Context(), datas)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Cannot insert agent",
+			"error":   err,
+		})
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"success": true,
+	})
+}
+
 func AddAgent(c *fiber.Ctx) error {
 	usersCollection := DB.MI.DBCol
 
