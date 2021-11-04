@@ -1,23 +1,20 @@
 package Services
 
 import (
-	"fmt"
 	"mf-chat-services/DB"
 	"mf-chat-services/Model"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
-	uuid "github.com/nu7hatch/gouuid"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 func AddOneMessage(c *fiber.Ctx) error {
 	collection := DB.MI.DBCol
 
-	data := new(Model.Message)
+	data := new(Model.Chat)
 
 	err := c.BodyParser(&data)
-
-	// if error
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
@@ -25,15 +22,11 @@ func AddOneMessage(c *fiber.Ctx) error {
 			"error":   err,
 		})
 	}
-
-	id, err := uuid.NewV4()
+	// timeStr := time.Now().String()
 	if err != nil {
-		fmt.Println("Failed to generate UUID for message")
+		panic(err)
 	}
-	data.Id = id.String()
-
-	// data.DateTime = time.Now()
-
+	data.SentTime = time.Now()
 	result, err := collection.InsertOne(c.Context(), data)
 
 	if err != nil {
@@ -45,7 +38,7 @@ func AddOneMessage(c *fiber.Ctx) error {
 	}
 
 	// get the inserted data
-	todo := &Model.Message{}
+	todo := &Model.Chat{}
 	query := bson.D{{Key: "_id", Value: result.InsertedID}}
 
 	collection.FindOne(c.Context(), query).Decode(todo)
@@ -55,5 +48,34 @@ func AddOneMessage(c *fiber.Ctx) error {
 		"data": fiber.Map{
 			"message": todo,
 		},
+	})
+}
+
+func AddManyMessages(c *fiber.Ctx) error {
+	usersCollection := DB.MI.DBCol
+
+	// var datas []Model.User = make([]Model.User, 0)
+	type data []interface{}
+	var datas data
+	err := c.BodyParser(&datas)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Cannot parse JSON",
+			"error":   err,
+		})
+	}
+	// err := json.Unmarshal(c.Body(), &datas)
+	_, err = usersCollection.InsertMany(c.Context(), datas)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Cannot insert agent",
+			"error":   err,
+		})
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"success": true,
 	})
 }

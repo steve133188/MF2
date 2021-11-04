@@ -1,7 +1,6 @@
 package Services
 
 import (
-	"fmt"
 	"mf-chat-services/DB"
 	"mf-chat-services/Model"
 
@@ -12,11 +11,19 @@ import (
 func GetAllMessages(c *fiber.Ctx) error {
 	collection := DB.MI.DBCol
 
+	data := new(Model.Chat)
+	err := c.BodyParser(&data)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Cannot parse JSON",
+			"error":   err,
+		})
+	}
 	// Query to filter
-	query := bson.D{{}}
+	query := bson.D{{"customer", data.Customer}}
 
 	cursor, err := collection.Find(c.Context(), query)
-
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false,
@@ -24,8 +31,8 @@ func GetAllMessages(c *fiber.Ctx) error {
 			"error":   err.Error(),
 		})
 	}
-
-	var todos []Model.Message = make([]Model.Message, 0)
+	defer cursor.Close(c.Context())
+	var todos []Model.Chat = make([]Model.Chat, 0)
 
 	// iterate the cursor and decode each item into a Todo
 	err = cursor.All(c.Context(), &todos)
@@ -37,47 +44,40 @@ func GetAllMessages(c *fiber.Ctx) error {
 		})
 	}
 
-	// timezone UTC +8
-	// for i := range todos {
-	// 	todos[i].Date = todos[i].Date.Add(time.Hour * 8)
-	// }
-
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
-		"data": fiber.Map{
-			"messages": todos,
-		},
+		"data":    todos,
 	})
 }
 
-func GetOneMessageById(c *fiber.Ctx) error {
-	collection := DB.MI.DBCol
+// func GetOneMessageById(c *fiber.Ctx) error {
+// 	collection := DB.MI.DBCol
 
-	paramID := c.Params("id")
-	fmt.Println(paramID)
+// 	paramID := c.Params("id")
+// 	fmt.Println(paramID)
 
-	// find todo and return
-	todo := &Model.Message{}
+// 	// find todo and return
+// 	todo := &Model.Message{}
 
-	query := bson.D{{Key: "id", Value: paramID}}
+// 	query := bson.D{{Key: "id", Value: paramID}}
 
-	err := collection.FindOne(c.Context(), query).Decode(todo)
+// 	err := collection.FindOne(c.Context(), query).Decode(todo)
 
-	// timezone UTC +8
-	// chat.Time = chat.Time.Add(time.Hour * 8)
+// 	// timezone UTC +8
+// 	// chat.Time = chat.Time.Add(time.Hour * 8)
 
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "Message Not found",
-			"error":   err,
-		})
-	}
+// 	if err != nil {
+// 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+// 			"success": false,
+// 			"message": "Message Not found",
+// 			"error":   err,
+// 		})
+// 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data": fiber.Map{
-			"message": todo,
-		},
-	})
-}
+// 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+// 		"success": true,
+// 		"data": fiber.Map{
+// 			"message": todo,
+// 		},
+// 	})
+// }

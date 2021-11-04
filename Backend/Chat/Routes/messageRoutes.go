@@ -7,9 +7,9 @@ import (
 )
 
 func ChatRoute(route fiber.Router) {
-	route.Get("/", Services.GetAllMessages)
-	route.Get("/id/:id", Services.GetOneMessageById)
-	route.Post("/", Services.AddOneMessage)
-	route.Put("/id/:id", Services.UpdateOneMessageById)
-	route.Delete("/id/:id", Services.DeleteOneMessageById)
+	route.Get("/getAll", Services.GetAllMessages)
+
+	route.Post("/postOne", Services.AddOneMessage)
+	route.Post("/postMany", Services.AddManyMessages)
+
 }
