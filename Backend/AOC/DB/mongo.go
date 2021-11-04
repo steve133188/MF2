@@ -21,29 +21,37 @@ import (
 // }
 
 type MongoInstance struct {
-	AdminClient *mongo.Client
-	ChanClient  *mongo.Client
-	OrgClient   *mongo.Client
-	AdminDBCol  *mongo.Collection
-	ChanDBCol   *mongo.Collection
-	OrgDBCol    *mongo.Collection
+	RoleClient *mongo.Client
+	TagsClient *mongo.Client
+	ChanClient *mongo.Client
+	OrgClient  *mongo.Client
+	RoleDBCol  *mongo.Collection
+	TagsDBCol  *mongo.Collection
+	ChanDBCol  *mongo.Collection
+	OrgDBCol   *mongo.Collection
 }
 
 var MI MongoInstance
 
 func MongoConnect() {
 	chanUrl, channelDB, chanCol := Util.GoDotEnvVariable("CHAN_URL"), Util.GoDotEnvVariable("CHAN_NAME"), Util.GoDotEnvVariable("CHAN_COLLECTION")
-	adminUrl, adminDB, adminCol := Util.GoDotEnvVariable("ADMIN_URL"), Util.GoDotEnvVariable("ADMIN_NAME"), Util.GoDotEnvVariable("ADMIN_COLLECTION")
+	adminUrl, adminDB, roleCol, tagsCol := Util.GoDotEnvVariable("ADMIN_URL"), Util.GoDotEnvVariable("ADMIN_NAME"), Util.GoDotEnvVariable("ROLE_COLLECTION"), Util.GoDotEnvVariable("TAGS_COLLECTION")
 	orgUrl, orgDB, orgCol := Util.GoDotEnvVariable("ORG_URL"), Util.GoDotEnvVariable("ORG_NAME"), Util.GoDotEnvVariable("ORG_COLLECTION")
 	// adminCol := Util.GoDotEnvVariable("ADMIN_COLLECTION")
 	// orgCol := Util.GoDotEnvVariable("ORG_COLLECTION")
 
 	ctx := context.Background()
-	admin, err := mongo.Connect(ctx, options.Client().ApplyURI(adminUrl))
+	role, err := mongo.Connect(ctx, options.Client().ApplyURI(adminUrl))
 	if err != nil {
 		fmt.Println("Cannot connect database")
 	}
-	admins := admin.Database(adminDB).Collection(adminCol)
+	roles := role.Database(adminDB).Collection(roleCol)
+
+	tag, err := mongo.Connect(ctx, options.Client().ApplyURI(adminUrl))
+	if err != nil {
+		fmt.Println("Cannot connect database")
+	}
+	tags := tag.Database(adminDB).Collection(tagsCol)
 
 	channel, err := mongo.Connect(ctx, options.Client().ApplyURI(chanUrl))
 	if err != nil {
@@ -70,11 +78,13 @@ func MongoConnect() {
 
 	fmt.Println("DB connected!")
 	MI = MongoInstance{
-		AdminClient: admin,
-		AdminDBCol:  admins,
-		ChanClient:  channel,
-		ChanDBCol:   channels,
-		OrgClient:   org,
-		OrgDBCol:    orgs,
+		RoleClient: role,
+		RoleDBCol:  roles,
+		TagsClient: tag,
+		TagsDBCol:  tags,
+		ChanClient: channel,
+		ChanDBCol:  channels,
+		OrgClient:  org,
+		OrgDBCol:   orgs,
 	}
 }

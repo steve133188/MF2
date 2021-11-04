@@ -22,14 +22,19 @@ func AdminRoute(route fiber.Router) {
 	route.Get("/getRole", Services.GetAllRole)
 	route.Get("/getRoleById/:id", Services.GetRoleById)
 	route.Get("/getRoleByName/:name", Services.GetRoleByName)
+	route.Get("getAllTags", Services.GetAllTags)
+	route.Get("getTags/:name", Services.GetTagesByName)
 
 	route.Post("/addRole", Services.AddRole)
+	route.Post("/addTags", Services.AddTags)
 
 	route.Put("/putRole-nd/:id", Services.UpdateRoleByID)
 	route.Put("/putRole-name/:name", Services.UpdateRoleByName)
+	route.Put("/putTages/:name", Services.UpdateTagsByName)
 
 	route.Delete("/delRole-id/:id", Services.DeleteRoleById)
 	route.Delete("/delRole-name/:name", Services.DeleteRoleByName)
+	route.Delete("/delTages/:name", Services.DeleteTagsByName)
 
 }
 

@@ -15,25 +15,6 @@ type Channel struct {
 	CallbackUrl              string `json:"callback_url" bson:"callback_url"`
 }
 
-// type Organization struct {
-// 	ID       string `json:"id" bson:"id"`
-// 	Name     string `json:"name" bson:"name"`
-// 	Role     string `json:"role" bson:"role"`
-// 	Email    string `json:"email" bson:"email"`
-// 	Phone    string `json:"phone" bson:"phone"`
-// 	Leads    string `json:"leads" bson:"leads"`
-// 	TeamId   string `json:"team_id" bson:"team_id"`
-// 	Division string `json:"division" bson:"division"`
-// }
-// type Team struct {
-// 	ID        string   `json:"id" bson:"id"`
-// 	Name      string   `json:"name" bson:"name"`
-// 	Division  string   `json:"division" bson:"division"`
-// 	Num       int      `json:"num" bson:"num"`
-// 	UserName  []string `json:"user_name" bson:"user_name"`
-// 	CreatedAt string   `json:"created_at" bson:"created"`
-// }
-
 type Division struct {
 	ID        string   `json:"id" bson:"id"`
 	Name      string   `json:"name" bson:"name"`
@@ -41,23 +22,6 @@ type Division struct {
 	Team      []string `json:"team" bson:"team"`
 	CreatedAt string   `json:"created_at" bson:"created"`
 }
-
-// type Admin struct {
-// 	ID          string `json:"id" bson:"id"`
-// 	AdminName   string `json:"username"`
-// 	Description string `json:"description"`
-// 	LastAction  string `json:"last_action"`
-
-// 	TargetUserId        string `json:"target_user_id"`
-// 	TargetUsername      string `json:"target_username"`
-// 	TargetUserPhone     string `json:"target_user_phone"`
-// 	TargetCustomerId    string `json:"target_customer_id"`
-// 	TargetCustomerName  string `json:"target_custmer_name"`
-// 	TargetCustomerPhone string `json:"target_customer_phone"`
-
-// 	UpdatedTime string `json:"updated_time"`
-// 	CreatedTime string `json:"created_time"`
-// }
 
 type Role struct {
 	ID               string `json:"id" bson:"id"`
@@ -71,4 +35,12 @@ type Role struct {
 	ProductCatalogue bool   `json:"product_catalogue" bson:"product_catalogue"`
 	Organization     bool   `json:"organization" bson:"organization"`
 	Admin            bool   `json:"admin" bson:"admin"`
+}
+
+type Tags struct {
+	ID      string `json:"id" bson:"id:"`
+	Name    string `json:"tags" bson:"tags"`
+	Total   int    `json:"total" bson:"total"`
+	Created string `json:"created" bson:"created"`
+	Updated string `json:"updated" bson:"updated"`
 }

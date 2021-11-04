@@ -58,7 +58,7 @@ func AddChannel(c *fiber.Ctx) error {
 }
 
 func AddRole(c *fiber.Ctx) error {
-	collection := DB.MI.AdminDBCol
+	collection := DB.MI.RoleDBCol
 
 	data := new(Model.Role)
 
@@ -75,6 +75,49 @@ func AddRole(c *fiber.Ctx) error {
 
 	id := xid.New()
 	data.ID = id.String()
+	result, err := collection.InsertOne(c.Context(), data)
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to insert",
+			"error":   err,
+		})
+	}
+
+	// get the inserted data
+	todo := &Model.Role{}
+	query := bson.D{{Key: "_id", Value: result.InsertedID}}
+
+	collection.FindOne(c.Context(), query).Decode(todo)
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"success": true,
+		"data":    todo,
+	})
+}
+
+func AddTags(c *fiber.Ctx) error {
+	collection := DB.MI.TagsDBCol
+
+	data := new(Model.Tags)
+
+	err := c.BodyParser(&data)
+
+	// if error
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Cannot parse JSON",
+			"error":   err,
+		})
+	}
+
+	id := xid.New()
+	data.ID = id.String()
+	data.Created = time.Now().Format("January 2, 2006")
+	data.Updated = time.Now().Format("January 2, 2006")
+
 	result, err := collection.InsertOne(c.Context(), data)
 
 	if err != nil {

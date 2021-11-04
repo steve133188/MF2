@@ -11,6 +11,7 @@ func CustomersRoute(route fiber.Router) {
 	route.Get("/id/:id", Services.GetCustomersById)
 	route.Get("/name/:name", Services.GetCustomersByName)
 	route.Get("/team/:team", Services.GetAllByTeamSorting)
+	route.Get("/chanInfo/:phone", Services.GetChannelInfoByPhone)
 
 	route.Get("/sort/agent", Services.GetAgentSorting)
 	route.Get("/sort/tag", Services.GetTagsSorting)
@@ -19,7 +20,9 @@ func CustomersRoute(route fiber.Router) {
 	route.Post("/create", Services.AddCustomer)
 
 	route.Put("/id/:id", Services.UpdateCustomerByID)
+	route.Put("/tags", Services.UpdateCustomerTags)
+	route.Put("/chanInfo", Services.UpdateChannelInfoByPhone)
 
 	route.Delete("/id/:id", Services.DeleteCustomerById)
-	route.Delete("/delete", Services.DeleteCustomer)
+	route.Delete("/delete/:phone", Services.DeleteCustomerByPhone)
 }

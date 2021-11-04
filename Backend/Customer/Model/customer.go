@@ -21,10 +21,10 @@ type Customer struct {
 	Phone        []string `json:"phone" bson:"phone"`
 	Organization string   `json:"organization" bson:"organization"`
 	Channel      []string `json:"channel" bson:"channel"`
-	Team         string   `json:"team" bson:"team"`
+	ChannelInfo  []string `json:"channel_info" bson:"channel_info"`
+	Group        string   `json:"group" bson:"group"`
 	Agent        []string `json:"agent" bson:"agent"`
 	Tags         []string `json:"tags" bson:"tags"`
-	Assignee     []string `json:"assignee" bson:"assignee"`
 	Birthday     string   `json:"birthday" bson:"birthday"`
 	Country      string   `json:"country" bson:"country"`
 	Address      string   `json:"address" bson:"address"`

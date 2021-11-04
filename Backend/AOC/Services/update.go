@@ -47,7 +47,7 @@ func UpdateChannelById(c *fiber.Ctx) error {
 }
 
 func UpdateRoleByID(c *fiber.Ctx) error {
-	collection := DB.MI.AdminDBCol
+	collection := DB.MI.RoleDBCol
 	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	todo := new(Model.Role)
 
@@ -73,14 +73,12 @@ func UpdateRoleByID(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"success": true,
-		"data": fiber.Map{
-			"admin": todo,
-		},
+		"data":    todo,
 	})
 }
 
 func UpdateRoleByName(c *fiber.Ctx) error {
-	collection := DB.MI.AdminDBCol
+	collection := DB.MI.RoleDBCol
 	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	todo := new(Model.Role)
 
@@ -106,8 +104,37 @@ func UpdateRoleByName(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"success": true,
-		"data": fiber.Map{
-			"admin": todo,
-		},
+		"data":    todo,
+	})
+}
+
+func UpdateTagsByName(c *fiber.Ctx) error {
+	collection := DB.MI.TagsDBCol
+	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	todo := new(Model.Tags)
+
+	if err := c.BodyParser(todo); err != nil {
+		log.Println(err)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to parse body",
+			"error":   err,
+		})
+	}
+
+	update := bson.D{{Key: "$set", Value: todo}}
+
+	_, err := collection.UpdateOne(c.Context(), bson.D{{Key: "name", Value: c.Params("name")}}, update)
+	fmt.Println(todo)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to update",
+			"error":   err.Error(),
+		})
+	}
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"success": true,
+		"data":    todo,
 	})
 }

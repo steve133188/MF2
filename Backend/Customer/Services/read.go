@@ -95,6 +95,32 @@ func GetCustomersByName(c *fiber.Ctx) error {
 	})
 }
 
+func GetChannelInfoByPhone(c *fiber.Ctx) error {
+	customerCollection := DB.MI.DBCol
+
+	paramID := c.Params("phone")
+	fmt.Println(paramID)
+
+	// find todo and return
+	customer := new(Model.Customer)
+
+	query := bson.D{{Key: "phone", Value: paramID}}
+
+	err := customerCollection.FindOne(c.Context(), query).Decode(&customer)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"message": "Customer Not found",
+			"error":   err,
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": true,
+		"data":    customer,
+	})
+}
+
 func GetAllByTeamSorting(c *fiber.Ctx) error {
 	customerCollection := DB.MI.DBCol
 
