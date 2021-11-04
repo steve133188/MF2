@@ -14,22 +14,22 @@ package Model
 // }
 
 type Customer struct {
-	ID           string      `json:"id" bson:"id"`
-	Name         string      `json:"name" bson:"name"`
-	FirstName    string      `json:"first_name" bson:"first_name"`
-	LastName     string      `json:"last_name" bson:"last_name"`
-	Phone        interface{} `json:"phone" bson:"phone"`
-	Organization string      `json:"organization" bson:"organization"`
-	Channel      string      `json:"channel" bson:"channel"`
-	Team         string      `json:"team" bson:"team"`
-	Agent        interface{} `json:"agent" bson:"agent"`
-	Tags         interface{} `json:"tags" bson:"tags"`
-	Assignee     interface{} `json:"assignee" bson:"assignee"`
-	Birthday     string      `json:"birthday" bson:"birthday"`
-	Country      string      `json:"country" bson:"country"`
-	Address      string      `json:"address" bson:"address"`
-	CreatedAt    string      `json:"created_at" bson:"created_at"`
-	UpdatedAt    string      `json:"updated_at" bson:"updated_at"`
+	ID           string   `json:"id" bson:"id"`
+	Name         string   `json:"name" bson:"name"`
+	FirstName    string   `json:"first_name" bson:"first_name"`
+	LastName     string   `json:"last_name" bson:"last_name"`
+	Phone        []string `json:"phone" bson:"phone"`
+	Organization string   `json:"organization" bson:"organization"`
+	Channel      []string `json:"channel" bson:"channel"`
+	Team         string   `json:"team" bson:"team"`
+	Agent        []string `json:"agent" bson:"agent"`
+	Tags         []string `json:"tags" bson:"tags"`
+	Assignee     []string `json:"assignee" bson:"assignee"`
+	Birthday     string   `json:"birthday" bson:"birthday"`
+	Country      string   `json:"country" bson:"country"`
+	Address      string   `json:"address" bson:"address"`
+	CreatedAt    string   `json:"created_at" bson:"created_at"`
+	UpdatedAt    string   `json:"updated_at" bson:"updated_at"`
 }
 
 type Sort struct {

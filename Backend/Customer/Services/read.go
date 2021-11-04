@@ -123,7 +123,7 @@ func GetAllByTeamSorting(c *fiber.Ctx) error {
 			"error":   err.Error(),
 		})
 	}
-
+	defer cursor.Close(c.Context())
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
 		"data":    customers,
@@ -135,12 +135,17 @@ func GetAgentSorting(c *fiber.Ctx) error {
 
 	data := new(Model.Sort)
 	_ = c.BodyParser(&data)
-	fmt.Println(data.Name)
+	// fmt.Println(data.Name)
 
 	// find todo and return
 	var customers []Model.Customer = make([]Model.Customer, 0)
-	filter := bson.D{{Key: "agent", Value: data.Name}}
+	var val bson.A
+	for _, v := range data.Name {
+		val = append(val, v)
+	}
 
+	filter := bson.D{{"agent", bson.D{{"$in", val}}}}
+	fmt.Println(filter)
 	cursor, err := customerCollection.Find(c.Context(), filter)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
@@ -173,7 +178,14 @@ func GetTagsSorting(c *fiber.Ctx) error {
 
 	// find todo and return
 	var customers []Model.Customer = make([]Model.Customer, 0)
-	filter := bson.D{{Key: "tags", Value: data.Name}}
+	var val bson.A
+	for _, v := range data.Name {
+		val = append(val, v)
+	}
+
+	filter := bson.D{{"tags", bson.D{{"$in", val}}}}
+	fmt.Println(filter)
+	// filter := bson.D{{Key: "tags", Value: data.Name}}
 	cursor, err := customerCollection.Find(c.Context(), filter)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
@@ -207,7 +219,14 @@ func GetChannelSorting(c *fiber.Ctx) error {
 
 	// find todo and return
 	var customers []Model.Customer = make([]Model.Customer, 0)
-	filter := bson.D{{Key: "channel", Value: data.Name}}
+	var val bson.A
+	for _, v := range data.Name {
+		val = append(val, v)
+	}
+
+	filter := bson.D{{"channel", bson.D{{"$in", val}}}}
+	fmt.Println(filter)
+	// filter := bson.D{{Key: "channel", Value: data.Name}}
 
 	cursor, err := customerCollection.Find(c.Context(), filter)
 	if err != nil {

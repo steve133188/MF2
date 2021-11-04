@@ -5,7 +5,6 @@ import (
 	"log"
 	"mf-aoc-service/DB"
 	"mf-aoc-service/Model"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
@@ -47,10 +46,10 @@ func UpdateChannelById(c *fiber.Ctx) error {
 	})
 }
 
-func UpdateAdminByID(c *fiber.Ctx) error {
+func UpdateRoleByID(c *fiber.Ctx) error {
 	collection := DB.MI.AdminDBCol
 	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	todo := new(Model.Admin)
+	todo := new(Model.Role)
 
 	if err := c.BodyParser(todo); err != nil {
 		log.Println(err)
@@ -61,8 +60,6 @@ func UpdateAdminByID(c *fiber.Ctx) error {
 		})
 	}
 
-	todo.UpdatedTime = time.Now().Format("January 2, 2006")
-	todo.ID = c.Params("id")
 	update := bson.D{{Key: "$set", Value: todo}}
 
 	_, err := collection.UpdateOne(c.Context(), bson.D{{Key: "id", Value: c.Params("id")}}, update)
@@ -70,7 +67,40 @@ func UpdateAdminByID(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false,
-			"message": "Admin failed to update",
+			"message": "Failed to update",
+			"error":   err.Error(),
+		})
+	}
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"success": true,
+		"data": fiber.Map{
+			"admin": todo,
+		},
+	})
+}
+
+func UpdateRoleByName(c *fiber.Ctx) error {
+	collection := DB.MI.AdminDBCol
+	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	todo := new(Model.Role)
+
+	if err := c.BodyParser(todo); err != nil {
+		log.Println(err)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to parse body",
+			"error":   err,
+		})
+	}
+
+	update := bson.D{{Key: "$set", Value: todo}}
+
+	_, err := collection.UpdateOne(c.Context(), bson.D{{Key: "name", Value: c.Params("name")}}, update)
+	fmt.Println(todo)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to update",
 			"error":   err.Error(),
 		})
 	}

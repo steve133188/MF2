@@ -11,13 +11,6 @@ import (
 
 func GetAllChannelInfo(c *fiber.Ctx) error {
 	fmt.Println("getall")
-	// token := c.Request().Header.Peek("Authorization")
-	// _, err := Util.ParseToken(string(token))
-	// if err != nil {
-	// 	return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-	// 		"error": "Unauthorized",
-	// 	})
-	// }
 
 	usersCollection := DB.MI.ChanDBCol
 	// Query to filter
@@ -77,7 +70,7 @@ func GetChannelInfoById(c *fiber.Ctx) error {
 	})
 }
 
-func GetAllAdmins(c *fiber.Ctx) error {
+func GetAllRole(c *fiber.Ctx) error {
 	collection := DB.MI.AdminDBCol
 
 	// Query to filter
@@ -92,8 +85,7 @@ func GetAllAdmins(c *fiber.Ctx) error {
 			"error":   err.Error(),
 		})
 	}
-
-	var todos []Model.Admin = make([]Model.Admin, 0)
+	var todos []Model.Role = make([]Model.Role, 0)
 
 	// iterate the cursor and decode each item into a Todo
 	err = cursor.All(c.Context(), &todos)
@@ -104,32 +96,22 @@ func GetAllAdmins(c *fiber.Ctx) error {
 			"error":   err.Error(),
 		})
 	}
-	// for i := range todos {
-	// 	todos[i].Date = todos[i].Date.Add(time.Hour * 8)
-	// }
+	defer cursor.Close(c.Context())
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
-		"data": fiber.Map{
-			"records": todos,
-		},
+		"data":    todos,
 	})
 }
 
-func GetAdminById(c *fiber.Ctx) error {
+func GetRoleById(c *fiber.Ctx) error {
 	collection := DB.MI.AdminDBCol
-
-	// get parameter value
-	// paramID, err := primitive.ObjectIDFromHex(c.Params("id")) //valid id: 24 hex
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
 
 	paramID := c.Params("id")
 	fmt.Println(paramID)
 
 	// find todo and return
-	todo := &Model.Admin{}
+	todo := &Model.Role{}
 
 	query := bson.D{{Key: "id", Value: paramID}}
 
@@ -140,15 +122,76 @@ func GetAdminById(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"success": false,
-			"message": "Analysis record Not found",
+			"message": "Not found",
 			"error":   err,
 		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
-		"data": fiber.Map{
-			"admin": todo,
-		},
+		"data":    todo,
+	})
+}
+
+func GetRoleByName(c *fiber.Ctx) error {
+	collection := DB.MI.AdminDBCol
+
+	paramID := c.Params("name")
+	fmt.Println(paramID)
+
+	// find todo and return
+	todo := &Model.Role{}
+
+	query := bson.D{{Key: "name", Value: paramID}}
+
+	err := collection.FindOne(c.Context(), query).Decode(todo)
+
+	// todo.Date = todo.Date.Add(time.Hour * 8)
+
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"message": "Not found",
+			"error":   err,
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": true,
+		"data":    todo,
+	})
+}
+
+func GetAllOrgInfo(c *fiber.Ctx) error {
+	fmt.Println("getall")
+	usersCollection := DB.MI.OrgDBCol
+	// Query to filter
+	query := bson.D{{}}
+
+	cursor, err := usersCollection.Find(c.Context(), query)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to find context",
+			"error":   err.Error(),
+		})
+	}
+
+	defer cursor.Close(c.Context())
+	var users []Model.Division = make([]Model.Division, 0)
+
+	// iterate the cursor and decode each item into a Todo
+	err = cursor.All(c.Context(), &users)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Error to interate cursor into result",
+			"error":   err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": true,
+		"data":    users,
 	})
 }

@@ -25,35 +25,50 @@ type Channel struct {
 // 	TeamId   string `json:"team_id" bson:"team_id"`
 // 	Division string `json:"division" bson:"division"`
 // }
-type Team struct {
-	ID        string   `json:"id" bson:"id"`
-	Name      string   `json:"name" bson:"name"`
-	Division  string   `json:"division" bson:"division"`
-	Num       int      `json:"num" bson:"num"`
-	UserName  []string `json:"user_name" bson:"user_name"`
-	CreatedAt string   `json:"created_at" bson:"created"`
-}
+// type Team struct {
+// 	ID        string   `json:"id" bson:"id"`
+// 	Name      string   `json:"name" bson:"name"`
+// 	Division  string   `json:"division" bson:"division"`
+// 	Num       int      `json:"num" bson:"num"`
+// 	UserName  []string `json:"user_name" bson:"user_name"`
+// 	CreatedAt string   `json:"created_at" bson:"created"`
+// }
 
 type Division struct {
 	ID        string   `json:"id" bson:"id"`
 	Name      string   `json:"name" bson:"name"`
+	TeamId    string   `json:"team_id" bson:"team_id"`
 	Team      []string `json:"team" bson:"team"`
 	CreatedAt string   `json:"created_at" bson:"created"`
 }
 
-type Admin struct {
-	ID          string `json:"id" bson:"id"`
-	AdminName   string `json:"username"`
-	Description string `json:"description"`
-	LastAction  string `json:"last_action"`
+// type Admin struct {
+// 	ID          string `json:"id" bson:"id"`
+// 	AdminName   string `json:"username"`
+// 	Description string `json:"description"`
+// 	LastAction  string `json:"last_action"`
 
-	TargetUserId        string `json:"target_user_id"`
-	TargetUsername      string `json:"target_username"`
-	TargetUserPhone     string `json:"target_user_phone"`
-	TargetCustomerId    string `json:"target_customer_id"`
-	TargetCustomerName  string `json:"target_custmer_name"`
-	TargetCustomerPhone string `json:"target_customer_phone"`
+// 	TargetUserId        string `json:"target_user_id"`
+// 	TargetUsername      string `json:"target_username"`
+// 	TargetUserPhone     string `json:"target_user_phone"`
+// 	TargetCustomerId    string `json:"target_customer_id"`
+// 	TargetCustomerName  string `json:"target_custmer_name"`
+// 	TargetCustomerPhone string `json:"target_customer_phone"`
 
-	UpdatedTime string `json:"updated_time"`
-	CreatedTime string `json:"created_time"`
+// 	UpdatedTime string `json:"updated_time"`
+// 	CreatedTime string `json:"created_time"`
+// }
+
+type Role struct {
+	ID               string `json:"id" bson:"id"`
+	Name             string `json:"name" bson:"name"`
+	Dashboard        bool   `json:"dashboard" bson:"dashboard"`
+	LiveChat         bool   `json:"livechat" bson:"livechat"`
+	Contact          bool   `json:"contact" bson:"contact"`
+	Boardcast        bool   `json:"boardcast" bson:"boardcast"`
+	FlowBuilder      bool   `json:"flowbuilder" bson:"flowbuilder"`
+	Integrations     bool   `json:"integration" bson:"integration"`
+	ProductCatalogue bool   `json:"product_catalogue" bson:"product_catalogue"`
+	Organization     bool   `json:"organization" bson:"organization"`
+	Admin            bool   `json:"admin" bson:"admin"`
 }

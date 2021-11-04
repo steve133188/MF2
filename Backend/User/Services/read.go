@@ -86,7 +86,7 @@ func GetUserByTeam(c *fiber.Ctx) error {
 	fmt.Println(paramID)
 
 	// find todo and return
-	customer := &Model.User{}
+	// customer := &Model.User{}
 
 	query := bson.D{{Key: "team", Value: paramID}}
 
@@ -112,7 +112,7 @@ func GetUserByTeam(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
-		"data":    customer,
+		"data":    users,
 	})
 }
 

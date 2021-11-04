@@ -40,7 +40,7 @@ func DeleteChannelById(c *fiber.Ctx) error {
 	})
 }
 
-func DeleteAdminById(c *fiber.Ctx) error {
+func DeleteRoleById(c *fiber.Ctx) error {
 	collection := DB.MI.AdminDBCol
 
 	// get param
@@ -55,20 +55,52 @@ func DeleteAdminById(c *fiber.Ctx) error {
 		if err == mongo.ErrNoDocuments {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"success": false,
-				"message": "Admin Not found",
+				"message": "Not found",
 				"error":   err,
 			})
 		}
 
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
-			"message": "Cannot delete admin",
+			"message": "Cannot delete",
 			"error":   err,
 		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": "Delete admin (ID = " + paramID + ") success",
+		"success": true,
+	})
+}
+
+func DeleteRoleByName(c *fiber.Ctx) error {
+	collection := DB.MI.AdminDBCol
+
+	// get param
+	paramID := c.Params("name")
+
+	// find and delete todo
+	query := bson.D{{Key: "name", Value: paramID}}
+
+	err := collection.FindOneAndDelete(c.Context(), query).Err()
+
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"success": false,
+				"message": "Not found",
+				"error":   err,
+			})
+		}
+
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Cannot delete",
+			"error":   err,
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": true,
 	})
 }
 
