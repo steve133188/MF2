@@ -126,7 +126,8 @@ func UpdateUserRole(c *fiber.Ctx) error {
 	}
 
 	update := bson.M{"$set": bson.M{
-		"role": user.Role,
+		"role":      user.Role,
+		"authority": user.Authority,
 	}}
 
 	_, err := usersCollection.UpdateOne(c.Context(), bson.D{{Key: "username", Value: user.UserName}}, update)

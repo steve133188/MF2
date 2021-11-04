@@ -39,22 +39,22 @@ package Model
 // }
 
 type User struct {
-	ID           string   `json:"id" bson:"id"`
-	CreatedAt    string   `json:"created_at" bson:"created_at"`
-	Password     string   `json:"password" bson:"password"`
-	UserName     string   `json:"username" bson:"username"`
-	Email        string   `json:"email" bson:"email"`
-	Role         string   `json:"role" bson:"role"`
-	Status       string   `json:"status" bson:"status"`
-	Interface    string   `json:"interface" bson:"interface"`
-	AssignTo     string   `json:"assign_to" bson:"assign_to"`
-	Leads        string   `json:"leads" bson:"leads"`
-	Team         string   `json:"team" bson:"team"`
-	DivisionName string   `json:"division_name" bson:"division_name"`
-	LastLogin    string   `json:"last_login" bson:"last_login"`
-	Right        []string `json:"right" bson:"right"`
-	Channels     []string `json:"channels" bson:"channels"`
-	Phone        string   `json:"phone" bson:"phone"`
+	ID        string `json:"id" bson:"id"`
+	CreatedAt string `json:"created_at" bson:"created_at"`
+	Password  string `json:"password" bson:"password"`
+	UserName  string `json:"username" bson:"username"`
+	Email     string `json:"email" bson:"email"`
+	Role      string `json:"role" bson:"role"`
+	Status    string `json:"status" bson:"status"`
+	// Interface    string      `json:"interface" bson:"interface"`
+	// AssignTo     string      `json:"assign_to" bson:"assign_to"`
+	Leads        string      `json:"leads" bson:"leads"`
+	Team         string      `json:"team" bson:"team"`
+	DivisionName string      `json:"division_name" bson:"division_name"`
+	LastLogin    string      `json:"last_login" bson:"last_login"`
+	Authority    interface{} `json:"authoruty" bson:"authority"`
+	Channels     []string    `json:"channels" bson:"channels"`
+	Phone        string      `json:"phone" bson:"phone"`
 }
 
 // type Token struct {
