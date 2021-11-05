@@ -57,6 +57,11 @@ type User struct {
 	Phone        string      `json:"phone" bson:"phone"`
 }
 
+type Div struct {
+	Division string `json:"division" bson:"division"`
+	Team     string `json:"team" bson:"team"`
+}
+
 // type Token struct {
 // 	Password string `json:"password"`
 // 	UserName string `json:"username"`

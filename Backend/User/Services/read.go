@@ -80,15 +80,16 @@ func GetUsersById(c *fiber.Ctx) error {
 
 func GetUserByTeam(c *fiber.Ctx) error {
 	customerCollection := DB.MI.DBCol
-
-	// get parameter value
-	paramID := c.Params("team")
-	fmt.Println(paramID)
-
-	// find todo and return
-	// customer := &Model.User{}
-
-	query := bson.D{{Key: "team", Value: paramID}}
+	data := new(Model.Div)
+	err := c.BodyParser(&data)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to parse body",
+			"error":   err,
+		})
+	}
+	query := bson.D{{"division_name", data.Division}, {"team", data.Team}}
 
 	cursor, err := customerCollection.Find(c.Context(), query)
 	if err != nil {
