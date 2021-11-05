@@ -9,7 +9,6 @@ import (
 func ChannelRoute(route fiber.Router) {
 	route.Get("/", Services.GetAllChannelInfo)
 	route.Get("/id/:id", Services.GetChannelInfoById)
-	// route.Get("/name/:name", Services.GetOrganizationByName)
 
 	route.Post("/", Services.AddChannel)
 
@@ -23,7 +22,7 @@ func AdminRoute(route fiber.Router) {
 	route.Get("/getRoleById/:id", Services.GetRoleById)
 	route.Get("/getRoleByName/:name", Services.GetRoleByName)
 	route.Get("getAllTags", Services.GetAllTags)
-	route.Get("getTags/:name", Services.GetTagesByName)
+	route.Get("getTags/:name", Services.GetTagsByName)
 
 	route.Post("/addRole", Services.AddRole)
 	route.Post("/addTags", Services.AddTags)
@@ -36,18 +35,19 @@ func AdminRoute(route fiber.Router) {
 	route.Delete("/delRole-name/:name", Services.DeleteRoleByName)
 	route.Delete("/delTages/:name", Services.DeleteTagsByName)
 
+	// route.Post("/addGroup", Services.AddGroup)
+	// route.Put("/editGroup", Services.EditGroup)
+	// route.Put("/delGroup", Services.DelGroup)
 }
 
 func OrgRoute(route fiber.Router) {
-	// route.Get("/", Services.GetAllOrganization)
-	// route.Get("/id/:id", Services.GetCustomersById)
-	// route.Get("/name/:name", Services.GetOrganizationByName)
-	route.Get("/get", Services.GetAllOrgInfo)
-	// route.Post("/agent", Services.AddAgent)
-	route.Post("/create/division", Services.CreateDivision)
-	route.Post("/create/team", Services.CreateTeam)
+	route.Post("/add-div", Services.CreateDivision)
+	route.Get("/get-div", Services.GetDivisionByName)
+	route.Get("/get-alldiv", Services.GetAllDivision)
+	route.Put("/edit-div", Services.UpdateDivisionByName)
+	// route.Delete("/del-div", Services.DeleteDivisionByName)
 
-	// route.Put("/phone/:phone", Services.UpdateOraganizationByPhone)
-
-	route.Delete("/phone/:phone", Services.DeleteOrganizationByPhone)
+	route.Put("/add-team", Services.CreateTeam)
+	route.Put("/edit-team", Services.UpdateTeam)
+	route.Put("/del-team", Services.DelTeam)
 }

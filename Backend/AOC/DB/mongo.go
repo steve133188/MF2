@@ -6,8 +6,6 @@ import (
 
 	"mf-aoc-service/Util"
 
-	uuid "github.com/nu7hatch/gouuid"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -22,13 +20,15 @@ import (
 
 type MongoInstance struct {
 	RoleClient *mongo.Client
-	TagsClient *mongo.Client
-	ChanClient *mongo.Client
-	OrgClient  *mongo.Client
 	RoleDBCol  *mongo.Collection
-	TagsDBCol  *mongo.Collection
+	ChanClient *mongo.Client
 	ChanDBCol  *mongo.Collection
+	TagsClient *mongo.Client
+	TagsDBCol  *mongo.Collection
+	OrgClient  *mongo.Client
 	OrgDBCol   *mongo.Collection
+	GrpClient  *mongo.Client
+	GrpDBCol   *mongo.Collection
 }
 
 var MI MongoInstance
@@ -37,10 +37,18 @@ func MongoConnect() {
 	chanUrl, channelDB, chanCol := Util.GoDotEnvVariable("CHAN_URL"), Util.GoDotEnvVariable("CHAN_NAME"), Util.GoDotEnvVariable("CHAN_COLLECTION")
 	adminUrl, adminDB, roleCol, tagsCol := Util.GoDotEnvVariable("ADMIN_URL"), Util.GoDotEnvVariable("ADMIN_NAME"), Util.GoDotEnvVariable("ROLE_COLLECTION"), Util.GoDotEnvVariable("TAGS_COLLECTION")
 	orgUrl, orgDB, orgCol := Util.GoDotEnvVariable("ORG_URL"), Util.GoDotEnvVariable("ORG_NAME"), Util.GoDotEnvVariable("ORG_COLLECTION")
+	grpCol := Util.GoDotEnvVariable("GRP_COLLECTION")
+
 	// adminCol := Util.GoDotEnvVariable("ADMIN_COLLECTION")
 	// orgCol := Util.GoDotEnvVariable("ORG_COLLECTION")
 
 	ctx := context.Background()
+	grp, err := mongo.Connect(ctx, options.Client().ApplyURI(adminUrl))
+	if err != nil {
+		fmt.Println("Cannot connect database")
+	}
+	grps := grp.Database(adminDB).Collection(grpCol)
+
 	role, err := mongo.Connect(ctx, options.Client().ApplyURI(adminUrl))
 	if err != nil {
 		fmt.Println("Cannot connect database")
@@ -65,19 +73,12 @@ func MongoConnect() {
 	}
 	orgs := org.Database(orgDB).Collection(orgCol)
 
-	id, err := uuid.NewV4()
-	if err != nil {
-		fmt.Println("Failed to generate first uuid")
-	}
-	res, err := channels.InsertOne(context.TODO(), bson.M{"id": id.String(), "name": "whatsappstella", "channel_id": "5e4367dd3c660d5d5e541176", "server": " https://35.198.244.95:9099", "server_auth": Util.GoDotEnvVariable("Stella_token")})
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(res.InsertedID, " Added")
 	// }
 
 	fmt.Println("DB connected!")
 	MI = MongoInstance{
+		GrpClient:  grp,
+		GrpDBCol:   grps,
 		RoleClient: role,
 		RoleDBCol:  roles,
 		TagsClient: tag,

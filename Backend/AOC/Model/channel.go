@@ -18,9 +18,14 @@ type Channel struct {
 type Division struct {
 	ID        string   `json:"id" bson:"id"`
 	Name      string   `json:"name" bson:"name"`
-	TeamId    string   `json:"team_id" bson:"team_id"`
 	Team      []string `json:"team" bson:"team"`
 	CreatedAt string   `json:"created_at" bson:"created"`
+}
+
+type EditTeam struct {
+	DivName string `json:"div_name" bson:"div_name"`
+	Old     string `json:"old" bson:"old"`
+	New     string `json:"new" bson:"new"`
 }
 
 type Role struct {
@@ -43,4 +48,8 @@ type Tags struct {
 	Total   int    `json:"total" bson:"total"`
 	Created string `json:"created" bson:"created"`
 	Updated string `json:"updated" bson:"updated"`
+}
+
+type Group struct {
+	Name string `json:"name" bson:"name"`
 }
