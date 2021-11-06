@@ -43,23 +43,32 @@ func GetAllCustomers(c *fiber.Ctx) error {
 	})
 }
 
-func GetCustomersById(c *fiber.Ctx) error {
+func GetCustomerById(c *fiber.Ctx) error {
 	customerCollection := DB.MI.DBCol
 
-	paramID := c.Params("id")
-	fmt.Println(paramID)
+	var data struct {
+		ID string `json:"id" bson:"id"`
+	}
 
-	// find todo and return
+	err := c.BodyParser(&data)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Cannot parse JSON",
+			"err":     err.Error(),
+		})
+	}
+
 	customer := new(Model.Customer)
 
-	query := bson.D{{Key: "id", Value: paramID}}
+	query := bson.D{{Key: "id", Value: data.ID}}
 
-	err := customerCollection.FindOne(c.Context(), query).Decode(&customer)
+	err = customerCollection.FindOne(c.Context(), query).Decode(&customer)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"success": false,
 			"message": "Customer Not found",
-			"error":   err,
+			"error":   err.Error(),
 		})
 	}
 
@@ -69,23 +78,30 @@ func GetCustomersById(c *fiber.Ctx) error {
 	})
 }
 
-func GetCustomersByName(c *fiber.Ctx) error {
+func GetCustomerByName(c *fiber.Ctx) error {
 	customerCollection := DB.MI.DBCol
 
-	paramID := c.Params("name")
-	fmt.Println(paramID)
-
-	// find todo and return
+	var data struct {
+		Name string `json:"name" bson:"name"`
+	}
+	err := c.BodyParser(&data)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Cannot parse JSON",
+			"err":     err.Error(),
+		})
+	}
 	customer := new(Model.Customer)
 
-	query := bson.D{{Key: "name", Value: paramID}}
+	query := bson.D{{Key: "name", Value: data.Name}}
 
-	err := customerCollection.FindOne(c.Context(), query).Decode(&customer)
+	err = customerCollection.FindOne(c.Context(), query).Decode(&customer)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"success": false,
 			"message": "Customer Not found",
-			"error":   err,
+			"error":   err.Error(),
 		})
 	}
 
@@ -121,16 +137,25 @@ func GetChannelInfoByPhone(c *fiber.Ctx) error {
 	})
 }
 
-func GetAllByTeamSorting(c *fiber.Ctx) error {
+func GetAllCustomerByGroup(c *fiber.Ctx) error {
 	customerCollection := DB.MI.DBCol
 
-	paramID := c.Params("team")
-	fmt.Println(paramID)
+	var data struct {
+		Group string `json:"group" bson:"group"`
+	}
 
-	// find todo and return
+	err := c.BodyParser(&data)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Cannot parse JSON",
+			"error":   err.Error(),
+		})
+	}
+
 	var customers []Model.Customer = make([]Model.Customer, 0)
 
-	query := bson.D{{Key: "team", Value: paramID}}
+	query := bson.D{{Key: "group", Value: data.Group}}
 
 	cursor, err := customerCollection.Find(c.Context(), query)
 	if err != nil {
@@ -156,7 +181,7 @@ func GetAllByTeamSorting(c *fiber.Ctx) error {
 	})
 }
 
-func GetAgentSorting(c *fiber.Ctx) error {
+func GetAgentFilter(c *fiber.Ctx) error {
 	customerCollection := DB.MI.DBCol
 
 	data := new(Model.Sort)
@@ -166,7 +191,7 @@ func GetAgentSorting(c *fiber.Ctx) error {
 	// find todo and return
 	var customers []Model.Customer = make([]Model.Customer, 0)
 	var val bson.A
-	for _, v := range data.Name {
+	for _, v := range data.Data {
 		val = append(val, v)
 	}
 
@@ -180,7 +205,6 @@ func GetAgentSorting(c *fiber.Ctx) error {
 			"error":   err,
 		})
 	}
-
 	err = cursor.All(c.Context(), &customers)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -196,7 +220,7 @@ func GetAgentSorting(c *fiber.Ctx) error {
 	})
 }
 
-func GetTagsSorting(c *fiber.Ctx) error {
+func GetTagsFilter(c *fiber.Ctx) error {
 	customerCollection := DB.MI.DBCol
 
 	data := new(Model.Sort)
@@ -205,7 +229,7 @@ func GetTagsSorting(c *fiber.Ctx) error {
 	// find todo and return
 	var customers []Model.Customer = make([]Model.Customer, 0)
 	var val bson.A
-	for _, v := range data.Name {
+	for _, v := range data.Data {
 		val = append(val, v)
 	}
 
@@ -236,17 +260,16 @@ func GetTagsSorting(c *fiber.Ctx) error {
 	})
 }
 
-func GetChannelSorting(c *fiber.Ctx) error {
+func GetChannelFilter(c *fiber.Ctx) error {
 	customerCollection := DB.MI.DBCol
 
 	data := new(Model.Sort)
 	_ = c.BodyParser(&data)
-	fmt.Println(data.Name)
 
 	// find todo and return
 	var customers []Model.Customer = make([]Model.Customer, 0)
 	var val bson.A
-	for _, v := range data.Name {
+	for _, v := range data.Data {
 		val = append(val, v)
 	}
 

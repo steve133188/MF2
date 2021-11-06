@@ -7,23 +7,29 @@ import (
 )
 
 func CustomersRoute(route fiber.Router) {
-	route.Get("/", Services.GetAllCustomers)
-	route.Get("/id/:id", Services.GetCustomersById)
-	route.Get("/name/:name", Services.GetCustomersByName)
-	route.Get("/team/:team", Services.GetAllByTeamSorting)
-	route.Get("/chanInfo/:phone", Services.GetChannelInfoByPhone)
-
-	route.Get("/sort/agent", Services.GetAgentSorting)
-	route.Get("/sort/tag", Services.GetTagsSorting)
-	route.Get("/sort/channel", Services.GetChannelSorting)
-
-	route.Post("/", Services.AddCustomer)
+	//contact page
+	route.Get("/all", Services.GetAllCustomers)
+	route.Get("/id", Services.GetCustomerById)
+	route.Get("/name", Services.GetCustomerByName)
+	route.Post("/add", Services.AddCustomer)
 	route.Post("/addMany", Services.AddManyCustomer)
+	route.Put("/id", Services.UpdateCustomerByID)
+	route.Delete("/id", Services.DeleteCustomerById)
+	// route.Delete("/delMany", Services.DeleteManyCustomer)
 
-	route.Put("/id/:id", Services.UpdateCustomerByID)
-	route.Put("/tags", Services.UpdateCustomerTags)
-	route.Put("/chanInfo", Services.UpdateChannelInfoByPhone)
+	// route.Get("/chanInfo/:phone", Services.GetChannelInfoByPhone)
+	// route.Put("/chanInfo", Services.UpdateChannelInfoByPhone)
 
-	route.Delete("/id/:id", Services.DeleteCustomerById)
-	route.Delete("/delete/:phone", Services.DeleteCustomerByPhone)
+	route.Post("/addTags", Services.AddTags)
+	// need to define
+	// route.Put("/editTags", Services.UpdateCustomerTags)
+
+	//sorting
+	route.Get("/group", Services.GetAllCustomerByGroup)
+	route.Get("/filter/agent", Services.GetAgentFilter)
+	route.Get("/filter/tag", Services.GetTagsFilter)
+	route.Get("/filter/channel", Services.GetChannelFilter)
+	// route.Get("/filter/group", Services.GetGroupFilter)
+
+	route.Delete("/phone", Services.DeleteCustomerByPhone)
 }
