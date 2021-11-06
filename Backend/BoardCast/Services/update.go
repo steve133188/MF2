@@ -1,7 +1,6 @@
 package Services
 
 import (
-	"fmt"
 	"log"
 	"mf-boardCast-services/DB"
 	"mf-boardCast-services/Model"
@@ -12,7 +11,6 @@ import (
 
 func UpdateBoardCastByID(c *fiber.Ctx) error {
 	collection := DB.MI.DBCol
-	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	todo := new(Model.BoardCast)
 
 	if err := c.BodyParser(todo); err != nil {
@@ -24,12 +22,9 @@ func UpdateBoardCastByID(c *fiber.Ctx) error {
 		})
 	}
 
-	// todo.UpdatedTime = time.Now()
-	todo.Id = c.Params("id")
 	update := bson.D{{Key: "$set", Value: todo}}
 
-	_, err := collection.UpdateOne(c.Context(), bson.D{{Key: "id", Value: c.Params("id")}}, update)
-	fmt.Println(todo)
+	_, err := collection.UpdateOne(c.Context(), bson.D{{"name", todo.Name}}, update)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false,
@@ -39,8 +34,6 @@ func UpdateBoardCastByID(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"success": true,
-		"data": fiber.Map{
-			"boardCast": todo,
-		},
+		"data":    todo,
 	})
 }
