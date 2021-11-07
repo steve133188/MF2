@@ -9,7 +9,6 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
-	"github.com/rs/xid"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -24,7 +23,7 @@ func AddManyAgent(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false,
 			"message": "Cannot parse JSON",
-			"error":   err,
+			"error":   err.Error(),
 		})
 	}
 	// err := json.Unmarshal(c.Body(), &datas)
@@ -33,7 +32,7 @@ func AddManyAgent(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"message": "Cannot insert agent",
-			"error":   err,
+			"error":   err.Error(),
 		})
 	}
 
@@ -53,20 +52,17 @@ func AddAgent(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false,
 			"message": "Cannot parse JSON",
-			"error":   err,
+			"error":   err.Error(),
 		})
 	}
 
-	id := xid.New()
-
-	data.ID = id.String()
-	data.CreatedAt = time.Now().Format("January 2, 2006")
+	data.CreatedAt = time.Now().Format("January 2, 2006 14:00")
 	data.Password, err = Util.HashPassword(data.Password)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"message": "Cannot insert agent",
-			"error":   err,
+			"error":   err.Error(),
 		})
 	}
 
@@ -86,7 +82,7 @@ func AddAgent(c *fiber.Ctx) error {
 		})
 	}
 
-	result, err := usersCollection.InsertOne(c.Context(), data)
+	_, err = usersCollection.InsertOne(c.Context(), data)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
@@ -97,7 +93,7 @@ func AddAgent(c *fiber.Ctx) error {
 
 	// get the inserted data
 	user := &Model.User{}
-	query := bson.D{{Key: "_id", Value: result.InsertedID}}
+	query := bson.D{{"phone", data.Phone}}
 	usersCollection.FindOne(c.Context(), query).Decode(user)
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
@@ -135,6 +131,16 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"success":  false,
 			"response": "failed to login",
+		})
+	}
+
+	find.LastLogin = time.Now().Format("January 2, 2006 14:00")
+	_, err = collection.InsertOne(c.Context(), find)
+	if err != nil {
+		c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to insert",
+			"error":   err.Error(),
 		})
 	}
 

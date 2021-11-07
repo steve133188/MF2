@@ -39,7 +39,6 @@ package Model
 // }
 
 type User struct {
-	ID        string `json:"id" bson:"id"`
 	CreatedAt string `json:"created_at" bson:"created_at"`
 	Password  string `json:"password" bson:"password"`
 	UserName  string `json:"username" bson:"username"`
@@ -52,7 +51,7 @@ type User struct {
 	Team         string      `json:"team" bson:"team"`
 	DivisionName string      `json:"division_name" bson:"division_name"`
 	LastLogin    string      `json:"last_login" bson:"last_login"`
-	Authority    interface{} `json:"authoruty" bson:"authority"`
+	Authority    interface{} `json:"authority" bson:"authority"`
 	Channels     []string    `json:"channels" bson:"channels"`
 	Phone        string      `json:"phone" bson:"phone"`
 }
@@ -60,6 +59,10 @@ type User struct {
 type Div struct {
 	Division string `json:"division" bson:"division"`
 	Team     string `json:"team" bson:"team"`
+}
+
+type Param struct {
+	Param string `json:"param" bson:"param"`
 }
 
 // type Token struct {
