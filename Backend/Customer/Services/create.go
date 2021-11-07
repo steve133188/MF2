@@ -1,6 +1,7 @@
 package Services
 
 import (
+	"fmt"
 	"mf-customer-services/DB"
 	"mf-customer-services/Model"
 	"time"
@@ -98,12 +99,20 @@ func AddTags(c *fiber.Ctx) error {
 		})
 	}
 
-	isExisted := customersCollection.FindOne(c.Context(), bson.D{{Key: "phone", Value: data.Phone}}).Decode(exist)
+	err = customersCollection.FindOne(c.Context(), bson.D{{"id", data.ID}}).Decode(exist)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"message": "Not Found",
+			"error":   err.Error(),
+		})
+	}
 	// var val bson.A
-	if (isExisted) == nil { //existing division
 
-		update := bson.D{{"$addToSet", bson.D{{"tags", bson.D{{"$each", data.Tags}}}}}}
-		_, err := customersCollection.UpdateOne(c.Context(), bson.D{{Key: "phone", Value: data.Phone}}, update)
+	if exist.Tags == nil {
+		fmt.Println(1)
+		update := bson.D{{"$set", bson.D{{"tags", data.Tags}}}}
+		_, err := customersCollection.UpdateOne(c.Context(), bson.D{{Key: "id", Value: data.ID}}, update)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"success": false,
@@ -112,32 +121,22 @@ func AddTags(c *fiber.Ctx) error {
 			})
 		}
 
-		err = customersCollection.FindOne(c.Context(), bson.D{{"phone", data.Phone}}).Decode(&exist)
+	} else {
+		fmt.Println(2)
+		update := bson.D{{"$addToSet", bson.D{{"tags", bson.D{{"$each", data.Tags}}}}}}
+
+		_, err := customersCollection.UpdateOne(c.Context(), bson.D{{Key: "id", Value: data.ID}}, update)
 		if err != nil {
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"success": false,
-				"message": "Customer Not found",
+				"message": "Failed to update",
 				"error":   err.Error(),
 			})
 		}
-		return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-			"success": true,
-			"data":    exist,
-		})
 
 	}
 
-	data.ID = xid.New().String()
-	_, err = customersCollection.InsertOne(c.Context(), data)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to insert",
-			"error":   err.Error(),
-		})
-	}
-
-	err = customersCollection.FindOne(c.Context(), bson.D{{"phone", data.Phone}}).Decode(&exist)
+	err = customersCollection.FindOne(c.Context(), bson.D{{"id", data.ID}}).Decode(&exist)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"success": false,
@@ -145,7 +144,20 @@ func AddTags(c *fiber.Ctx) error {
 			"error":   err.Error(),
 		})
 	}
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+
+	// data.ID = xid.New().String()
+
+	// result, err := customersCollection.InsertOne(c.Context(), data)
+
+	// if err != nil {
+	// 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+	// 		"success": false,
+	// 		"message": "Failed to insert",
+	// 		"error":   err.Error(),
+	// 	})
+	// }
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
 		"data":    exist,
 	})

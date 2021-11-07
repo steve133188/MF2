@@ -84,6 +84,7 @@ func GetCustomerByName(c *fiber.Ctx) error {
 	var data struct {
 		Name string `json:"name" bson:"name"`
 	}
+
 	err := c.BodyParser(&data)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -286,6 +287,45 @@ func GetChannelFilter(c *fiber.Ctx) error {
 		})
 	}
 
+	err = cursor.All(c.Context(), &customers)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Something went wrong",
+			"error":   err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": true,
+		"data":    customers,
+	})
+}
+
+func GetTeamFilter(c *fiber.Ctx) error {
+	customerCollection := DB.MI.DBCol
+
+	data := new(Model.Sort)
+	_ = c.BodyParser(&data)
+	// fmt.Println(data.Name)
+
+	// find todo and return
+	var customers []Model.Customer = make([]Model.Customer, 0)
+	var val bson.A
+	for _, v := range data.Data {
+		val = append(val, v)
+	}
+
+	filter := bson.D{{"team", bson.D{{"$in", val}}}}
+	fmt.Println(filter)
+	cursor, err := customerCollection.Find(c.Context(), filter)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"message": "Customer Not found",
+			"error":   err,
+		})
+	}
 	err = cursor.All(c.Context(), &customers)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

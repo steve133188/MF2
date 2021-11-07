@@ -48,39 +48,137 @@ func UpdateCustomerByID(c *fiber.Ctx) error {
 	})
 }
 
-// func UpdateCustomerTags(c *fiber.Ctx) error {
-// 	customersCollection := DB.MI.DBCol
-// 	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-// 	customer := new(Model.Customer)
+func UpdateCustomersTags(c *fiber.Ctx) error {
+	customersCollection := DB.MI.DBCol
+	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 
-// 	if err := c.BodyParser(&customer); err != nil {
-// 		log.Println(err)
-// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-// 			"success": false,
-// 			"message": "Failed to parse body",
-// 			"error":   err,
-// 		})
-// 	}
+	var data struct {
+		New string `json:"new" bson:"new"`
+		Old string `json:"old" bson:"old"`
+	}
 
-// 	customer.UpdatedAt = time.Now()
+	if err := c.BodyParser(&data); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to parse body",
+			"error":   err.Error(),
+		})
+	}
 
-// 	update := bson.M{"$set": bson.M{
-// 		"tags": customer.Tags,
-// 	}}
-// 	_, err := customersCollection.FindOneAndUpdate(c.Context(), bson.D{{"phone", c.Params("name")}}, update)
-// 	fmt.Println(customer)
-// 	if err != nil {
-// 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-// 			"success": false,
-// 			"message": "Customer failed to update",
-// 			"error":   err.Error(),
-// 		})
-// 	}
-// 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-// 		"success": true,
-// 		"data":    customer,
-// 	})
-// }
+	query := bson.D{{"tags", data.Old}}
+	update := bson.D{{"$set", bson.D{{"tags.$", data.New}}}}
+
+	_, err := customersCollection.UpdateMany(c.Context(), query, update)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to update",
+			"error":   err.Error(),
+		})
+	}
+
+	cursor, err := customersCollection.Find(c.Context(), bson.D{{"tags", data.New}})
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"message": "Not Found",
+			"error":   err.Error(),
+		})
+	}
+
+	var customers []Model.Customer = make([]Model.Customer, 0)
+
+	err = cursor.All(c.Context(), &customers)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Error to interate cursor",
+			"error":   err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"success": true,
+		"data":    customers,
+	})
+}
+
+func DeleteTagFromAllCustomer(c *fiber.Ctx) error {
+	customersCollection := DB.MI.DBCol
+	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+
+	var data struct {
+		Old string `json:"old" bson:"old"`
+	}
+
+	if err := c.BodyParser(&data); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to parse body",
+			"error":   err.Error(),
+		})
+	}
+
+	query := bson.D{{"tags", data.Old}}
+	update := bson.D{{"$pull", bson.D{{"tags", data.Old}}}}
+
+	result, err := customersCollection.UpdateMany(c.Context(), query, update)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to update",
+			"error":   err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"success": true,
+		"data":    result,
+	})
+}
+
+func DeleteCustomerTags(c *fiber.Ctx) error {
+	customersCollection := DB.MI.DBCol
+	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	result := new(Model.Customer)
+	var data struct {
+		ID  string   `json:"id" bson:"id"`
+		Old []string `json:"old" bson:"old"`
+	}
+
+	if err := c.BodyParser(&data); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to parse body",
+			"error":   err.Error(),
+		})
+	}
+
+	query := bson.D{{"id", data.ID}}
+	update := bson.D{{"$pull", bson.D{{"tags", bson.D{{"$in", data.Old}}}}}}
+
+	_, err := customersCollection.UpdateOne(c.Context(), query, update)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to update",
+			"error":   err.Error(),
+		})
+	}
+	err = customersCollection.FindOne(c.Context(), bson.D{{"id", data.ID}}).Decode(&result)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Not Find",
+			"error":   err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"success": true,
+		"data":    result,
+	})
+}
 
 func UpdateChannelInfoByPhone(c *fiber.Ctx) error {
 	customersCollection := DB.MI.DBCol
