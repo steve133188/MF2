@@ -117,36 +117,36 @@ func GetUserByPhone(c *fiber.Ctx) error {
 	})
 }
 
-func GetUserAuthority(c *fiber.Ctx) error {
-	customerCollection := DB.MI.DBCol
-	var data struct {
-		Param []string `json:"param" bson:"param"`
-	}
-	user := new(Model.User)
-	err := c.BodyParser(&data)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to parse body",
-			"error":   err,
-		})
-	}
-	query := bson.D{{"authority", bson.D{{"$in", data.Param}}}}
+// func GetUserAuthority(c *fiber.Ctx) error {
+// 	customerCollection := DB.MI.DBCol
+// 	var data struct {
+// 		Param []string `json:"param" bson:"param"`
+// 	}
+// 	user := new(Model.User)
+// 	err := c.BodyParser(&data)
+// 	if err != nil {
+// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+// 			"success": false,
+// 			"message": "Failed to parse body",
+// 			"error":   err,
+// 		})
+// 	}
+// 	query := bson.D{{"authority", bson.D{{"$in", data.Param}}}}
 
-	err = customerCollection.FindOne(c.Context(), query).Decode(&user)
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "User Not found",
-			"error":   err,
-		})
-	}
+// 	err = customerCollection.FindOne(c.Context(), query).Decode(&user)
+// 	if err != nil {
+// 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+// 			"success": false,
+// 			"message": "User Not found",
+// 			"error":   err,
+// 		})
+// 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    user,
-	})
-}
+// 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+// 		"success": true,
+// 		"data":    user,
+// 	})
+// }
 
 func GetUserList(c *fiber.Ctx) error {
 	col := DB.MI.DBCol

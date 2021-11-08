@@ -23,10 +23,20 @@ func UpdateUserByName(c *fiber.Ctx) error {
 			"error":   err.Error(),
 		})
 	}
+	password, err := Util.HashPassword(user.Password)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to hass password",
+			"error":   err.Error(),
+		})
+	}
+
+	user.Password = password
 
 	update := bson.D{{Key: "$set", Value: user}}
 
-	_, err := usersCollection.UpdateOne(c.Context(), bson.D{{Key: "username", Value: user.UserName}}, update)
+	_, err = usersCollection.UpdateOne(c.Context(), bson.D{{Key: "username", Value: user.UserName}}, update)
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -133,42 +143,6 @@ func UpdateUserRole(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"success": true,
 		"data":    data,
-	})
-}
-
-func ChangeUserPassword(c *fiber.Ctx) error {
-	usersCollection := DB.MI.DBCol
-	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	user := new(Model.User)
-
-	if err := c.BodyParser(&user); err != nil {
-		log.Println(err)
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to parse body",
-			"error":   err.Error(),
-		})
-	}
-	password, err := Util.HashPassword(user.Password)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Cannot insert agent",
-			"error":   err.Error(),
-		})
-	}
-	update := bson.M{"$set": bson.M{"password": password}}
-
-	err = usersCollection.FindOneAndUpdate(c.Context(), bson.D{{Key: "email", Value: user.Email}}, update).Decode(&user)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "User failed to update",
-			"error":   err.Error(),
-		})
-	}
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"success": true,
 	})
 }
 

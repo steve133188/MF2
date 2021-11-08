@@ -1,13 +1,11 @@
 package Services
 
 import (
-	"fmt"
 	"mf-user-servies/DB"
 	"mf-user-servies/Model"
 	"mf-user-servies/Util"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -56,12 +54,12 @@ func AddAgent(c *fiber.Ctx) error {
 		})
 	}
 
-	data.CreatedAt = time.Now().Format("January 2, 2006 14:00")
+	data.CreatedAt = time.Now().Format("January 2 2006 15:04:05")
 	data.Password, err = Util.HashPassword(data.Password)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false,
-			"message": "Cannot insert agent",
+			"message": "Failed to hash password",
 			"error":   err.Error(),
 		})
 	}
@@ -100,72 +98,6 @@ func AddAgent(c *fiber.Ctx) error {
 		"success": true,
 		"data":    user,
 	})
-}
-
-func Login(c *fiber.Ctx) error {
-	fmt.Println("Login")
-	collection := DB.MI.DBCol
-	// paramPassword := c.Params("password")
-	// paramEmail := c.Params("email")
-	user := new(Model.User)
-	find := new(Model.User)
-
-	err := c.BodyParser(&user)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Cannot parse JSON",
-			"error":   err,
-		})
-	}
-	query := bson.D{{Key: "email", Value: user.Email}}
-
-	err = collection.FindOne(c.Context(), query).Decode(find)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	match := Util.CheckPasswordHash(user.Password, find.Password)
-
-	if !match {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"success":  false,
-			"response": "failed to login",
-		})
-	}
-
-	find.LastLogin = time.Now().Format("January 2, 2006 14:00")
-	_, err = collection.InsertOne(c.Context(), find)
-	if err != nil {
-		c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to insert",
-			"error":   err.Error(),
-		})
-	}
-
-	token := jwt.New(jwt.SigningMethodHS256)
-	claims := token.Claims.(jwt.MapClaims)
-	claims["exp"] = time.Now().Add(time.Hour * 24 * 7).Unix()
-	claims["username"] = find.UserName
-	claims["password"] = find.Password
-	claims["email"] = find.Email
-	claims["role"] = find.Role
-	claims["status"] = find.Status
-
-	Secret := Util.GoDotEnvVariable("Token_pwd")
-	s, err := token.SignedString([]byte(Secret))
-	if err != nil {
-		fmt.Println(err)
-	}
-	// token := jwt.NewWithClaims(jwt.SigningMethodPS256, tk)
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    find,
-		"token":   s,
-	})
-
 }
 
 // func TestLogin(c *fiber.Ctx) error {

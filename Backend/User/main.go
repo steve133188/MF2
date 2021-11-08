@@ -26,7 +26,8 @@ func main() {
 	app.Post("/api/users/login", Services.Login)
 	app.Post("/api/users", Services.AddAgent)
 	app.Post("/api/users/addMany", Services.AddManyAgent)
-	app.Put("/api/users/chpassword", Services.ChangeUserPassword)
+	app.Post("/api/users/forgot-password", Services.ForgotPassword)
+	// app.Post("/api/users/forgot-password", Services.ForgotPassword)
 
 	app.Use(jwtware.New(jwtware.Config{
 		SigningKey: []byte(Util.GoDotEnvVariable("Token_pwd")),
