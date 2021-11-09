@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"mf-customer-services/DB"
 	"mf-customer-services/Model"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func GetAllCustomers(c *fiber.Ctx) error {
@@ -14,9 +16,18 @@ func GetAllCustomers(c *fiber.Ctx) error {
 
 	// Query to filter
 	query := bson.D{{}}
+	num := c.Params("num")
 
-	cursor, err := customersCollection.Find(c.Context(), query)
+	n, err := strconv.ParseInt(num, 10, 64)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to convert param to int64",
+			"error":   err.Error(),
+		})
+	}
 
+	cursor, err := customersCollection.Find(c.Context(), query, options.Find().SetSkip((n-1)*10), options.Find().SetLimit(10))
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false,

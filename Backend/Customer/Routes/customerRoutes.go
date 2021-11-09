@@ -8,7 +8,7 @@ import (
 
 func CustomersRoute(route fiber.Router) {
 	//contact page
-	route.Get("/", Services.GetAllCustomers)
+	route.Get("/:num", Services.GetAllCustomers)
 	route.Get("/id", Services.GetCustomerById)
 	route.Get("/name", Services.GetCustomerByName)
 
