@@ -51,10 +51,7 @@ func CreateDivision(c *fiber.Ctx) error {
 
 	customersCollection.FindOne(c.Context(), query).Decode(customer)
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    customer,
-	})
+	return c.Status(fiber.StatusOK).JSON(customer)
 }
 
 func GetDivisionByName(c *fiber.Ctx) error {
@@ -79,10 +76,7 @@ func GetDivisionByName(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    data,
-	})
+	return c.Status(fiber.StatusOK).JSON(data)
 
 }
 
@@ -112,10 +106,7 @@ func GetAllDivision(c *fiber.Ctx) error {
 	}
 	defer cursor.Close(c.Context())
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    todos,
-	})
+	return c.Status(fiber.StatusOK).JSON(todos)
 }
 
 func UpdateDivisionByName(c *fiber.Ctx) error {
@@ -142,10 +133,7 @@ func UpdateDivisionByName(c *fiber.Ctx) error {
 			"error":   err.Error(),
 		})
 	}
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"success": true,
-		"data":    todo,
-	})
+	return c.Status(fiber.StatusCreated).JSON(todo)
 }
 
 func CreateTeam(c *fiber.Ctx) error {
@@ -176,10 +164,7 @@ func CreateTeam(c *fiber.Ctx) error {
 				"error":   err.Error(),
 			})
 		}
-		return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-			"success": true,
-			"data":    result,
-		})
+		return c.Status(fiber.StatusCreated).JSON(result)
 
 	}
 
@@ -195,10 +180,7 @@ func CreateTeam(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    result,
-	})
+	return c.Status(fiber.StatusOK).JSON(result)
 }
 
 func UpdateTeam(c *fiber.Ctx) error {

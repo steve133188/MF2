@@ -32,10 +32,7 @@ func AddGroup(c *fiber.Ctx) error {
 			"error":   err.Error(),
 		})
 	}
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"success": true,
-		"data":    result,
-	})
+	return c.Status(fiber.StatusCreated).JSON(result)
 
 }
 

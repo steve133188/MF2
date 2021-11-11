@@ -42,7 +42,7 @@ func AdminRoute(route fiber.Router) {
 
 func OrgRoute(route fiber.Router) {
 	route.Post("/add-div", Services.CreateDivision)
-	route.Get("/get-div", Services.GetDivisionByName)
+	route.Post("/get-div", Services.GetDivisionByName)
 	route.Get("/get-alldiv", Services.GetAllDivision)
 	route.Put("/edit-div", Services.UpdateDivisionByName) //?????????
 	// route.Delete("/del-div", Services.DeleteDivisionByName)

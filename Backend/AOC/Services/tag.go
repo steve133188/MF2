@@ -51,10 +51,7 @@ func AddTags(c *fiber.Ctx) error {
 
 	collection.FindOne(c.Context(), query).Decode(todo)
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"success": true,
-		"data":    todo,
-	})
+	return c.Status(fiber.StatusCreated).JSON(todo)
 }
 
 //Delete
@@ -119,10 +116,7 @@ func GetAllTags(c *fiber.Ctx) error {
 	}
 	defer cursor.Close(c.Context())
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    todos,
-	})
+	return c.Status(fiber.StatusOK).JSON(todos)
 }
 
 func GetTagsByName(c *fiber.Ctx) error {
@@ -148,10 +142,7 @@ func GetTagsByName(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    todo,
-	})
+	return c.Status(fiber.StatusOK).JSON(todo)
 }
 
 //Update
@@ -180,8 +171,5 @@ func UpdateTagsByName(c *fiber.Ctx) error {
 			"error":   err.Error(),
 		})
 	}
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"success": true,
-		"data":    todo,
-	})
+	return c.Status(fiber.StatusCreated).JSON(todo)
 }
