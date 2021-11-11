@@ -1,8 +1,6 @@
 package Services
 
 import (
-	"fmt"
-	"log"
 	"mf-customer-services/DB"
 	"mf-customer-services/Model"
 	"time"
@@ -42,10 +40,7 @@ func UpdateCustomerByID(c *fiber.Ctx) error {
 
 	customersCollection.FindOne(c.Context(), query).Decode(customer)
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    customer,
-	})
+	return c.Status(fiber.StatusOK).JSON(customer)
 }
 
 func UpdateCustomersTags(c *fiber.Ctx) error {
@@ -97,10 +92,7 @@ func UpdateCustomersTags(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"success": true,
-		"data":    customers,
-	})
+	return c.Status(fiber.StatusCreated).JSON(customers)
 }
 
 func DeleteTagFromAllCustomer(c *fiber.Ctx) error {
@@ -131,10 +123,7 @@ func DeleteTagFromAllCustomer(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"success": true,
-		"data":    result,
-	})
+	return c.Status(fiber.StatusCreated).JSON(result)
 }
 
 func DeleteCustomerTags(c *fiber.Ctx) error {
@@ -174,42 +163,5 @@ func DeleteCustomerTags(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"success": true,
-		"data":    result,
-	})
-}
-
-func UpdateChannelInfoByPhone(c *fiber.Ctx) error {
-	customersCollection := DB.MI.DBCol
-	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	customer := new(Model.Customer)
-
-	if err := c.BodyParser(&customer); err != nil {
-		log.Println(err)
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to parse body",
-			"error":   err,
-		})
-	}
-
-	customer.UpdatedAt = time.Now()
-
-	update := bson.M{"$set": bson.M{
-		"channel_info": customer.ChannelInfo,
-	}}
-	_, err := customersCollection.UpdateOne(c.Context(), bson.D{{Key: "phone", Value: c.Params("phone")}}, update)
-	fmt.Println(customer)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Customer failed to update",
-			"error":   err.Error(),
-		})
-	}
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"success": true,
-		"data":    customer,
-	})
+	return c.Status(fiber.StatusCreated).JSON(result)
 }

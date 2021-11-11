@@ -36,10 +36,7 @@ func GetAllCustomers(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    customers,
-	})
+	return c.Status(fiber.StatusOK).JSON(customers)
 }
 
 func GetCustomerById(c *fiber.Ctx) error {
@@ -71,10 +68,7 @@ func GetCustomerById(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    customer,
-	})
+	return c.Status(fiber.StatusOK).JSON(customer)
 }
 
 func GetCustomerByName(c *fiber.Ctx) error {
@@ -105,10 +99,7 @@ func GetCustomerByName(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    customer,
-	})
+	return c.Status(fiber.StatusOK).JSON(customer)
 }
 
 func GetChannelInfoByPhone(c *fiber.Ctx) error {
@@ -131,10 +122,7 @@ func GetChannelInfoByPhone(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    customer,
-	})
+	return c.Status(fiber.StatusOK).JSON(customer)
 }
 
 func GetAllCustomerByGroup(c *fiber.Ctx) error {
@@ -175,10 +163,7 @@ func GetAllCustomerByGroup(c *fiber.Ctx) error {
 		})
 	}
 	defer cursor.Close(c.Context())
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    customers,
-	})
+	return c.Status(fiber.StatusOK).JSON(customers)
 }
 
 func GetAgentFilter(c *fiber.Ctx) error {
@@ -195,7 +180,7 @@ func GetAgentFilter(c *fiber.Ctx) error {
 		val = append(val, v)
 	}
 
-	filter := bson.D{{"agent", bson.D{{"$in", val}}}}
+	filter := bson.D{{"agents", bson.D{{"$in", val}}}}
 	fmt.Println(filter)
 	cursor, err := customerCollection.Find(c.Context(), filter)
 	if err != nil {
@@ -214,10 +199,7 @@ func GetAgentFilter(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    customers,
-	})
+	return c.Status(fiber.StatusOK).JSON(customers)
 }
 
 func GetTagsFilter(c *fiber.Ctx) error {
@@ -254,10 +236,7 @@ func GetTagsFilter(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    customers,
-	})
+	return c.Status(fiber.StatusOK).JSON(customers)
 }
 
 func GetChannelFilter(c *fiber.Ctx) error {
@@ -273,7 +252,7 @@ func GetChannelFilter(c *fiber.Ctx) error {
 		val = append(val, v)
 	}
 
-	filter := bson.D{{"channel", bson.D{{"$in", val}}}}
+	filter := bson.D{{"channels", bson.D{{"$in", val}}}}
 	fmt.Println(filter)
 	// filter := bson.D{{Key: "channel", Value: data.Name}}
 
@@ -295,10 +274,7 @@ func GetChannelFilter(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    customers,
-	})
+	return c.Status(fiber.StatusOK).JSON(customers)
 }
 
 func GetTeamFilter(c *fiber.Ctx) error {
@@ -334,8 +310,5 @@ func GetTeamFilter(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    customers,
-	})
+	return c.Status(fiber.StatusOK).JSON(customers)
 }

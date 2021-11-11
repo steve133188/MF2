@@ -49,10 +49,7 @@ func AddCustomer(c *fiber.Ctx) error {
 
 	customersCollection.FindOne(c.Context(), query).Decode(customer)
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    customer,
-	})
+	return c.Status(fiber.StatusOK).JSON(customer)
 }
 
 func AddManyCustomer(c *fiber.Ctx) error {
@@ -157,8 +154,5 @@ func AddTags(c *fiber.Ctx) error {
 	// 	})
 	// }
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    exist,
-	})
+	return c.Status(fiber.StatusOK).JSON(exist)
 }
