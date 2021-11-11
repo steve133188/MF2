@@ -94,10 +94,7 @@ func AddAgent(c *fiber.Ctx) error {
 	query := bson.D{{"phone", data.Phone}}
 	usersCollection.FindOne(c.Context(), query).Decode(user)
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"success": true,
-		"data":    user,
-	})
+	return c.Status(fiber.StatusCreated).JSON(user)
 }
 
 // func TestLogin(c *fiber.Ctx) error {

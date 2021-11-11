@@ -53,6 +53,7 @@ type User struct {
 	LastLogin    string      `json:"last_login" bson:"last_login"`
 	Authority    interface{} `json:"authority" bson:"authority"`
 	Channels     []string    `json:"channels" bson:"channels"`
+	ChannelInfo  Info        `json:"channel_info" bson:"channel_info"`
 	Phone        string      `json:"phone" bson:"phone"`
 }
 
@@ -63,6 +64,12 @@ type Div struct {
 
 type Param struct {
 	Param string `json:"param" bson:"param"`
+}
+
+type Info struct {
+	Phone     string `json:"phone" bson:"phone"`
+	Address   string `json:"address" bson:"address"`
+	ChannelId string `json:"channel_id" bson:"channel"`
 }
 
 // type Token struct {

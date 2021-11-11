@@ -54,10 +54,7 @@ func UpdateUserByName(c *fiber.Ctx) error {
 			"error":   err.Error(),
 		})
 	}
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"success": true,
-		"data":    user,
-	})
+	return c.Status(fiber.StatusCreated).JSON(user)
 }
 
 func ChangeUserStatus(c *fiber.Ctx) error {
@@ -97,10 +94,7 @@ func ChangeUserStatus(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"success": true,
-		"data":    data,
-	})
+	return c.Status(fiber.StatusCreated).JSON(data)
 }
 
 func UpdateUserRole(c *fiber.Ctx) error {
@@ -140,10 +134,7 @@ func UpdateUserRole(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"success": true,
-		"data":    data,
-	})
+	return c.Status(fiber.StatusCreated).JSON(data)
 }
 
 func UpdateDivisionAndTeam(c *fiber.Ctx) error {
@@ -180,10 +171,7 @@ func UpdateDivisionAndTeam(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    data,
-	})
+	return c.Status(fiber.StatusOK).JSON(data)
 }
 
 func DeleteUserTeam(c *fiber.Ctx) error {
@@ -220,8 +208,36 @@ func DeleteUserTeam(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    data,
-	})
+	return c.Status(fiber.StatusOK).JSON(data)
+}
+
+func UpdateChannelInfoByID(c *fiber.Ctx) error {
+	customersCollection := DB.MI.DBCol
+	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	// customer := new(Model.Customer)
+	chanInfo := new(Model.Info)
+
+	if err := c.BodyParser(&chanInfo); err != nil {
+		log.Println(err)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to parse body",
+			"error":   err,
+		})
+	}
+
+	update := bson.D{{"$set", bson.D{{"channel_info", chanInfo}}}}
+
+	_, err := customersCollection.UpdateOne(c.Context(), bson.D{{Key: "phone", Value: chanInfo.Phone}}, update)
+	// fmt.Println(customer)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Customer failed to update",
+			"error":   err.Error(),
+		})
+	}
+	customer := new(Model.User)
+	customersCollection.FindOne(c.Context(), bson.D{{"phone", chanInfo.Phone}}).Decode(&customer)
+	return c.Status(fiber.StatusCreated).JSON(chanInfo)
 }

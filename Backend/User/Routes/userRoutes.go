@@ -8,15 +8,15 @@ import (
 
 func UsersRoute(route fiber.Router) {
 	// route.Get("/id/:id", Services.GetUsersById)
-	route.Get("/username", Services.GetUserByUsername)
-	route.Get("/email", Services.GetUserByEmail)
+	route.Post("/username", Services.GetUserByUsername)
+	route.Post("/email", Services.GetUserByEmail)
 
-	route.Get("/phone", Services.GetUserByPhone)
-	route.Get("/team", Services.GetUsersByTeam)
+	route.Post("/phone", Services.GetUserByPhone)
+	route.Post("/team", Services.GetUsersByTeam)
 	// route.Get("/authority", Services.GetUserAuthority)
 	//for filter
-	route.Get("/userlist", Services.GetUserList)
-	route.Get("/", Services.GetAllUsers)
+	route.Post("/userlist", Services.GetUserList)
+	route.Post("/", Services.GetAllUsers)
 
 	// route.Put("/id/:id", Services.UpdateUserByID)
 	route.Put("/name/", Services.UpdateUserByName)
@@ -27,5 +27,7 @@ func UsersRoute(route fiber.Router) {
 
 	// route.Delete("/id/:id", Services.DeleteUserById)
 	route.Delete("/name", Services.DeleteUserByName)
+
+	route.Put("/chanInfo", Services.UpdateChannelInfoByID)
 
 }

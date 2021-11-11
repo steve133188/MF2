@@ -43,10 +43,7 @@ func GetAllUsers(c *fiber.Ctx) error {
 	// 	users[i].Date = users[i].Date.Add(time.Hour * 8)
 	// }
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    users,
-	})
+	return c.Status(fiber.StatusOK).JSON(users)
 }
 
 func GetUsersByTeam(c *fiber.Ctx) error {
@@ -82,10 +79,7 @@ func GetUsersByTeam(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    users,
-	})
+	return c.Status(fiber.StatusOK).JSON(users)
 }
 
 func GetUserByPhone(c *fiber.Ctx) error {
@@ -111,10 +105,7 @@ func GetUserByPhone(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    user,
-	})
+	return c.Status(fiber.StatusOK).JSON(user)
 }
 
 // func GetUserAuthority(c *fiber.Ctx) error {

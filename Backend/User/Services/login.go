@@ -62,10 +62,7 @@ func ForgotPassword(c *fiber.Ctx) error {
 		})
 	}
 	// Receiver email address.
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    result,
-	})
+	return c.Status(fiber.StatusOK).JSON(result)
 }
 
 func Login(c *fiber.Ctx) error {
