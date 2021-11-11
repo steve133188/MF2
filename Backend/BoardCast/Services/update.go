@@ -32,8 +32,5 @@ func UpdateBoardCastByID(c *fiber.Ctx) error {
 			"error":   err.Error(),
 		})
 	}
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"success": true,
-		"data":    todo,
-	})
+	return c.Status(fiber.StatusCreated).JSON(todo)
 }

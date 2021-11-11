@@ -25,7 +25,7 @@ func AddBoardCast(c *fiber.Ctx) error {
 		})
 	}
 
-	data.CreatedDate = time.Now().Format("Jan 2, 2006")
+	data.CreatedDate = time.Now().Format("January 2 2006 15:04:05")
 
 	_, err = collection.InsertOne(c.Context(), data)
 	if err != nil {
@@ -42,10 +42,7 @@ func AddBoardCast(c *fiber.Ctx) error {
 
 	collection.FindOne(c.Context(), query).Decode(todo)
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"success": true,
-		"data":    todo,
-	})
+	return c.Status(fiber.StatusCreated).JSON(todo)
 }
 
 func AddManyBoardCast(c *fiber.Ctx) error {
@@ -74,7 +71,7 @@ func AddManyBoardCast(c *fiber.Ctx) error {
 			fmt.Println("send response unmarshal error")
 		}
 
-		todo.CreatedDate = time.Now().Format("Jan 2, 2006")
+		todo.CreatedDate = time.Now().Format("January 2 2006 15:04:05")
 
 		_, err = col.InsertOne(c.Context(), todo)
 		if err != nil {
@@ -108,8 +105,5 @@ func AddManyBoardCast(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    todos,
-	})
+	return c.Status(fiber.StatusOK).JSON(todos)
 }

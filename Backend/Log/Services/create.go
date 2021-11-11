@@ -26,7 +26,7 @@ func CreateUserLog(c *fiber.Ctx) error {
 
 	id := xid.New()
 	data.ID = id.String()
-	data.Date = time.Now().Format("January 2, 2006")
+	data.Date = time.Now().Format("January 2 2006 15:04:05")
 
 	result, err := logCollection.InsertOne(c.Context(), data)
 
@@ -58,41 +58,35 @@ func CreateCustomerLog(c *fiber.Ctx) error {
 	data := new(Model.CustomerLog)
 
 	err := c.BodyParser(&data)
-
-	// if error
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"message": "Cannot parse JSON",
-			"error":   err,
+			"error":   err.Error(),
 		})
 	}
 
-	id := xid.New()
-	data.ID = id.String()
-	data.Date = time.Now().Format("January 2, 2006")
+	data.Date = time.Now().Format("January 2 2006 15:04:05")
 
-	result, err := logCollection.InsertOne(c.Context(), data)
+	_, err = logCollection.InsertOne(c.Context(), data)
 
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"message": "Cannot insert customer log",
-			"error":   err,
+			"error":   err.Error(),
 		})
 	}
 
 	// get the inserted data
 	customerLog := &Model.CustomerLog{}
-	query := bson.D{{Key: "_id", Value: result.InsertedID}}
+	query := bson.D{{"customer_name", data.CustomerName}}
 
 	logCollection.FindOne(c.Context(), query).Decode(customerLog)
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"success": true,
-		"data": fiber.Map{
-			"customerLog": customerLog,
-		},
+		"data":    customerLog,
 	})
 }
 
@@ -114,7 +108,7 @@ func CreateSystemLog(c *fiber.Ctx) error {
 
 	id := xid.New()
 	data.ID = id.String()
-	data.Date = time.Now().Format("January 2, 2006")
+	data.Date = time.Now().Format("January 2 2006 15:04:05")
 
 	result, err := logCollection.InsertOne(c.Context(), data)
 
@@ -137,5 +131,34 @@ func CreateSystemLog(c *fiber.Ctx) error {
 		"data": fiber.Map{
 			"systemLog": systemLog,
 		},
+	})
+}
+
+func AddManyUserLog(c *fiber.Ctx) error {
+	usersCollection := DB.MI.DBCol
+
+	// var datas []Model.User = make([]Model.User, 0)
+	type data []interface{}
+	var datas data
+	err := c.BodyParser(&datas)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Cannot parse JSON",
+			"error":   err,
+		})
+	}
+	// err := json.Unmarshal(c.Body(), &datas)
+	_, err = usersCollection.InsertMany(c.Context(), datas)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Cannot insert agent",
+			"error":   err,
+		})
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"success": true,
 	})
 }

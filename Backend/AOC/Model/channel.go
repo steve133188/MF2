@@ -49,7 +49,7 @@ type Role struct {
 
 type Tags struct {
 	ID      string `json:"id" bson:"id:"`
-	Name    string `json:"tags" bson:"tags"`
+	Tags    string `json:"tags" bson:"tags"`
 	Total   int    `json:"total" bson:"total"`
 	Created string `json:"created" bson:"created"`
 	Updated string `json:"updated" bson:"updated"`

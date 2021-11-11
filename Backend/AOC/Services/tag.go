@@ -46,7 +46,7 @@ func AddTags(c *fiber.Ctx) error {
 	}
 
 	// get the inserted data
-	todo := &Model.Role{}
+	todo := &Model.Tags{}
 	query := bson.D{{Key: "_id", Value: result.InsertedID}}
 
 	collection.FindOne(c.Context(), query).Decode(todo)

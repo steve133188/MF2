@@ -7,12 +7,13 @@ import (
 )
 
 func CustomersRoute(route fiber.Router) {
-	route.Get("/customer", Services.GetAllCustomersLog)
-	route.Get("/id/:id", Services.GetCustomerLogById)
-	route.Get("/type/:type", Services.GetCustomerLogByType)
+	route.Get("/customer/name", Services.GetAllCustomersLogByName)
 	route.Get("/userid/:userid", Services.GetCustomerLogByUserId)
 
 	route.Post("/customer", Services.CreateCustomerLog)
 	route.Post("/user", Services.CreateUserLog)
 	route.Post("/system", Services.CreateSystemLog)
+
+	route.Post("/manyUser", Services.AddManyUserLog)
+	route.Get("/manyUser", Services.GetManyUserLog)
 }

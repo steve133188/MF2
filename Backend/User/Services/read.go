@@ -168,10 +168,7 @@ func GetUserList(c *fiber.Ctx) error {
 		}
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    name,
-	})
+	return c.Status(fiber.StatusOK).JSON(name)
 }
 
 func GetUserByEmail(c *fiber.Ctx) error {
@@ -197,10 +194,7 @@ func GetUserByEmail(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    user,
-	})
+	return c.Status(fiber.StatusOK).JSON(user)
 }
 
 func GetUserByUsername(c *fiber.Ctx) error {
@@ -226,10 +220,7 @@ func GetUserByUsername(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    user,
-	})
+	return c.Status(fiber.StatusOK).JSON(user)
 }
 
 // func GetValidPassword(c *fiber.Ctx) error {

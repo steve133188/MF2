@@ -34,10 +34,7 @@ func GetAllBoardCasts(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    todos,
-	})
+	return c.Status(fiber.StatusOK).JSON(todos)
 }
 
 func GetBoardCastsByGroup(c *fiber.Ctx) error {
@@ -77,10 +74,7 @@ func GetBoardCastsByGroup(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    todos,
-	})
+	return c.Status(fiber.StatusOK).JSON(todos)
 }
 
 func GetBoardCastsByName(c *fiber.Ctx) error {
@@ -119,8 +113,5 @@ func GetBoardCastsByName(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    todos,
-	})
+	return c.Status(fiber.StatusOK).JSON(todos)
 }
