@@ -51,10 +51,7 @@ func AddChannel(c *fiber.Ctx) error {
 	query := bson.D{{Key: "_id", Value: result.InsertedID}}
 	usersCollection.FindOne(c.Context(), query).Decode(user)
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"success": true,
-		"data":    user,
-	})
+	return c.Status(fiber.StatusCreated).JSON(user)
 }
 
 //Update
@@ -89,10 +86,8 @@ func UpdateChannelById(c *fiber.Ctx) error {
 			"error":   err.Error(),
 		})
 	}
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"success": true,
-		"data":    customer,
-	})
+	customersCollection.FindOne(c.Context(), bson.D{{"id", customer.ID}}).Decode(customer)
+	return c.Status(fiber.StatusCreated).JSON(customer)
 }
 
 //Get
@@ -125,10 +120,7 @@ func GetAllChannelInfo(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    users,
-	})
+	return c.Status(fiber.StatusOK).JSON(users)
 }
 
 func GetChannelInfoById(c *fiber.Ctx) error {
@@ -151,10 +143,7 @@ func GetChannelInfoById(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    customer,
-	})
+	return c.Status(fiber.StatusOK).JSON(customer)
 }
 
 //Delete

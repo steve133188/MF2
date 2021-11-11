@@ -32,8 +32,8 @@ func AddTags(c *fiber.Ctx) error {
 
 	id := xid.New()
 	data.ID = id.String()
-	data.Created = time.Now().Format("January 2, 2006")
-	data.Updated = time.Now().Format("January 2, 2006")
+	data.Created = time.Now().Format("January 2 2006 15:04:05")
+	data.Updated = time.Now().Format("January 2 2006 15:04:05")
 
 	result, err := collection.InsertOne(c.Context(), data)
 
