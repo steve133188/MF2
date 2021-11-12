@@ -13,6 +13,8 @@ func UsersRoute(route fiber.Router) {
 	route.Get("/team", Services.GetUsersByTeam)
 	route.Get("/", Services.GetAllUsers)
 	route.Get("/userlist", Services.GetUserList)
+	route.Get("/teamlist", Services.GetTeamList)
+
 	// route.Get("/authority", Services.GetUserAuthority)
 	//for filter
 

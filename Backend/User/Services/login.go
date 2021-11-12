@@ -2,6 +2,7 @@ package Services
 
 import (
 	"fmt"
+	"log"
 	"mf-user-servies/DB"
 	"mf-user-servies/Model"
 	"mf-user-servies/Util"
@@ -20,46 +21,31 @@ func ForgotPassword(c *fiber.Ctx) error {
 
 	err := c.BodyParser(&target)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to parse",
-			"error":   err.Error(),
-		})
+		log.Println("ForgotPassword parse: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 	user := new(Model.User)
 	err = col.FindOne(c.Context(), bson.D{{"email", target.Address}}).Decode(&user)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "Not Found",
-			"error":   err.Error(),
-		})
+		log.Println("ForgotPassword FindOne: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 	randomPassword := Util.GeneratePassword(2, 2, 2, 8)
 	password, err := Util.HashPassword(randomPassword)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to hash password",
-			"error":   err.Error(),
-		})
+		log.Println("ForgotPassword HashPassword: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 	result, err := col.UpdateOne(c.Context(), bson.D{{"email", target.Address}}, bson.D{{"$set", bson.D{{"password", password}}}})
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to update",
-			"error":   err.Error(),
-		})
+		log.Println("ForgotPassword UpdateOne: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	err = Util.SendEmail(target.Address, randomPassword)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to send mail",
-			"error":   err.Error(),
-		})
+		log.Println("ForgotPassword SendEmail: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 	// Receiver email address.
 	return c.Status(fiber.StatusOK).JSON(result)
@@ -75,35 +61,28 @@ func Login(c *fiber.Ctx) error {
 
 	err := c.BodyParser(&user)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Cannot parse JSON",
-			"error":   err,
-		})
+		log.Println("Login parse: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 	query := bson.D{{Key: "email", Value: user.Email}}
 
 	err = collection.FindOne(c.Context(), query).Decode(find)
 	if err != nil {
-		fmt.Println(err)
+		log.Println("Login FindOne: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	match := Util.CheckPasswordHash(user.Password, find.Password)
 	if !match {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"success":  false,
-			"response": "failed to login",
-		})
+		log.Println("Login CheckPasswordHash: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	find.LastLogin = time.Now().Format("January 2 2006 15:04:05")
 	_, err = collection.UpdateOne(c.Context(), bson.D{{"email", user.Email}}, bson.D{{"$set", bson.D{{"last_login", find.LastLogin}}}})
 	if err != nil {
-		c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to insert",
-			"error":   err.Error(),
-		})
+		log.Println("Login UpdateOne: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	token := jwt.New(jwt.SigningMethodHS256)

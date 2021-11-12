@@ -43,11 +43,13 @@ func GetUserList(c *fiber.Ctx) error {
 	cursor, err := col.Find(c.Context(), bson.D{{}}, options.Find())
 	if err != nil {
 		log.Println("GetUserList find: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	err = cursor.All(c.Context(), &data)
 	if err != nil {
 		log.Println("GetUserList cursor all: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 	defer cursor.Close(c.Context())
 
@@ -55,6 +57,45 @@ func GetUserList(c *fiber.Ctx) error {
 	for _, v := range data {
 		if v.UserName != "" {
 			name = append(name, v.UserName)
+		}
+	}
+
+	return c.Status(fiber.StatusOK).JSON(name)
+}
+
+func GetTeamList(c *fiber.Ctx) error {
+	col := DB.MI.UserDBCol
+
+	var data []struct {
+		Team string `json:"team"`
+	}
+
+	cursor, err := col.Find(c.Context(), bson.D{{}}, options.Find())
+	if err != nil {
+		log.Println("GetTeamList find: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	err = cursor.All(c.Context(), &data)
+	if err != nil {
+		log.Println("GetTeamList cursor all: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+	defer cursor.Close(c.Context())
+
+	var name []string
+	for _, v := range data {
+		if v.Team != "" {
+			found := false
+			for _, val := range name {
+				if v.Team == val {
+					found = true
+					break
+				}
+			}
+			if !found {
+				name = append(name, v.Team)
+			}
 		}
 	}
 
