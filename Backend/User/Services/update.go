@@ -11,233 +11,182 @@ import (
 )
 
 func UpdateUserByName(c *fiber.Ctx) error {
-	usersCollection := DB.MI.DBCol
-	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	col := DB.MI.UserDBCol
 	user := new(Model.User)
 
 	if err := c.BodyParser(&user); err != nil {
-		log.Println(err)
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to parse body",
-			"error":   err.Error(),
-		})
+		log.Println("UpdateUserByName parse: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 	password, err := Util.HashPassword(user.Password)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to hass password",
-			"error":   err.Error(),
-		})
+		log.Println("UpdateUserByName hashPW: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	user.Password = password
 
 	update := bson.D{{Key: "$set", Value: user}}
 
-	_, err = usersCollection.UpdateOne(c.Context(), bson.D{{Key: "username", Value: user.UserName}}, update)
+	_, err = col.UpdateOne(c.Context(), bson.D{{Key: "username", Value: user.UserName}}, update)
 
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "User failed to update",
-			"error":   err.Error(),
-		})
+		log.Println("UpdateUserByName UpdateOne: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
-	err = usersCollection.FindOne(c.Context(), bson.D{{Key: "username", Value: user.UserName}}).Decode(&user)
+	err = col.FindOne(c.Context(), bson.D{{Key: "username", Value: user.UserName}}).Decode(&user)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Not Found",
-			"error":   err.Error(),
-		})
+		log.Println("UpdateUserByName FindOne: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 	return c.Status(fiber.StatusCreated).JSON(user)
 }
 
 func ChangeUserStatus(c *fiber.Ctx) error {
-	usersCollection := DB.MI.DBCol
-	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	user := new(Model.User)
+	col := DB.MI.UserDBCol
+	// user := new(Model.User)
 	data := new(Model.User)
 
-	if err := c.BodyParser(&user); err != nil {
-		log.Println(err)
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to parse body",
-			"error":   err.Error(),
-		})
-	}
+	name := c.Query("name")
+	status := c.Query("status")
 
 	update := bson.M{"$set": bson.M{
-		"status": user.Status,
+		"status": status,
 	}}
 
-	_, err := usersCollection.UpdateOne(c.Context(), bson.D{{Key: "username", Value: user.UserName}}, update)
+	_, err := col.UpdateOne(c.Context(), bson.D{{Key: "username", Value: name}}, update)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "User failed to update",
-			"error":   err.Error(),
-		})
+		log.Println("ChangeUserStatus UpdateOne: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
-	err = usersCollection.FindOne(c.Context(), bson.D{{Key: "username", Value: user.UserName}}).Decode(&data)
+	err = col.FindOne(c.Context(), bson.D{{Key: "username", Value: name}}).Decode(&data)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Not Found",
-			"error":   err.Error(),
-		})
+		log.Println("ChangeUserStatus FindOne: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(data)
 }
 
 func UpdateUserRole(c *fiber.Ctx) error {
-	usersCollection := DB.MI.DBCol
-	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	user := new(Model.User)
+	rcol := DB.MI.RoleDBCol
+	ucol := DB.MI.UserDBCol
+
 	data := new(Model.User)
-	if err := c.BodyParser(&user); err != nil {
-		log.Println(err)
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to parse body",
-			"error":   err.Error(),
-		})
+	auth := new(Model.Auth)
+	rdata := new(Model.Roles)
+
+	name := c.Query("name")
+	role := c.Query("role")
+
+	err := ucol.FindOne(c.Context(), bson.D{{"username", name}}).Decode(&data)
+	if err != nil {
+		log.Println("UpdateUserRole user FindOne", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
-	update := bson.M{"$set": bson.M{
-		"role":      user.Role,
-		"authority": user.Authority,
-	}}
-
-	_, err := usersCollection.UpdateOne(c.Context(), bson.D{{Key: "username", Value: user.UserName}}, update)
+	err = rcol.FindOne(c.Context(), bson.D{{"name", role}}).Decode(&rdata)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "User failed to update",
-			"error":   err.Error(),
-		})
+		log.Println("UpdateUserRole role FindOne", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
-	err = usersCollection.FindOne(c.Context(), bson.D{{Key: "username", Value: user.UserName}}).Decode(&data)
+	auth.Admin = rdata.Admin
+	auth.Dashboard = rdata.Dashboard
+	auth.Livechat = rdata.Livechat
+	auth.Contact = rdata.Contact
+	auth.Flowbuilder = rdata.Flowbuilder
+	auth.Integrations = rdata.Integrations
+	auth.Organization = rdata.Organization
+	auth.ProductCatalogue = rdata.ProductCatalogue
+	auth.Boardcast = rdata.Boardcast
+
+	update := bson.M{"$set": bson.M{"role": role, "authority": auth}}
+
+	_, err = ucol.UpdateOne(c.Context(), bson.D{{Key: "username", Value: name}}, update)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Not Found",
-			"error":   err.Error(),
-		})
+		log.Println("UpdateUserRole UpdateOne", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	err = ucol.FindOne(c.Context(), bson.D{{Key: "username", Value: name}}).Decode(&data)
+	if err != nil {
+		log.Println("UpdateUserRole FindOne", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(data)
 }
 
 func UpdateDivisionAndTeam(c *fiber.Ctx) error {
-	usersCollection := DB.MI.DBCol
+	usersCollection := DB.MI.UserDBCol
 	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	user := new(Model.User)
 	data := new(Model.User)
 	if err := c.BodyParser(&user); err != nil {
-		log.Println(err)
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to parse body",
-			"error":   err.Error(),
-		})
+		log.Println("UpdateDivisionAndTeam parser", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	update := bson.M{"$set": bson.M{"division_name": user.DivisionName, "team": user.Team}}
 
 	_, err := usersCollection.UpdateOne(c.Context(), bson.D{{Key: "username", Value: user.UserName}}, update)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to update",
-			"error":   err.Error(),
-		})
+		log.Println("UpdateDivisionAndTeam UpdateOne", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	err = usersCollection.FindOne(c.Context(), bson.D{{Key: "username", Value: user.UserName}}).Decode(&data)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Not Found",
-			"error":   err.Error(),
-		})
+		log.Println("UpdateDivisionAndTeam FindOne", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(data)
 }
 
 func DeleteUserTeam(c *fiber.Ctx) error {
-	usersCollection := DB.MI.DBCol
+	usersCollection := DB.MI.UserDBCol
 	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	user := new(Model.User)
 	data := new(Model.User)
 	if err := c.BodyParser(&user); err != nil {
-		log.Println(err)
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to parse body",
-			"error":   err.Error(),
-		})
+		log.Println("DeleteUserTeam parse", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	update := bson.M{"$set": bson.M{"division_name": "", "team": ""}}
 
 	_, err := usersCollection.UpdateOne(c.Context(), bson.D{{Key: "username", Value: user.UserName}}, update)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to update",
-			"error":   err.Error(),
-		})
+		log.Println("DeleteUserTeam UpdateOne", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	err = usersCollection.FindOne(c.Context(), bson.D{{Key: "username", Value: user.UserName}}).Decode(&data)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Not Found",
-			"error":   err.Error(),
-		})
+		log.Println("DeleteUserTeam FindOne", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(data)
 }
 
-func UpdateChannelInfoByID(c *fiber.Ctx) error {
-	customersCollection := DB.MI.DBCol
-	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	// customer := new(Model.Customer)
+func UpdateChannelInfoByPhone(c *fiber.Ctx) error {
+	col := DB.MI.UserDBCol
 	chanInfo := new(Model.Info)
-
-	if err := c.BodyParser(&chanInfo); err != nil {
-		log.Println(err)
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to parse body",
-			"error":   err,
-		})
-	}
-
+	phone := c.Params("phone")
 	update := bson.D{{"$set", bson.D{{"channel_info", chanInfo}}}}
 
-	_, err := customersCollection.UpdateOne(c.Context(), bson.D{{Key: "phone", Value: chanInfo.Phone}}, update)
-	// fmt.Println(customer)
+	_, err := col.UpdateOne(c.Context(), bson.D{{Key: "phone", Value: phone}}, update)
+
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Customer failed to update",
-			"error":   err.Error(),
-		})
+		log.Println("UpdateChannelInfoByPhone UpdateOne", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 	customer := new(Model.User)
-	customersCollection.FindOne(c.Context(), bson.D{{"phone", chanInfo.Phone}}).Decode(&customer)
+	col.FindOne(c.Context(), bson.D{{"phone", chanInfo.Phone}}).Decode(&customer)
 	return c.Status(fiber.StatusCreated).JSON(chanInfo)
 }

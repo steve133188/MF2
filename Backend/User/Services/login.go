@@ -13,7 +13,7 @@ import (
 )
 
 func ForgotPassword(c *fiber.Ctx) error {
-	col := DB.MI.DBCol
+	col := DB.MI.UserDBCol
 	var target struct {
 		Address string `json:"address"`
 	}
@@ -67,7 +67,7 @@ func ForgotPassword(c *fiber.Ctx) error {
 
 func Login(c *fiber.Ctx) error {
 	fmt.Println("Login")
-	collection := DB.MI.DBCol
+	collection := DB.MI.UserDBCol
 	// paramPassword := c.Params("password")
 	// paramEmail := c.Params("email")
 	user := new(Model.User)

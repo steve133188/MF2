@@ -11,7 +11,7 @@ import (
 )
 
 func AddManyAgent(c *fiber.Ctx) error {
-	usersCollection := DB.MI.DBCol
+	usersCollection := DB.MI.UserDBCol
 
 	// var datas []Model.User = make([]Model.User, 0)
 	type data []interface{}
@@ -40,7 +40,7 @@ func AddManyAgent(c *fiber.Ctx) error {
 }
 
 func AddAgent(c *fiber.Ctx) error {
-	usersCollection := DB.MI.DBCol
+	usersCollection := DB.MI.UserDBCol
 
 	data := new(Model.User)
 	exist := new(Model.User)

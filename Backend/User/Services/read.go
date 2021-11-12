@@ -1,7 +1,7 @@
 package Services
 
 import (
-	"fmt"
+	"log"
 	"mf-user-servies/DB"
 	"mf-user-servies/Model"
 
@@ -11,136 +11,30 @@ import (
 )
 
 func GetAllUsers(c *fiber.Ctx) error {
-	fmt.Println("getall")
+	usersCollection := DB.MI.UserDBCol
 
-	usersCollection := DB.MI.DBCol
-	// Query to filter
 	query := bson.D{{}}
 
 	cursor, err := usersCollection.Find(c.Context(), query)
 
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to find context",
-			"error":   err.Error(),
-		})
+		log.Println("GetAllUsers find: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	var users []Model.User = make([]Model.User, 0)
 
-	// iterate the cursor and decode each item into a Todo
 	err = cursor.All(c.Context(), &users)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Error to interate cursor into result",
-			"error":   err.Error(),
-		})
-	}
-
-	// for i := range users {
-	// 	users[i].Date = users[i].Date.Add(time.Hour * 8)
-	// }
-
-	return c.Status(fiber.StatusOK).JSON(users)
-}
-
-func GetUsersByTeam(c *fiber.Ctx) error {
-	customerCollection := DB.MI.DBCol
-	data := new(Model.Div)
-	err := c.BodyParser(&data)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to parse body",
-			"error":   err,
-		})
-	}
-	query := bson.D{{"division_name", data.Division}, {"team", data.Team}}
-
-	cursor, err := customerCollection.Find(c.Context(), query)
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "User Not found",
-			"error":   err,
-		})
-	}
-	var users []Model.User = make([]Model.User, 0)
-
-	// iterate the cursor and decode each item into a Todo
-	err = cursor.All(c.Context(), &users)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Error to interate cursor into result",
-			"error":   err.Error(),
-		})
+		log.Println("GetAllUsers cursor all: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(users)
 }
-
-func GetUserByPhone(c *fiber.Ctx) error {
-	customerCollection := DB.MI.DBCol
-	data := new(Model.Param)
-	user := new(Model.User)
-	err := c.BodyParser(&data)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to parse body",
-			"error":   err,
-		})
-	}
-	query := bson.D{{"phone", data.Param}}
-
-	err = customerCollection.FindOne(c.Context(), query).Decode(&user)
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "User Not found",
-			"error":   err,
-		})
-	}
-
-	return c.Status(fiber.StatusOK).JSON(user)
-}
-
-// func GetUserAuthority(c *fiber.Ctx) error {
-// 	customerCollection := DB.MI.DBCol
-// 	var data struct {
-// 		Param []string `json:"param" bson:"param"`
-// 	}
-// 	user := new(Model.User)
-// 	err := c.BodyParser(&data)
-// 	if err != nil {
-// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-// 			"success": false,
-// 			"message": "Failed to parse body",
-// 			"error":   err,
-// 		})
-// 	}
-// 	query := bson.D{{"authority", bson.D{{"$in", data.Param}}}}
-
-// 	err = customerCollection.FindOne(c.Context(), query).Decode(&user)
-// 	if err != nil {
-// 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-// 			"success": false,
-// 			"message": "User Not found",
-// 			"error":   err,
-// 		})
-// 	}
-
-// 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-// 		"success": true,
-// 		"data":    user,
-// 	})
-// }
 
 func GetUserList(c *fiber.Ctx) error {
-	col := DB.MI.DBCol
+	col := DB.MI.UserDBCol
 
 	var data []struct {
 		UserName string `json:"username" bson:"username"`
@@ -148,16 +42,12 @@ func GetUserList(c *fiber.Ctx) error {
 
 	cursor, err := col.Find(c.Context(), bson.D{{}}, options.Find())
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "Not Found",
-			"error":   err.Error(),
-		})
+		log.Println("GetUserList find: ", err)
 	}
 
 	err = cursor.All(c.Context(), &data)
 	if err != nil {
-		fmt.Println(err)
+		log.Println("GetUserList cursor all: ", err)
 	}
 	defer cursor.Close(c.Context())
 
@@ -172,52 +62,31 @@ func GetUserList(c *fiber.Ctx) error {
 }
 
 func GetUserByEmail(c *fiber.Ctx) error {
-	customerCollection := DB.MI.DBCol
-	data := new(Model.Param)
+	col := DB.MI.UserDBCol
 	user := new(Model.User)
-	err := c.BodyParser(&data)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to parse body",
-			"error":   err,
-		})
-	}
-	query := bson.D{{"email", data.Param}}
+	email := c.Params("email")
+	query := bson.D{{"email", email}}
 
-	err = customerCollection.FindOne(c.Context(), query).Decode(&user)
+	err := col.FindOne(c.Context(), query).Decode(&user)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "User Not found",
-			"error":   err,
-		})
+		log.Println("GetUsersByEmail findone: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(user)
 }
 
-func GetUserByUsername(c *fiber.Ctx) error {
-	customerCollection := DB.MI.DBCol
-	data := new(Model.Param)
-	user := new(Model.User)
-	err := c.BodyParser(&data)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to parse body",
-			"error":   err,
-		})
-	}
-	query := bson.D{{"username", data.Param}}
+func GetUserByName(c *fiber.Ctx) error {
+	col := DB.MI.UserDBCol
 
-	err = customerCollection.FindOne(c.Context(), query).Decode(&user)
+	user := new(Model.User)
+	name := c.Params("name")
+	query := bson.D{{"username", name}}
+
+	err := col.FindOne(c.Context(), query).Decode(&user)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "User Not found",
-			"error":   err,
-		})
+		log.Println("GetUsersByName find: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(user)
@@ -251,3 +120,46 @@ func GetUserByUsername(c *fiber.Ctx) error {
 // 	})
 
 // }
+
+func GetUsersByTeam(c *fiber.Ctx) error {
+	col := DB.MI.UserDBCol
+
+	team := c.Query("team")
+	division := c.Query("division")
+
+	query := bson.D{{"division_name", division}, {"team", team}}
+
+	cursor, err := col.Find(c.Context(), query)
+	if err != nil {
+		log.Println("GetUsersByTeam Error: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	var users []Model.User = make([]Model.User, 0)
+
+	err = cursor.All(c.Context(), &users)
+	if err != nil {
+		log.Println("GetUsersByTeam Error: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(users)
+}
+
+func GetUserByPhone(c *fiber.Ctx) error {
+	col := DB.MI.UserDBCol
+
+	user := new(Model.User)
+	phone := c.Params("phone")
+	query := bson.D{{"phone", phone}}
+
+	err := col.FindOne(c.Context(), query).Decode(&user)
+	if err != nil {
+		if err != nil {
+			log.Println("GetUsersByPhone Error: ", err)
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+	}
+
+	return c.Status(fiber.StatusOK).JSON(user)
+}

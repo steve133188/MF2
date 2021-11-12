@@ -1,8 +1,8 @@
 package Services
 
 import (
+	"log"
 	"mf-user-servies/DB"
-	"mf-user-servies/Model"
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
@@ -10,40 +10,22 @@ import (
 )
 
 func DeleteUserByName(c *fiber.Ctx) error {
-	userCollection := DB.MI.DBCol
+	userCollection := DB.MI.UserDBCol
 
-	data := new(Model.User)
+	name := c.Params("name")
 
-	err := c.BodyParser(&data)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Cannot parse JSON",
-			"error":   err.Error(),
-		})
-	}
+	query := bson.M{"username": name}
 
-	// find and delete todo
-	query := bson.M{"username": data.UserName}
-
-	err = userCollection.FindOneAndDelete(c.Context(), query).Err()
+	err := userCollection.FindOneAndDelete(c.Context(), query).Err()
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"success": false,
-				"message": "Not found",
-				"error":   err.Error(),
-			})
+			log.Println("DeleteUserByName FindOneAndDelete: ", err)
+			return c.SendStatus(fiber.StatusNotFound)
 		}
 
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to delete",
-			"error":   err.Error(),
-		})
+		log.Println("DeleteUserByName FindOneAndDelete: ", err)
+		return c.SendStatus(fiber.StatusBadRequest)
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-	})
+	return c.SendStatus(fiber.StatusOK)
 }

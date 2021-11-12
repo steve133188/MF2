@@ -47,14 +47,39 @@ type User struct {
 	Status    string `json:"status" bson:"status"`
 	// Interface    string      `json:"interface" bson:"interface"`
 	// AssignTo     string      `json:"assign_to" bson:"assign_to"`
-	Leads        string      `json:"leads" bson:"leads"`
-	Team         string      `json:"team" bson:"team"`
-	DivisionName string      `json:"division_name" bson:"division_name"`
-	LastLogin    string      `json:"last_login" bson:"last_login"`
-	Authority    interface{} `json:"authority" bson:"authority"`
-	Channels     []string    `json:"channels" bson:"channels"`
-	ChannelInfo  Info        `json:"channel_info" bson:"channel_info"`
-	Phone        string      `json:"phone" bson:"phone"`
+	Leads        string   `json:"leads" bson:"leads"`
+	Team         string   `json:"team" bson:"team"`
+	DivisionName string   `json:"division_name" bson:"division_name"`
+	LastLogin    string   `json:"last_login" bson:"last_login"`
+	Authority    Auth     `json:"authority" bson:"authority"`
+	Channels     []string `json:"channels" bson:"channels"`
+	ChannelInfo  Info     `json:"channel_info" bson:"channel_info"`
+	Phone        string   `json:"phone" bson:"phone"`
+}
+
+type Roles struct {
+	Name             string `json:"name" bson:"name"`
+	Dashboard        bool   `json:"dashboard" bson:"dashboard" default:"false"`
+	Livechat         bool   `json:"livechat" bson:"livechat" default:"false"`
+	Contact          bool   `json:"contact" bson:"contact" default:"false"`
+	Boardcast        bool   `json:"boardcast" bson:"boardcast" default:"false"`
+	Flowbuilder      bool   `json:"flowbuilder" bson:"flowbuilder" default:"false"`
+	Integrations     bool   `json:"integrations" bson:"integrations" default:"false"`
+	ProductCatalogue bool   `json:"product_catalogue" bson:"product_catalogue" default:"false"`
+	Organization     bool   `json:"organization" bson:"organization" default:"false"`
+	Admin            bool   `json:"admin" bson:"admin" default:"false"`
+}
+
+type Auth struct {
+	Dashboard        bool `json:"dashboard" bson:"dashboard" default:"false"`
+	Livechat         bool `json:"livechat" bson:"livechat" default:"false"`
+	Contact          bool `json:"contact" bson:"contact" default:"false"`
+	Boardcast        bool `json:"boardcast" bson:"boardcast" default:"false"`
+	Flowbuilder      bool `json:"flowbuilder" bson:"flowbuilder" default:"false"`
+	Integrations     bool `json:"integrations" bson:"integrations" default:"false"`
+	ProductCatalogue bool `json:"product_catalogue" bson:"product_catalogue" default:"false"`
+	Organization     bool `json:"organization" bson:"organization" default:"false"`
+	Admin            bool `json:"admin" bson:"admin" default:"false"`
 }
 
 type Div struct {
