@@ -17,7 +17,7 @@ func UsersRoute(route fiber.Router) {
 	//for filter
 
 	// route.Put("/id/:id", Services.UpdateUserByID)
-	route.Put("/name/:name", Services.UpdateUserByName)
+	route.Put("/name", Services.UpdateUserByName)
 	route.Put("/update-div-team", Services.UpdateDivisionAndTeam)
 	route.Put("/status", Services.ChangeUserStatus)
 	route.Put("/role", Services.UpdateUserRole) //??????
