@@ -20,6 +20,14 @@ type Channel struct {
 	Address string `json:"address" bson:"address"`
 }
 
+type ORG struct {
+	ID         string   `json:"id" bson:"id"`
+	Type       string   `json:"type" bson:"type"`
+	ChildrenID []string `json:"children_id" bson:"children_id"`
+	ParentID   string   `json:"parent_id" bson:"parent_id"`
+	Name       string   `json:"name" bson:"name"`
+}
+
 type Division struct {
 	ID        string   `json:"id" bson:"id"`
 	Name      string   `json:"name" bson:"name"`
@@ -31,20 +39,6 @@ type EditTeam struct {
 	DivName string `json:"div_name" bson:"div_name"`
 	Old     string `json:"old" bson:"old"`
 	New     string `json:"new" bson:"new"`
-}
-
-type Role struct {
-	ID               string `json:"id" bson:"id"`
-	Name             string `json:"name" bson:"name"`
-	Dashboard        bool   `json:"dashboard" bson:"dashboard"`
-	LiveChat         bool   `json:"livechat" bson:"livechat"`
-	Contact          bool   `json:"contact" bson:"contact"`
-	Boardcast        bool   `json:"boardcast" bson:"boardcast"`
-	FlowBuilder      bool   `json:"flowbuilder" bson:"flowbuilder"`
-	Integrations     bool   `json:"integration" bson:"integration"`
-	ProductCatalogue bool   `json:"product_catalogue" bson:"product_catalogue"`
-	Organization     bool   `json:"organization" bson:"organization"`
-	Admin            bool   `json:"admin" bson:"admin"`
 }
 
 type Tags struct {
