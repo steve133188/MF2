@@ -25,6 +25,13 @@ func AdminRoute(route fiber.Router) {
 	route.Put("/tage/name/:name", Services.UpdateTagsByName)
 	route.Delete("/tages/name/:name", Services.DeleteTagsByName)
 
+	//role CRUD
+	route.Get("/roles", Services.GetAllRoles)
+	route.Get("/role/name/:name", Services.GetRoleByName)
+	route.Get("/roles-name", Services.GetRolesName)
+	route.Post("/role", Services.AddRole)
+	route.Put("/role", Services.UpdateRoleByName)
+	route.Delete("/role/name/:name", Services.DeleteRoleByName)
 	// route.Post("/addGroup", Services.AddGroup)
 	// route.Put("/editGroup", Services.EditGroup)
 	// route.Put("/delGroup", Services.DelGroup)
@@ -34,6 +41,9 @@ func OrgRoute(route fiber.Router) {
 	route.Post("/", Services.CreateDivision)
 	route.Get("/root", Services.GetRootDivisions)
 	route.Get("/parent/:parentId", Services.GetOrgByParentID)
+	route.Get("/id/:id", Services.GetOrgByID)
+	route.Get("/name/:id", Services.GetNameByID)
+
 	route.Put("/", Services.EditOrgName)
 	route.Delete("/id/:id", Services.DeleteOrgById)
 }

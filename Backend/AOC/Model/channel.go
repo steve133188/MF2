@@ -28,19 +28,6 @@ type ORG struct {
 	Name       string   `json:"name" bson:"name"`
 }
 
-type Division struct {
-	ID        string   `json:"id" bson:"id"`
-	Name      string   `json:"name" bson:"name"`
-	Team      []string `json:"team" bson:"team"`
-	CreatedAt string   `json:"created_at" bson:"created"`
-}
-
-type EditTeam struct {
-	DivName string `json:"div_name" bson:"div_name"`
-	Old     string `json:"old" bson:"old"`
-	New     string `json:"new" bson:"new"`
-}
-
 type Tags struct {
 	ID      string `json:"id" bson:"id:"`
 	Tags    string `json:"tags" bson:"tags"`
@@ -49,11 +36,19 @@ type Tags struct {
 	Updated string `json:"updated" bson:"updated"`
 }
 
-type Group struct {
+type Roles struct {
 	Name string `json:"name" bson:"name"`
+	Auth Auth   `json:"auth" bson:"auth"`
 }
 
-type EditGroup struct {
-	Old string `json:"old" bson:"old"`
-	New string
+type Auth struct {
+	Dashboard        bool `json:"dashboard" bson:"dashboard" default:"false"`
+	Livechat         bool `json:"livechat" bson:"livechat" default:"false"`
+	Contact          bool `json:"contact" bson:"contact" default:"false"`
+	Boardcast        bool `json:"boardcast" bson:"boardcast" default:"false"`
+	Flowbuilder      bool `json:"flowbuilder" bson:"flowbuilder" default:"false"`
+	Integrations     bool `json:"integrations" bson:"integrations" default:"false"`
+	ProductCatalogue bool `json:"product_catalogue" bson:"product_catalogue" default:"false"`
+	Organization     bool `json:"organization" bson:"organization" default:"false"`
+	Admin            bool `json:"admin" bson:"admin" default:"false"`
 }
