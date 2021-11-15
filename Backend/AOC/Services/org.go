@@ -47,7 +47,6 @@ func CreateDivision(c *fiber.Ctx) error {
 	if data.ParentID != "" {
 		nFilter := bson.D{{"id", data.ParentID}}
 		nUpdate := bson.D{{"$push", bson.D{{"children_id", data.ID}}}}
-
 		res, err := col.UpdateOne(c.Context(), nFilter, nUpdate)
 		if err != nil {
 			log.Println("CreateDivision UpdateOne ", err)
@@ -55,6 +54,7 @@ func CreateDivision(c *fiber.Ctx) error {
 		}
 		fmt.Println(res.ModifiedCount)
 		fmt.Println(res.MatchedCount)
+
 	}
 
 	result, err := col.InsertOne(c.Context(), data)
@@ -117,6 +117,40 @@ func GetOrgByParentID(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(datas)
+}
+
+func GetOrgByID(c *fiber.Ctx) error {
+	col := DB.MI.OrgDBCol
+
+	id := c.Params("id")
+
+	filter := bson.D{{"id", id}}
+
+	data := new(Model.ORG)
+	err := col.FindOne(c.Context(), filter).Decode(&data)
+	if err != nil {
+		log.Println("GetOrgByParentID Find ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(data)
+}
+
+func GetNameByID(c *fiber.Ctx) error {
+	col := DB.MI.OrgDBCol
+
+	id := c.Params("id")
+
+	filter := bson.D{{"id", id}}
+
+	data := new(Model.ORG)
+	err := col.FindOne(c.Context(), filter).Decode(&data)
+	if err != nil {
+		log.Println("GetOrgByParentID Find ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(data.Name)
 }
 
 func EditOrgName(c *fiber.Ctx) error {
