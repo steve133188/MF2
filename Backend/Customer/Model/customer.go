@@ -12,7 +12,7 @@ type Customer struct {
 	Channels     []string `json:"channels" bson:"channels"`
 
 	Group     string    `json:"group" bson:"group"`
-	Team      string    `json:"team" bson:"team"`
+	TeamID    string    `json:"team_id" bson:"team_id"`
 	Agents    []string  `json:"agents" bson:"agents"`
 	Tags      []string  `json:"tags" bson:"tags"`
 	Birthday  string    `json:"birthday" bson:"birthday"`

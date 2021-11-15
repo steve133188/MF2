@@ -2,6 +2,7 @@ package Services
 
 import (
 	"fmt"
+	"log"
 	"mf-customer-services/DB"
 	"mf-customer-services/Model"
 
@@ -15,13 +16,9 @@ func GetAllCustomers(c *fiber.Ctx) error {
 	// Query to filter
 	query := bson.D{{}}
 	cursor, err := customersCollection.Find(c.Context(), query)
-
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to find context",
-			"error":   err.Error(),
-		})
+		log.Println("GetAllCustomers Find ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	var customers []Model.Customer = make([]Model.Customer, 0)
@@ -29,11 +26,8 @@ func GetAllCustomers(c *fiber.Ctx) error {
 	// iterate the cursor and decode each item into a Todo
 	err = cursor.All(c.Context(), &customers)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Error to interate cursor into result",
-			"error":   err.Error(),
-		})
+		log.Println("GetAllCustomers All ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(customers)
@@ -42,30 +36,16 @@ func GetAllCustomers(c *fiber.Ctx) error {
 func GetCustomerById(c *fiber.Ctx) error {
 	customerCollection := DB.MI.DBCol
 
-	var data struct {
-		ID string `json:"id" bson:"id"`
-	}
-
-	err := c.BodyParser(&data)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Cannot parse JSON",
-			"err":     err.Error(),
-		})
-	}
+	id := c.Params("id")
 
 	customer := new(Model.Customer)
 
-	query := bson.D{{Key: "id", Value: data.ID}}
+	query := bson.D{{Key: "id", Value: id}}
 
-	err = customerCollection.FindOne(c.Context(), query).Decode(&customer)
+	err := customerCollection.FindOne(c.Context(), query).Decode(&customer)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "Customer Not found",
-			"error":   err.Error(),
-		})
+		log.Println("GetCustomerById findone ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(customer)
@@ -74,29 +54,15 @@ func GetCustomerById(c *fiber.Ctx) error {
 func GetCustomerByName(c *fiber.Ctx) error {
 	customerCollection := DB.MI.DBCol
 
-	var data struct {
-		Name string `json:"name" bson:"name"`
-	}
-
-	err := c.BodyParser(&data)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Cannot parse JSON",
-			"err":     err.Error(),
-		})
-	}
+	name := c.Params("name")
 	customer := new(Model.Customer)
 
-	query := bson.D{{Key: "name", Value: data.Name}}
+	query := bson.D{{Key: "name", Value: name}}
 
-	err = customerCollection.FindOne(c.Context(), query).Decode(&customer)
+	err := customerCollection.FindOne(c.Context(), query).Decode(&customer)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "Customer Not found",
-			"error":   err.Error(),
-		})
+		log.Println("GetCustomerByName findone ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(customer)
@@ -123,47 +89,6 @@ func GetChannelInfoByPhone(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(customer)
-}
-
-func GetAllCustomerByGroup(c *fiber.Ctx) error {
-	customerCollection := DB.MI.DBCol
-
-	var data struct {
-		Group string `json:"group" bson:"group"`
-	}
-
-	err := c.BodyParser(&data)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Cannot parse JSON",
-			"error":   err.Error(),
-		})
-	}
-
-	var customers []Model.Customer = make([]Model.Customer, 0)
-
-	query := bson.D{{Key: "group", Value: data.Group}}
-
-	cursor, err := customerCollection.Find(c.Context(), query)
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "Customer Not found",
-			"error":   err,
-		})
-	}
-
-	err = cursor.All(c.Context(), &customers)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Something went wrong",
-			"error":   err.Error(),
-		})
-	}
-	defer cursor.Close(c.Context())
-	return c.Status(fiber.StatusOK).JSON(customers)
 }
 
 func GetAgentFilter(c *fiber.Ctx) error {

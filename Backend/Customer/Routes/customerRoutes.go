@@ -9,8 +9,8 @@ import (
 func CustomersRoute(route fiber.Router) {
 	//contact page
 	route.Get("/", Services.GetAllCustomers)
-	route.Post("/id", Services.GetCustomerById)
-	route.Post("/name", Services.GetCustomerByName)
+	route.Get("/id/:id", Services.GetCustomerById)
+	route.Get("/name/:name", Services.GetCustomerByName)
 
 	route.Post("/", Services.AddCustomer)
 	route.Post("/addMany", Services.AddManyCustomer)
@@ -28,12 +28,22 @@ func CustomersRoute(route fiber.Router) {
 	route.Put("/del-customer-tag", Services.DeleteCustomerTags)
 	// need to define
 
+	//Group
+	route.Get("/group/:group", Services.GetAllCustomerByGroup)
+	route.Put("/add-group-to-customer", Services.AddGroupToCustomer)
+	route.Put("/edit-group-name", Services.EditGroupName)
+	route.Put("/detele/group/:group", Services.DeleteGrpupByName)
+
 	//sorting
-	route.Post("/group", Services.GetAllCustomerByGroup)
 	route.Post("/filter/agent", Services.GetAgentFilter)
 	route.Post("/filter/tag", Services.GetTagsFilter)
 	route.Post("/filter/channel", Services.GetChannelFilter)
-	route.Post("/filter/team", Services.GetTeamFilter)
+	// route.Post("/filter/team", Services.GetTeamFilter)
+
+	route.Get("/team/:id", Services.GetCustomersByTeamID)
+	route.Put("/add-team-to-customer", Services.AddTeamIDToCustomer)
+	route.Put("/change-customers-team", Services.UpdateCustomersTeamID)
+	route.Put("/delete-customers-team/:team", Services.DeleteTeamIDFromCustomers)
 
 	route.Delete("/id", Services.DeleteCustomerById)
 
