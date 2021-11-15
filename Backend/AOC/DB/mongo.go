@@ -29,6 +29,8 @@ type MongoInstance struct {
 	OrgDBCol   *mongo.Collection
 	GrpClient  *mongo.Client
 	GrpDBCol   *mongo.Collection
+	RpyClient  *mongo.Client
+	RpyDBCol   *mongo.Collection
 }
 
 var MI MongoInstance
@@ -38,6 +40,7 @@ func MongoConnect() {
 	adminUrl, adminDB, roleCol, tagsCol := Util.GoDotEnvVariable("ADMIN_URL"), Util.GoDotEnvVariable("ADMIN_NAME"), Util.GoDotEnvVariable("ROLE_COLLECTION"), Util.GoDotEnvVariable("TAGS_COLLECTION")
 	orgUrl, orgDB, orgCol := Util.GoDotEnvVariable("ORG_URL"), Util.GoDotEnvVariable("ORG_NAME"), Util.GoDotEnvVariable("ORG_COLLECTION")
 	grpCol := Util.GoDotEnvVariable("GRP_COLLECTION")
+	rpyCol := Util.GoDotEnvVariable("RPY_COLLECTION")
 
 	// adminCol := Util.GoDotEnvVariable("ADMIN_COLLECTION")
 	// orgCol := Util.GoDotEnvVariable("ORG_COLLECTION")
@@ -73,6 +76,12 @@ func MongoConnect() {
 	}
 	orgs := org.Database(orgDB).Collection(orgCol)
 
+	rpy, err := mongo.Connect(ctx, options.Client().ApplyURI(adminUrl))
+	if err != nil {
+		fmt.Println("Cannot connect database")
+	}
+	rpys := org.Database(adminDB).Collection(rpyCol)
+
 	// }
 
 	fmt.Println("DB connected!")
@@ -87,5 +96,7 @@ func MongoConnect() {
 		ChanDBCol:  channels,
 		OrgClient:  org,
 		OrgDBCol:   orgs,
+		RpyClient:  rpy,
+		RpyDBCol:   rpys,
 	}
 }
