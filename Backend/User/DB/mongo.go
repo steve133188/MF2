@@ -12,8 +12,6 @@ import (
 type MongoInstance struct {
 	UserClient *mongo.Client
 	UserDBCol  *mongo.Collection
-	RoleClient *mongo.Client
-	RoleDBCol  *mongo.Collection
 }
 
 var MI MongoInstance
@@ -27,18 +25,10 @@ func MongoConnect() {
 	}
 	users := user.Database(Util.GoDotEnvVariable("DB_NAME")).Collection(Util.GoDotEnvVariable("USER_COLLECTION"))
 
-	role, err := mongo.Connect(ctx, options.Client().ApplyURI(Util.GoDotEnvVariable("DB_URL")))
-	if err != nil {
-		fmt.Println("Cannot connect database")
-	}
-	roles := user.Database(Util.GoDotEnvVariable("DB_NAME")).Collection(Util.GoDotEnvVariable("ROLE_COLLECTION"))
-
 	fmt.Println("DB connected!")
 	MI = MongoInstance{
 		UserClient: user,
 		UserDBCol:  users,
-		RoleClient: role,
-		RoleDBCol:  roles,
 	}
 
 }

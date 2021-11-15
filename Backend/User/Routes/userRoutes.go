@@ -10,20 +10,23 @@ func UsersRoute(route fiber.Router) {
 	route.Get("/name/:name", Services.GetUserByName)
 	route.Get("/email/:email", Services.GetUserByEmail)
 	route.Get("/phone/:phone", Services.GetUserByPhone)
-	route.Get("/team", Services.GetUsersByTeam)
 	route.Get("/", Services.GetAllUsers)
 	route.Get("/userlist", Services.GetUserList)
-	route.Get("/teamlist", Services.GetTeamList)
 
 	// route.Get("/authority", Services.GetUserAuthority)
 	//for filter
 
 	// route.Put("/id/:id", Services.UpdateUserByID)
 	route.Put("/name", Services.UpdateUserByName)
-	route.Put("/update-div-team", Services.UpdateDivisionAndTeam)
 	route.Put("/status", Services.ChangeUserStatus)
-	route.Put("/role", Services.UpdateUserRole) //??????
-	route.Put("/team", Services.DeleteUserTeam)
+
+	//role
+
+	//team
+	route.Get("/team/:id", Services.GetUsersByTeamID)
+	route.Put("/add-team-to-user", Services.AddTeamIDToUser)
+	route.Put("/change-users-team", Services.UpdateUsersTeamID)
+	route.Put("/delete-users-team/:team", Services.DeleteTeamIDFromUsers)
 
 	// route.Delete("/id/:id", Services.DeleteUserById)
 	route.Delete("/name/:name", Services.DeleteUserByName)

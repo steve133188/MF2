@@ -63,45 +63,6 @@ func GetUserList(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(name)
 }
 
-func GetTeamList(c *fiber.Ctx) error {
-	col := DB.MI.UserDBCol
-
-	var data []struct {
-		Team string `json:"team"`
-	}
-
-	cursor, err := col.Find(c.Context(), bson.D{{}}, options.Find())
-	if err != nil {
-		log.Println("GetTeamList find: ", err)
-		return c.SendStatus(fiber.StatusInternalServerError)
-	}
-
-	err = cursor.All(c.Context(), &data)
-	if err != nil {
-		log.Println("GetTeamList cursor all: ", err)
-		return c.SendStatus(fiber.StatusInternalServerError)
-	}
-	defer cursor.Close(c.Context())
-
-	var name []string
-	for _, v := range data {
-		if v.Team != "" {
-			found := false
-			for _, val := range name {
-				if v.Team == val {
-					found = true
-					break
-				}
-			}
-			if !found {
-				name = append(name, v.Team)
-			}
-		}
-	}
-
-	return c.Status(fiber.StatusOK).JSON(name)
-}
-
 func GetUserByEmail(c *fiber.Ctx) error {
 	col := DB.MI.UserDBCol
 	user := new(Model.User)
@@ -161,31 +122,6 @@ func GetUserByName(c *fiber.Ctx) error {
 // 	})
 
 // }
-
-func GetUsersByTeam(c *fiber.Ctx) error {
-	col := DB.MI.UserDBCol
-
-	team := c.Query("team")
-	division := c.Query("division")
-
-	query := bson.D{{"division_name", division}, {"team", team}}
-
-	cursor, err := col.Find(c.Context(), query)
-	if err != nil {
-		log.Println("GetUsersByTeam Error: ", err)
-		return c.SendStatus(fiber.StatusInternalServerError)
-	}
-
-	var users []Model.User = make([]Model.User, 0)
-
-	err = cursor.All(c.Context(), &users)
-	if err != nil {
-		log.Println("GetUsersByTeam Error: ", err)
-		return c.SendStatus(fiber.StatusInternalServerError)
-	}
-
-	return c.Status(fiber.StatusOK).JSON(users)
-}
 
 func GetUserByPhone(c *fiber.Ctx) error {
 	col := DB.MI.UserDBCol
