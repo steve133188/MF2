@@ -21,7 +21,7 @@ func GetAllMessages(c *fiber.Ctx) error {
 		})
 	}
 	// Query to filter
-	query := bson.D{{"customer", data.Customer}}
+	query := bson.D{{"customer_id", data.CustomerID}}
 
 	cursor, err := collection.Find(c.Context(), query)
 	if err != nil {

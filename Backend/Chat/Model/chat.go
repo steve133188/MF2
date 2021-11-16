@@ -20,5 +20,5 @@ type Chat struct {
 	ReceiverNo string    `json:"receiver_no" bson:"receiver_no"`
 	Message    string    `json:"message" bson:"message"`
 	SentTime   time.Time `json:"sent_time" bson:"sent_time"`
-	Customer   string    `json:"customer" bson:"customer"`
+	CustomerID string    `json:"customer_id" bson:"customer_id"`
 }
