@@ -66,7 +66,7 @@ type Auth struct {
 	Dashboard        bool `json:"dashboard" bson:"dashboard" default:"false"`
 	Livechat         bool `json:"livechat" bson:"livechat" default:"false"`
 	Contact          bool `json:"contact" bson:"contact" default:"false"`
-	Boardcast        bool `json:"boardcast" bson:"boardcast" default:"false"`
+	Broadcast        bool `json:"broadcast" bson:"broadcast" default:"false"`
 	Flowbuilder      bool `json:"flowbuilder" bson:"flowbuilder" default:"false"`
 	Integrations     bool `json:"integrations" bson:"integrations" default:"false"`
 	ProductCatalogue bool `json:"product_catalogue" bson:"product_catalogue" default:"false"`

@@ -33,13 +33,13 @@ func UsersRoute(route fiber.Router) {
 
 	route.Put("/chanInfo/:phone", Services.UpdateChannelInfoByPhone)
 
-}
+	route.Get("/role-number/:role", Services.GetUserNumByRole)
+	route.Get("/role-auth/:phone", Services.GetUserAuthByPhone)
+	route.Get("/role/:role", Services.GetUsersByRole)
+	route.Put("/role", Services.UpdateUserRole)
+	route.Put("/roles", Services.UpdateUsersRole)
+	route.Put("/role/:phone", Services.DeleteUserRoleByPhone)
+	route.Put("/roles/:role", Services.DeleteUsersRoleByRole)
+	route.Post("/role", Services.AddRoleToUser)
 
-func RoleRoute(route fiber.Router) {
-	route.Get("/", Services.GetAllRoles)
-	route.Get("/name/:name", Services.GetRoleByName)
-	route.Get("/list", Services.GetRolesName)
-	route.Post("/", Services.AddRole)
-	route.Put("/", Services.UpdateRoleByName)
-	route.Delete("/name/:name", Services.DeleteRoleByName)
 }

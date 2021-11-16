@@ -35,7 +35,6 @@ func main() {
 	api := app.Group("/api")
 
 	Routes.UsersRoute(api.Group("/users"))
-	Routes.RoleRoute(api.Group("/roles"))
 
 	app.Listen(":3001")
 }
