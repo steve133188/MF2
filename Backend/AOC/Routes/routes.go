@@ -37,10 +37,15 @@ func AdminRoute(route fiber.Router) {
 	// route.Put("/delGroup", Services.DelGroup)
 
 	//Standard Reply
-	route.Get("/getReplyByID/:id", Services.GetReplyFolderByID)
-	route.Get("/getAllReply", Services.GetAllReplyFolder)
+	route.Get("/reply/id/:id", Services.GetReplyFolderByID)
+	route.Get("/replys", Services.GetAllReplyFolder)
 	route.Post("/reply", Services.CreateReply)
-	route.Put("/updateReply", Services.UpdateReply)
+	route.Put("/add-content", Services.AddContent)
+	route.Put("/edit-content", Services.UpdateContent)
+	route.Put("/del-content", Services.DeleteContent)
+	route.Get("/content/:name", Services.GetContentsByFolderName)
+
+	route.Put("/reply", Services.UpdateReply)
 	route.Delete("/reply/:id", Services.DeleteReply)
 }
 

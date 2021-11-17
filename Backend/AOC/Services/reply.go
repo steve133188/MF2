@@ -62,6 +62,7 @@ func CreateReply(c *fiber.Ctx) error {
 
 	id := xid.New()
 	reply.ID = id.String()
+	reply.Content = make([]Model.Content, 0)
 
 	sameNameFilter := bson.D{{Key: "name", Value: reply.Name}}
 	count, err := adminColl.CountDocuments(c.Context(), sameNameFilter)
@@ -148,10 +149,10 @@ func AddContent(c *fiber.Ctx) error {
 	}
 
 	folder := recContent.FolderName
-	content.ID = recContent.ContentID
+	content.ID = xid.New().String()
 	content.Body = recContent.ContentBody
 
-	update := bson.D{{"push", bson.D{{"content", content}}}}
+	update := bson.D{{"$push", bson.D{{"content", content}}}}
 	filter := bson.D{{"name", folder}}
 
 	res, err := col.UpdateOne(c.Context(), filter, update)
@@ -182,8 +183,8 @@ func UpdateContent(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
-	filter := bson.D{{"content.id", bson.D{{"$eq", recContent.ID}}}}
-	update := bson.D{{"content.body", bson.D{{"$set", recContent.Body}}}}
+	filter := bson.D{{"content.id", recContent.ID}}
+	update := bson.D{{"$set", bson.D{{"content.$.body", recContent.Body}}}}
 
 	res, err := col.UpdateOne(c.Context(), filter, update)
 	if err != nil {
@@ -238,7 +239,7 @@ func DeleteContent(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
-	msgContent := new(Model.MessageContent)
+	msgContent := new(Model.StandardReply)
 	err = col.FindOne(c.Context(), filter).Decode(&msgContent)
 	if err != nil {
 		log.Println("DeleteContent FindOne ", err)
@@ -262,6 +263,6 @@ func GetContentsByFolderName(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
-	return c.Status(fiber.StatusOK).JSON(rpyContent)
+	return c.Status(fiber.StatusOK).JSON(rpyContent.Content)
 
 }
