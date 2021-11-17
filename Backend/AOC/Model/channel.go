@@ -45,7 +45,7 @@ type Auth struct {
 	Dashboard        bool `json:"dashboard" bson:"dashboard" default:"false"`
 	Livechat         bool `json:"livechat" bson:"livechat" default:"false"`
 	Contact          bool `json:"contact" bson:"contact" default:"false"`
-	Boardcast        bool `json:"boardcast" bson:"boardcast" default:"false"`
+	Broadcast        bool `json:"broadcast" bson:"broadcast" default:"false"`
 	Flowbuilder      bool `json:"flowbuilder" bson:"flowbuilder" default:"false"`
 	Integrations     bool `json:"integrations" bson:"integrations" default:"false"`
 	ProductCatalogue bool `json:"product_catalogue" bson:"product_catalogue" default:"false"`
@@ -54,10 +54,20 @@ type Auth struct {
 }
 
 type StandardReply struct {
-	ID			string `json:"id" bson:"id"`
-	Name 		string `json:"name" bson:"name"`
-	Content		[]string `json:"content" bson:"content"`
-	Channel 	[]string `json:"channel" bson:"channel"`
-	Team 		string `json:"team" bson:"team"`
-	Assignee 	[]string `json:"assignee" bson:"assignee"`
+	ID       string    `json:"id" bson:"id"`
+	Name     string    `json:"name" bson:"name"`
+	Content  []Content `json:"content" bson:"content"`
+	Channel  []string  `json:"channel" bson:"channel"`
+	Team     string    `json:"team" bson:"team"`
+	Assignee []string  `json:"assignee" bson:"assignee"`
+}
+
+type Content struct {
+	ID   string `json:"id" bson:"id"`
+	Body string `json:"body" bson:"body"`
+}
+type MessageContent struct {
+	FolderName  string `json:"folder_name" bson:"folder_name"`
+	ContentID   string `json:"content_id" bson:"content_id"`
+	ContentBody string `json:"content_body" bson:"content_body"`
 }

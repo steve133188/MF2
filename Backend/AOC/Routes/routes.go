@@ -39,9 +39,9 @@ func AdminRoute(route fiber.Router) {
 	//Standard Reply
 	route.Get("/getReplyByID/:id", Services.GetReplyFolderByID)
 	route.Get("/getAllReply", Services.GetAllReplyFolder)
-	route.Post("/createReply", Services.CreateReply)
+	route.Post("/reply", Services.CreateReply)
 	route.Put("/updateReply", Services.UpdateReply)
-	route.Delete("/deleteReply/:id", Services.DeleteReply)
+	route.Delete("/reply/:id", Services.DeleteReply)
 }
 
 func OrgRoute(route fiber.Router) {
