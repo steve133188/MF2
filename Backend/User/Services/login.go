@@ -136,3 +136,21 @@ func ChangeUserPassword(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(result)
 }
+
+func CheckUserAuthority(c *fiber.Ctx) error {
+	col := DB.MI.UserDBCol
+
+	email := c.Params("email")
+
+	filter := bson.D{{"email", email}}
+
+	update := bson.D{{"$set", bson.D{{"check_auth", true}}}}
+
+	res, err := col.UpdateOne(c.Context(), filter, update)
+	if err != nil || res.ModifiedCount == 0 {
+		log.Println("CheckUserAuthority UpdateOne ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	return c.SendStatus(fiber.StatusOK)
+}

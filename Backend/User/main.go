@@ -27,6 +27,7 @@ func main() {
 	app.Post("/api/users", Services.AddAgent)
 	app.Post("/api/users/addMany", Services.AddManyAgent)
 	app.Post("/api/users/forgot-password", Services.ForgotPassword)
+	app.Put("/api/users/check-auth/:email", Services.CheckUserAuthority)
 	// app.Post("/api/users/forgot-password", Services.ForgotPassword)
 
 	app.Use(jwtware.New(jwtware.Config{

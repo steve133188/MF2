@@ -54,6 +54,7 @@ type User struct {
 	Channels    []string `json:"channels" bson:"channels"`
 	ChannelInfo Info     `json:"channel_info" bson:"channel_info"`
 	Phone       string   `json:"phone" bson:"phone"`
+	ChekAuth    bool     `json:"check_auth" bson:"check_auth" default:"false"`
 }
 
 type Roles struct {
