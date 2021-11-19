@@ -1,6 +1,7 @@
 package Services
 
 import (
+	"log"
 	"mf-broadCast-services/DB"
 	"mf-broadCast-services/Model"
 
@@ -16,11 +17,8 @@ func DeleteBroadCastByName(c *fiber.Ctx) error {
 
 	err := c.BodyParser(&data)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Cannot parse JSON",
-			"error":   err.Error(),
-		})
+		log.Println("DeleteBroadCastByName parse ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	query := bson.D{{"name", data.Param}}
@@ -28,20 +26,12 @@ func DeleteBroadCastByName(c *fiber.Ctx) error {
 	err = collection.FindOneAndDelete(c.Context(), query).Err()
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"success": false,
-				"message": "Board Cast record Not found",
-				"error":   err.Error(),
-			})
+			log.Println("DeleteBroadCastByName ErrNoDocuments ", err)
+			return c.SendStatus(fiber.StatusNotFound)
 		}
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Cannot delete chat record",
-			"error":   err.Error(),
-		})
+		log.Println("DeleteBroadCastByName FindOneAndDelete ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-	})
+	return c.SendStatus(fiber.StatusOK)
 }

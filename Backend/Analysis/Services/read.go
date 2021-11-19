@@ -36,9 +36,6 @@ func GetAllAnalysisRecords(c *fiber.Ctx) error {
 			"error":   err.Error(),
 		})
 	}
-	// for i := range todos {
-	// 	todos[i].Date = todos[i].Date.Add(time.Hour * 8)
-	// }
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
@@ -74,7 +71,7 @@ func GetAnalysisRecordById(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
 		"data": fiber.Map{
-			"boardCast": todo,
+			"broadCast": todo,
 		},
 	})
 }

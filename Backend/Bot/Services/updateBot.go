@@ -25,7 +25,7 @@ func UpdateOneBotById(c *fiber.Ctx) error {
 		})
 	}
 
-	todo.UpdatedOn = time.Now().Format("January 2, 2006")
+	todo.UpdatedOn = time.Now().Format("January 2 2006 15:04:05")
 	todo.ID = c.Params("id")
 	update := bson.D{{Key: "$set", Value: todo}}
 

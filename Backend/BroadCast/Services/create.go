@@ -3,6 +3,7 @@ package Services
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"mf-broadCast-services/DB"
 	"mf-broadCast-services/Model"
 	"time"
@@ -18,22 +19,16 @@ func AddBroadCast(c *fiber.Ctx) error {
 
 	err := c.BodyParser(&data)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Cannot parse JSON",
-			"error":   err.Error(),
-		})
+		log.Println("AddBroadCast parse ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	data.CreatedDate = time.Now().Format("January 2 2006 15:04:05")
 
 	_, err = collection.InsertOne(c.Context(), data)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Cannot insert customer",
-			"error":   err.Error(),
-		})
+		log.Println("AddBroadCast InsertOne ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	// get the inserted data
@@ -53,11 +48,8 @@ func AddManyBroadCast(c *fiber.Ctx) error {
 
 	err := c.BodyParser(&datas)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Cannot parse JSON",
-			"error":   err.Error(),
-		})
+		log.Println("AddManyBroadCast parse ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	for _, v := range datas {
@@ -75,22 +67,16 @@ func AddManyBroadCast(c *fiber.Ctx) error {
 
 		_, err = col.InsertOne(c.Context(), todo)
 		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"success": false,
-				"message": "Cannot insert customer",
-				"error":   err.Error(),
-			})
+			log.Println("AddManyBroadCast InsertOne ", err)
+			return c.SendStatus(fiber.StatusInternalServerError)
 		}
 
 	}
 
 	cursor, err := col.Find(c.Context(), bson.D{{}})
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to find context",
-			"error":   err.Error(),
-		})
+		log.Println("AddManyBroadCast Find ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	var todos []Model.BroadCast = make([]Model.BroadCast, 0)
@@ -98,11 +84,8 @@ func AddManyBroadCast(c *fiber.Ctx) error {
 	// iterate the cursor and decode each item into a Todo
 	err = cursor.All(c.Context(), &todos)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Error to interate cursor into result",
-			"error":   err.Error(),
-		})
+		log.Println("AddManyBroadCast All ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(todos)

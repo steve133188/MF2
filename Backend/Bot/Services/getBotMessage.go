@@ -37,11 +37,6 @@ func GetAllBots(c *fiber.Ctx) error {
 		})
 	}
 
-	// timezone UTC +8
-	// for i := range todos {
-	// 	todos[i].Date = todos[i].Date.Add(time.Hour * 8)
-	// }
-
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
 		"data": fiber.Map{

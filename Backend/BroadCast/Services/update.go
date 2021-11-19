@@ -14,23 +14,16 @@ func UpdateBroadCastByID(c *fiber.Ctx) error {
 	todo := new(Model.BroadCast)
 
 	if err := c.BodyParser(todo); err != nil {
-		log.Println(err)
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to parse body",
-			"error":   err,
-		})
+		log.Println("UpdateBroadCastByID parse ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	update := bson.D{{Key: "$set", Value: todo}}
 
 	_, err := collection.UpdateOne(c.Context(), bson.D{{"name", todo.Name}}, update)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Board cast failed to update",
-			"error":   err.Error(),
-		})
+		log.Println("UpdateBroadCastByID UpdateOne ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 	return c.Status(fiber.StatusCreated).JSON(todo)
 }

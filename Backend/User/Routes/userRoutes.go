@@ -42,4 +42,5 @@ func UsersRoute(route fiber.Router) {
 	route.Put("/roles/:role", Services.DeleteUsersRoleByRole)
 	route.Post("/role", Services.AddRoleToUser)
 
+	route.Put("/change-password", Services.ChangeUserPassword)
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func BoardCastRoute(route fiber.Router) {
+func BroadCastRoute(route fiber.Router) {
 	route.Get("/", Services.GetAllAnalysisRecords)
 	route.Get("/id/:id", Services.GetAnalysisRecordById)
 	route.Post("/", Services.AddAnalysis)

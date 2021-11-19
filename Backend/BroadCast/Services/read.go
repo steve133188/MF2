@@ -1,6 +1,7 @@
 package Services
 
 import (
+	"log"
 	"mf-broadCast-services/DB"
 	"mf-broadCast-services/Model"
 
@@ -15,11 +16,8 @@ func GetAllBroadCasts(c *fiber.Ctx) error {
 
 	cursor, err := collection.Find(c.Context(), query)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to find context",
-			"error":   err.Error(),
-		})
+		log.Println("GetAllBroadCasts Find ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	var todos []Model.BroadCast = make([]Model.BroadCast, 0)
@@ -27,11 +25,8 @@ func GetAllBroadCasts(c *fiber.Ctx) error {
 	// iterate the cursor and decode each item into a Todo
 	err = cursor.All(c.Context(), &todos)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Error to interate cursor into result",
-			"error":   err.Error(),
-		})
+		log.Println("GetAllBroadCasts All ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(todos)
@@ -44,34 +39,24 @@ func GetBroadCastsByGroup(c *fiber.Ctx) error {
 
 	err := c.BodyParser(&data)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Cannot parse JSON",
-			"error":   err.Error(),
-		})
+		log.Println("GetBroadCastsByGroup parse ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	query := bson.D{{"group", data.Param}}
 
 	cursor, err := collection.Find(c.Context(), query)
-
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to find context",
-			"error":   err.Error(),
-		})
+		log.Println("GetBroadCastsByGroup find ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	var todos []Model.BroadCast = make([]Model.BroadCast, 0)
 
 	err = cursor.All(c.Context(), &todos)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Error to interate cursor into result",
-			"error":   err.Error(),
-		})
+		log.Println("GetBroadCastsByGroup All ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(todos)
@@ -84,33 +69,24 @@ func GetBroadCastsByName(c *fiber.Ctx) error {
 
 	err := c.BodyParser(&data)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Cannot parse JSON",
-			"error":   err.Error(),
-		})
+		log.Println("GetBroadCastsByName parse ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	query := bson.D{{"name", data.Param}}
 
 	cursor, err := collection.Find(c.Context(), query)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to find context",
-			"error":   err.Error(),
-		})
+		log.Println("GetBroadCastsByName Find ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	var todos []Model.BroadCast = make([]Model.BroadCast, 0)
 
 	err = cursor.All(c.Context(), &todos)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Error to interate cursor into result",
-			"error":   err.Error(),
-		})
+		log.Println("GetBroadCastsByName all ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(todos)

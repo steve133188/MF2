@@ -29,7 +29,7 @@ func main() {
 
 	api := app.Group("/api")
 
-	Routes.BoardCastRoute(api.Group("/analysis"))
+	Routes.BroadCastRoute(api.Group("/analysis"))
 
 	app.Listen(":3009")
 }

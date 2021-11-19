@@ -25,7 +25,7 @@ func UpdateAnalysisRecordByID(c *fiber.Ctx) error {
 		})
 	}
 
-	todo.UpdatedTime = time.Now().Format("January 2, 2006")
+	todo.UpdatedTime = time.Now().Format("January 2 2006 15:04:05")
 	todo.ID = c.Params("id")
 	update := bson.D{{Key: "$set", Value: todo}}
 
@@ -41,7 +41,7 @@ func UpdateAnalysisRecordByID(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"success": true,
 		"data": fiber.Map{
-			"boardCast": todo,
+			"broadCast": todo,
 		},
 	})
 }

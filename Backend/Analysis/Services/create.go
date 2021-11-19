@@ -26,8 +26,8 @@ func AddAnalysis(c *fiber.Ctx) error {
 		})
 	}
 
-	data.CreatedTime = time.Now().Format("January 2, 2006")
-	data.UpdatedTime = time.Now().Format("January 2, 2006")
+	data.CreatedTime = time.Now().Format("January 2 2006 15:04:05")
+	data.UpdatedTime = time.Now().Format("January 2 2006 15:04:05")
 	id := xid.New()
 	data.ID = id.String()
 	result, err := collection.InsertOne(c.Context(), data)

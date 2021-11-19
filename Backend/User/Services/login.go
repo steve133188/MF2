@@ -36,7 +36,7 @@ func ForgotPassword(c *fiber.Ctx) error {
 		log.Println("ForgotPassword HashPassword: ", err)
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
-	result, err := col.UpdateOne(c.Context(), bson.D{{"email", target.Address}}, bson.D{{"$set", bson.D{{"password", password}}}})
+	_, err = col.UpdateOne(c.Context(), bson.D{{"email", target.Address}}, bson.D{{"$set", bson.D{{"password", password}}}})
 	if err != nil {
 		log.Println("ForgotPassword UpdateOne: ", err)
 		return c.SendStatus(fiber.StatusInternalServerError)
@@ -48,7 +48,7 @@ func ForgotPassword(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 	// Receiver email address.
-	return c.Status(fiber.StatusOK).JSON(result)
+	return c.SendStatus(fiber.StatusOK)
 }
 
 func Login(c *fiber.Ctx) error {
@@ -109,38 +109,30 @@ func Login(c *fiber.Ctx) error {
 
 }
 
-// func ChangeUserPassword(c *fiber.Ctx) error {
-// 	usersCollection := DB.MI.DBCol
-// 	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-// 	user := new(Model.User)
+func ChangeUserPassword(c *fiber.Ctx) error {
+	usersCollection := DB.MI.UserDBCol
+	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	var user struct {
+		Email    string `json:"email" bson:"email"`
+		Password string `json:"password" bson:"password"`
+	}
+	result := new(Model.User)
 
-// 	if err := c.BodyParser(&user); err != nil {
-// 		log.Println(err)
-// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-// 			"success": false,
-// 			"message": "Failed to parse body",
-// 			"error":   err.Error(),
-// 		})
-// 	}
-// 	password, err := Util.HashPassword(user.Password)
-// 	if err != nil {
-// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-// 			"success": false,
-// 			"message": "Cannot insert agent",
-// 			"error":   err.Error(),
-// 		})
-// 	}
-// 	update := bson.M{"$set": bson.M{"password": password}}
+	if err := c.BodyParser(&user); err != nil {
+		log.Println("ChangeUserPassword parse", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+	password, err := Util.HashPassword(user.Password)
+	if err != nil {
+		log.Println("ChangeUserPassword hashpassword ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+	update := bson.M{"$set": bson.M{"password": password}}
 
-// 	err = usersCollection.FindOneAndUpdate(c.Context(), bson.D{{Key: "email", Value: user.Email}}, update).Decode(&user)
-// 	if err != nil {
-// 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-// 			"success": false,
-// 			"message": "User failed to update",
-// 			"error":   err.Error(),
-// 		})
-// 	}
-// 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-// 		"success": true,
-// 	})
-// }
+	err = usersCollection.FindOneAndUpdate(c.Context(), bson.D{{Key: "email", Value: user.Email}}, update).Decode(&result)
+	if err != nil {
+		log.Println("ChangeUserPassword FindOneAndUpdate", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+	return c.Status(fiber.StatusOK).JSON(result)
+}

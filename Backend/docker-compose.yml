@@ -31,9 +31,9 @@ services:
       context: ./FlowBuilder
     ports: 
       - 3006:3006
-  boardcast: 
+  broadcast: 
     build: 
-      context: ./BoardCast
+      context: ./BroadCast
     ports: 
       - 3007:3007
   auth: 

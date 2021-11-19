@@ -23,8 +23,8 @@ func CreateOneBotMessage(c *fiber.Ctx) error {
 			"error":   err,
 		})
 	}
-	data.CreatedOn = time.Now().Format("January 2, 2006")
-	data.UpdatedOn = time.Now().Format("January 2, 2006")
+	data.CreatedOn = time.Now().Format("January 2 2006 15:04:05")
+	data.UpdatedOn = time.Now().Format("January 2 2006 15:04:05")
 	id := xid.New()
 	data.ID = id.String()
 

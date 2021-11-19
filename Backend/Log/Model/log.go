@@ -9,7 +9,7 @@ type SystemLog struct {
 }
 
 type UserLog struct {
-	ID          string `json:"id"`
+	ID          string `json:"id" bson:"id"`
 	Des         string `json:"description"` //user Activity
 	UserId      string `json:"user_id"`
 	UserLogType string `json:"user_log_type"`
