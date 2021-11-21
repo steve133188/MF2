@@ -22,3 +22,18 @@ type Chat struct {
 	SentTime   time.Time `json:"sent_time" bson:"sent_time"`
 	CustomerID string    `json:"customer_id" bson:"customer_id"`
 }
+
+// type ClientReq struct {
+// 	UserID      string      `json:"user_id"`
+// 	ChannelType string      `json:"channel_type"`
+// 	Msg         interface{} `json:"message"`
+// }
+
+type ClientMsg struct {
+	UserID      string      `json:"user_id"`
+	ChannelType string      `json:"channel_type"`
+	ChatID      string      `json:"chat_id"`
+	Url         string      `json:"url"`
+	Token       string      `json:"token"`
+	Msg         interface{} `json:"message"`
+}

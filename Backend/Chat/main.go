@@ -5,6 +5,8 @@ import (
 	"mf-chat-services/DB"
 	"mf-chat-services/Websocket"
 	"net/http"
+
+	"github.com/gorilla/mux"
 	// "mf-chat-services/Util"
 	// jwtware "github.com/gofiber/jwt/v2"
 )
@@ -12,13 +14,16 @@ import (
 func main() {
 	DB.MongoConnect()
 
-	// app.Use(jwtware.New(jwtware.Config{
-	// 	SigningKey: []byte(Util.GoDotEnvVariable("Token_pwd")),
-	// }))
+	websocket := mux.NewRouter()
+	websocket.HandleFunc("/websocket", Websocket.HandleConnections)
+	err := http.ListenAndServe(":3003", websocket)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	http.HandleFunc("/websocket", Websocket.HandleConnections)
-
-	err := http.ListenAndServe(":3003", nil)
+	webhook := mux.NewRouter()
+	webhook.HandleFunc("/whatsapp", Websocket.HandleWhatsapp)
+	err = http.ListenAndServe(":3013", webhook)
 	if err != nil {
 		log.Fatal(err)
 	}

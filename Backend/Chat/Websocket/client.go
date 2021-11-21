@@ -1,28 +1,33 @@
 package Websocket
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
 	"mf-chat-services/Model"
-	"mf-chat-services/Util"
-	"net/http"
+	"net"
 
 	"github.com/gorilla/websocket"
 )
 
 type Client struct {
 	Socket  *websocket.Conn
-	Send    chan []byte
+	Write   chan []byte
+	Read    chan []byte
 	Address string
+	UserID  string
+	RoomID  string
+
 	// Message interface{}
 }
+
+var Register = make(map[net.Addr]bool)
 
 func NewClient(socket *websocket.Conn, address string) (client *Client) {
 	client = &Client{
 		Socket:  socket,
-		Send:    make(chan []byte, 100),
+		Write:   make(chan []byte, 100),
+		Read:    make(chan []byte, 100),
 		Address: address,
 	}
 	return
@@ -38,7 +43,7 @@ func (c *Client) read() {
 
 	defer func() {
 		log.Println("Close client channel", c)
-		close(c.Send)
+		close(c.Read)
 	}()
 
 	for {
@@ -49,7 +54,8 @@ func (c *Client) read() {
 			return
 		}
 		log.Println("Processing client message: ", string(message))
-		ProcessData(c, message)
+		c.Read <- message
+		c.WebsocketProcessData()
 
 	}
 }
@@ -64,13 +70,16 @@ func (c *Client) write() {
 
 	defer func() {
 		c.Socket.Close()
+		close(c.Write)
+		DelWsConn(c.RoomID, c.UserID, c.Socket)
+		fmt.Println("map   ", Register)
 		log.Println("client write (defer)", c)
 	}()
 
 	for {
-		message, ok := <-c.Send
+		message, ok := <-c.Write
 		if !ok {
-			log.Println("Nothing to send: ", c, "ok", ok)
+			log.Println("Nothing to Write: ", c, "ok", ok)
 
 			return
 		}
@@ -79,45 +88,82 @@ func (c *Client) write() {
 	}
 }
 
-func ProcessData(c *Client, message []byte) {
+func (c *Client) WebsocketProcessData() {
+	message := <-c.Read
 	if string(message) == "ping" {
 		message = []byte("pong")
-		c.sendMsg(message)
+		c.Write <- message
 	} else {
-		clt := http.Client{}
-		req, err := http.NewRequest("POST", Util.GoDotEnvVariable("WHATSAPP_ADDRESS"), bytes.NewBuffer(message))
+		c.Write <- []byte("message received")
+
+		clientMsg := new(Model.ClientMsg)
+		err := json.Unmarshal(message, &clientMsg)
 		if err != nil {
-			log.Println("Error in webhook post", err)
+			log.Println("process data     ", err)
+			c.Write <- []byte(message)
+
 		}
-		res, err := clt.Do(req)
+		recData := new(Model.ClientMsg)
+		switch clientMsg.ChannelType {
+		case "whatsapp":
+			recData, err = c.HandleCliWhatsappMsg(clientMsg)
+			if err != nil {
+				log.Println("process data     ", err)
+				c.Write <- []byte(err.Error())
+
+			}
+		default:
+			c.Write <- []byte(message)
+
+		}
+
+		room := recData.ChatID
+		user := recData.UserID
+
+		//append conn to Rooms if necessary
+		var found bool
+		connSlice := Rooms[room][user]
+		for _, v := range connSlice {
+			if v == c.Socket {
+				found = true
+			}
+		}
+		if !found {
+			SetWsConn(room, user, c.Socket)
+		}
+		SetWsConn(room, user, c.Socket)
+
+		result, err := json.Marshal(recData)
 		if err != nil {
-			log.Println("Error after webhook post", err)
+			log.Println(err)
+			c.Write <- []byte(err.Error())
 		}
-		fmt.Println(res.Body)
-		c.sendMsg([]byte("message sent"))
+		c.Write <- []byte(result)
+		c.Write <- []byte("message sent")
+
 		// http.ListenAndServe(Util.GoDotEnvVariable("WHATSAPP_ADRESS"), nil)
 	}
 
 }
 
-func (c *Client) HandleWhatsapp(w http.ResponseWriter, r *http.Request) {
-	dec := json.NewDecoder(r.Body)
-	data := new(Model.Chat)
-	err := dec.Decode(&data)
-	if err != nil {
-		log.Println("Error in HandleWhatsapp: ", err)
-		w.WriteHeader(http.StatusBadRequest)
-	}
+// func (c *Client) HandleWhatsapp(w http.ResponseWriter, r *http.Request) {
+// 	dec := json.NewDecoder(r.Body)
+// 	data := new(Model.Chat)
+// 	err := dec.Decode(&data)
+// 	if err != nil {
+// 		log.Println("Error in HandleWhatsapp: ", err)
+// 		w.WriteHeader(http.StatusBadRequest)
+// 	}
 
-	message, err := json.Marshal(data)
-	if err != nil {
-		log.Println("Error in HandleWhatsapp marshal: ", err)
-	}
+// 	message, err := json.Marshal(data)
+// 	if err != nil {
+// 		log.Println("Error in HandleWhatsapp marshal: ", err)
+// 	}
 
-	c.sendMsg(message)
-	log.Println(bytes.NewBuffer(message))
-}
+// 	c.WriteMsg(message)
+// 	log.Println(bytes.NewBuffer(message))
+// }
 
-func (c *Client) sendMsg(message []byte) {
-	c.Send <- message
-}
+// func (c *Client) WriteMsg(message []byte) {
+// 	c.Write <- message
+// }
