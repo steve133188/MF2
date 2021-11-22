@@ -1,7 +1,5 @@
 package Model
 
-import "time"
-
 // type Message struct {
 // 	MediaKey  string      `json:"media_key" bson:"media_key"`
 // 	Id        interface{} `json:"id" bson:"id"`
@@ -16,11 +14,8 @@ import "time"
 // }
 
 type Chat struct {
-	SenderNo   string    `json:"sender_no" bson:"sender_no"`
-	ReceiverNo string    `json:"receiver_no" bson:"receiver_no"`
-	Message    string    `json:"message" bson:"message"`
-	SentTime   time.Time `json:"sent_time" bson:"sent_time"`
-	CustomerID string    `json:"customer_id" bson:"customer_id"`
+	RoomID []string `json:"room_id" bson:"room_id"`
+	UserID string   `json:"user_id" bson:"user_id"`
 }
 
 // type ClientReq struct {

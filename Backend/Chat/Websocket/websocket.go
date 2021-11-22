@@ -3,6 +3,7 @@ package Websocket
 import (
 	"errors"
 	"log"
+	"mf-chat-services/Services"
 	"net/http"
 
 	"github.com/gorilla/websocket"
@@ -38,6 +39,10 @@ func SetWsConn(room string, user string, conn *websocket.Conn) {
 		con := make(map[string][]*websocket.Conn)
 		con[user] = append(con[user], conn)
 		Rooms[room] = con
+		err := Services.CreateChatRoom(room, user)
+		if err != nil {
+			log.Println(err)
+		}
 	} else {
 		Rooms[room][user] = append(Rooms[room][user], conn)
 	}
@@ -79,6 +84,10 @@ func DelWsConn(room string, user string, conn *websocket.Conn) {
 	}
 	if len(Rooms[room][user]) == 0 {
 		delete(Rooms, room)
+		err := Services.DeleteChatRoom(room, user)
+		if err != nil {
+			log.Println(err)
+		}
 	}
 }
 
