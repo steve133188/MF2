@@ -70,12 +70,6 @@ func DelWsConn(room string, user string, conn *websocket.Conn) {
 
 	for k, v := range Rooms[room][user] {
 		if v == conn {
-			log.Println("====================", len(Rooms[room][user]))
-			// if len(Rooms[room][user]) > 1 {
-			// 	Rooms[room][user] = append(Rooms[room][user][:k], Rooms[room][user][k+1])
-			// } else {
-			// 	Rooms[room][user] = make([]*websocket.Conn, 0)
-			// }
 			result := deleteConnArrayItem(Rooms[room][user], k)
 			Rooms[room][user] = result
 			log.Println("delete      ", Rooms)

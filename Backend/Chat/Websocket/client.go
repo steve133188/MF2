@@ -101,11 +101,18 @@ func (c *Client) write() {
 
 func (c *Client) WebsocketProcessData() error {
 	message := <-c.Read
+	chat := new(Model.ClientMsg)
+	err := json.Unmarshal(message, &chat)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
 	if string(message) == "ping" {
 		message = []byte("pong")
 		c.Write <- message
 		return nil
-	} else {
+	} else if chat.Topic == "send-message" {
 		c.Write <- []byte("message received")
 
 		clientMsg := new(Model.ClientMsg)

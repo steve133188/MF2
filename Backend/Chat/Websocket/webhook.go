@@ -58,9 +58,8 @@ func (c *Client) HandleCliWhatsappMsg(msg *Model.ClientMsg) (*Model.ClientMsg, e
 		log.Println("HandleCliWhatsappMsg_1     ", err)
 		return nil, err
 	}
+	msg.Url = msg.Url + "/send-message"
 	req, err := http.NewRequest("POST", msg.Url, bytes.NewBuffer(result))
-
-	// req, err := http.NewRequest("POST", Util.GoDotEnvVariable("WHATSAPP_ADDRESS"), bytes.NewBuffer(result))
 	if err != nil {
 		log.Println("HandleCliWhatsappMsg_2     ", err)
 		return nil, err
