@@ -80,7 +80,7 @@ func (c *Client) HandleCliWhatsappMsg(msg *Model.ClientMsg) (*Model.ClientMsg, e
 
 	}
 
-	log.Println(bytes.NewBuffer(resBody))
+	log.Println("resp body       ", bytes.NewBuffer(resBody))
 
 	err = json.Unmarshal(resBody, &data)
 	if err != nil {
