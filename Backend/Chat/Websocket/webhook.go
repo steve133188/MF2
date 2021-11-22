@@ -52,12 +52,14 @@ func HandleWhatsapp(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Client) HandleCliWhatsappMsg(msg *Model.ClientMsg) (*Model.ClientMsg, error) {
+	log.Println("=======================HandleCliWhatsappMsg=======================")
 	clt := http.Client{}
 	result, err := json.Marshal(msg)
 	if err != nil {
 		log.Println("HandleCliWhatsappMsg_1     ", err)
 		return nil, err
 	}
+	log.Println("handler result msg      ", bytes.NewBuffer(result))
 	msg.Url = msg.Url + "/send-message"
 	req, err := http.NewRequest("POST", msg.Url, bytes.NewBuffer(result))
 	if err != nil {
@@ -72,7 +74,6 @@ func (c *Client) HandleCliWhatsappMsg(msg *Model.ClientMsg) (*Model.ClientMsg, e
 
 	}
 
-	data := new(Model.ClientMsg)
 	resBody, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		log.Println("HandleCliWhatsappMsg_4     ", err)
@@ -82,6 +83,7 @@ func (c *Client) HandleCliWhatsappMsg(msg *Model.ClientMsg) (*Model.ClientMsg, e
 
 	log.Println("resp body       ", bytes.NewBuffer(resBody))
 
+	data := new(Model.ClientMsg)
 	err = json.Unmarshal(resBody, &data)
 	if err != nil {
 		log.Println("HandleCliWhatsappMsg_5     ", err)
