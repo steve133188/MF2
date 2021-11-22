@@ -67,6 +67,7 @@ func (c *Client) HandleCliWhatsappMsg(msg *Model.ClientMsg) (*Model.ClientMsg, e
 		return nil, err
 
 	}
+	req.Header.Set("Content-Type", "application/json")
 	res, err := clt.Do(req)
 	if err != nil {
 		log.Println("HandleCliWhatsappMsg_3     ", err)
