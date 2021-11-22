@@ -18,6 +18,8 @@ type Customer struct {
 	Birthday  string    `json:"birthday" bson:"birthday"`
 	Country   string    `json:"country" bson:"country"`
 	Address   string    `json:"address" bson:"address"`
+	Email     string    `json:"email" bson:"email"`
+	Gender    string    `json:"gender" bson:"gender"`
 	CreatedAt time.Time `json:"created_at" bson:"created_at"`
 	UpdatedAt time.Time `json:"updated_at" bson:"updated_at"`
 }
