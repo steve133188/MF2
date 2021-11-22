@@ -25,12 +25,12 @@ type Chat struct {
 // }
 
 type ClientMsg struct {
-	Topic         string      `json:"topic" bson:"topic"`
-	UserID        string      `json:"user_id"`
-	CustomerPhone string      `json:"customer_phone"`
-	ChannelType   string      `json:"channel_type"`
-	ChatID        string      `json:"chat_id"`
-	Url           string      `json:"url"`
-	Token         string      `json:"token"`
-	Msg           interface{} `json:"message"`
+	Topic       string      `json:"topic" bson:"topic"`
+	UserID      string      `json:"user_id"`
+	Phone       string      `json:"phone"`
+	ChannelType string      `json:"channel_type"`
+	ChatID      string      `json:"chat_id"`
+	Url         string      `json:"url"`
+	Token       string      `json:"token"`
+	Msg         interface{} `json:"message"`
 }
