@@ -2,7 +2,6 @@ package Websocket
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -20,9 +19,6 @@ var Upgrader = websocket.Upgrader{
 var Rooms = make(map[string]map[string][]*websocket.Conn)
 
 func HandleConnections(w http.ResponseWriter, r *http.Request) {
-	// r.ParseForm()
-	// roomID := r.Form["room_id"][0]
-	// uid := r.Form["user_id"][0]
 
 	ws, err := Upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -30,21 +26,7 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	// defer ws.Close()
-
-	// SetWsConn(roomID, uid, ws)
-
 	client := NewClient(ws, ws.RemoteAddr().String())
-
-	//should be placed in main.go??
-	// go func() {
-	// 	WhatsappRoute := mux.NewRouter()
-	// 	WhatsappRoute.HandleFunc("/whatsapp", client.HandleWhatsapp)
-	// 	err = http.ListenAndServe(":3013", WhatsappRoute)
-	// 	if err != nil {
-	// 		log.Fatal("3013", err)
-	// 	}
-	// }()
 
 	go client.read()
 	go client.write()
@@ -59,16 +41,7 @@ func SetWsConn(room string, user string, conn *websocket.Conn) {
 	} else {
 		Rooms[room][user] = append(Rooms[room][user], conn)
 	}
-	for k1, v1 := range Rooms {
-		fmt.Println(k1)
-		fmt.Println(v1)
-
-		for k, v := range v1 {
-			fmt.Println(k)
-			fmt.Println(v)
-		}
-
-	}
+	log.Println(Rooms)
 }
 
 func GetWsConn(room string, user string, conn *websocket.Conn) ([]*websocket.Conn, error) {
@@ -88,10 +61,29 @@ func GetWsConn(room string, user string, conn *websocket.Conn) ([]*websocket.Con
 }
 
 func DelWsConn(room string, user string, conn *websocket.Conn) {
+	log.Println("delete conn")
+
 	for k, v := range Rooms[room][user] {
 		if v == conn {
-			Rooms[room][user] = append(Rooms[room][user][:k], Rooms[room][user][k+1])
-			fmt.Println(Rooms[room][user])
+			log.Println("====================", len(Rooms[room][user]))
+			// if len(Rooms[room][user]) > 1 {
+			// 	Rooms[room][user] = append(Rooms[room][user][:k], Rooms[room][user][k+1])
+			// } else {
+			// 	Rooms[room][user] = make([]*websocket.Conn, 0)
+			// }
+			result := deleteConnArrayItem(Rooms[room][user], k)
+			Rooms[room][user] = result
+			log.Println("delete      ", Rooms)
+			break
 		}
 	}
+	if len(Rooms[room][user]) == 0 {
+		delete(Rooms, room)
+	}
+}
+
+func deleteConnArrayItem(conns []*websocket.Conn, k int) []*websocket.Conn {
+	conns[k] = conns[len(conns)-1]
+	conns = conns[:len(conns)-1]
+	return conns
 }

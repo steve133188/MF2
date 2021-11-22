@@ -6,26 +6,49 @@ import (
 	"io/ioutil"
 	"log"
 	"mf-chat-services/Model"
-	"mf-chat-services/Util"
 	"net/http"
+
+	"github.com/gorilla/websocket"
 )
 
 func HandleWhatsapp(w http.ResponseWriter, r *http.Request) {
-	dec := json.NewDecoder(r.Body)
-	data := new(Model.Chat)
-	err := dec.Decode(&data)
-	if err != nil {
-		log.Println("Error in HandleWhatsapp: ", err)
+	if r.Method == "POST" {
+
+		reqBody, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			log.Println("webhook read req body      ", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
+		}
+
+		data := new(Model.ClientMsg)
+
+		err = json.Unmarshal(reqBody, &data)
+		if err != nil {
+			log.Println("webhook unmarshal      ", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
+		}
+
+		roomId := data.ChatID
+		userId := data.UserID
+
+		val, ok := Rooms[roomId][userId]
+		if !ok {
+			log.Println("Error in finding conn in Rooms map")
+			w.WriteHeader(http.StatusBadRequest)
+			str, _ := json.Marshal("user not connected")
+			w.Write(str)
+		}
+
+		msg, _ := json.Marshal(data)
+		for _, v := range val {
+			v.WriteMessage(websocket.TextMessage, msg)
+		}
+	} else {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
-	message, err := json.Marshal(data)
-	if err != nil {
-		log.Println("Error in HandleWhatsapp marshal: ", err)
-	}
-
-	// c.sendMsg(message)
-	log.Println(bytes.NewBuffer(message))
 }
 
 func (c *Client) HandleCliWhatsappMsg(msg *Model.ClientMsg) (*Model.ClientMsg, error) {
@@ -35,7 +58,9 @@ func (c *Client) HandleCliWhatsappMsg(msg *Model.ClientMsg) (*Model.ClientMsg, e
 		log.Println("HandleCliWhatsappMsg_1     ", err)
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", Util.GoDotEnvVariable("WHATSAPP_ADDRESS"), bytes.NewBuffer(result))
+	req, err := http.NewRequest("POST", msg.Url, bytes.NewBuffer(result))
+
+	// req, err := http.NewRequest("POST", Util.GoDotEnvVariable("WHATSAPP_ADDRESS"), bytes.NewBuffer(result))
 	if err != nil {
 		log.Println("HandleCliWhatsappMsg_2     ", err)
 		return nil, err

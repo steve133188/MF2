@@ -15,15 +15,12 @@ func main() {
 	DB.MongoConnect()
 
 	websocket := mux.NewRouter()
-	websocket.HandleFunc("/websocket", Websocket.HandleConnections)
-	err := http.ListenAndServe(":3003", websocket)
-	if err != nil {
-		log.Fatal(err)
-	}
 
-	webhook := mux.NewRouter()
-	webhook.HandleFunc("/whatsapp", Websocket.HandleWhatsapp)
-	err = http.ListenAndServe(":3013", webhook)
+	websocket.HandleFunc("/websocket", Websocket.HandleConnections)
+
+	websocket.HandleFunc("/whatsapp", Websocket.HandleWhatsapp)
+
+	err := http.ListenAndServe(":3003", websocket)
 	if err != nil {
 		log.Fatal(err)
 	}
