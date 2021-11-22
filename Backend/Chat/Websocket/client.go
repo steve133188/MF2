@@ -141,7 +141,7 @@ func (c *Client) WebsocketProcessData() error {
 			return nil
 		}
 
-		result, err := json.Marshal(recData)
+		result, err := json.Marshal(&recData)
 		if err != nil {
 			log.Println(err)
 			c.Write <- []byte(err.Error())
@@ -150,6 +150,8 @@ func (c *Client) WebsocketProcessData() error {
 
 		c.RoomID = recData.ChatID
 		c.UserID = recData.UserID
+
+		log.Println("room   ", c.RoomID, "       user     ", c.UserID)
 
 		var found = false
 		for _, conns := range Rooms[c.RoomID] {
