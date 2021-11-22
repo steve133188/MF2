@@ -79,6 +79,9 @@ func (c *Client) HandleCliWhatsappMsg(msg *Model.ClientMsg) (*Model.ClientMsg, e
 		return nil, err
 
 	}
+
+	log.Println(bytes.NewBuffer(resBody))
+
 	err = json.Unmarshal(resBody, &data)
 	if err != nil {
 		log.Println("HandleCliWhatsappMsg_5     ", err)
