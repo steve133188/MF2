@@ -6,7 +6,6 @@ require (
 	github.com/gofiber/fiber/v2 v2.19.0
 	github.com/gofiber/jwt/v2 v2.2.7
 	github.com/joho/godotenv v1.4.0
-	github.com/rs/xid v1.3.0
 	go.mongodb.org/mongo-driver v1.7.2
 )
 

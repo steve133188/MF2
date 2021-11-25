@@ -15,7 +15,11 @@ func CustomersRoute(route fiber.Router) {
 	route.Post("/", Services.AddCustomer)
 	route.Post("/addMany", Services.AddManyCustomer)
 	route.Put("/id", Services.UpdateCustomerByID)
+	route.Put("/many", Services.UpdateManyCustomers)
+
 	route.Delete("/id", Services.DeleteCustomerById)
+	route.Delete("/many", Services.DeleteManyCustomers)
+
 	// route.Delete("/delMany", Services.DeleteManyCustomer)
 
 	// route.Get("/chanInfo/:phone", Services.GetChannelInfoByPhone)
@@ -44,7 +48,5 @@ func CustomersRoute(route fiber.Router) {
 	route.Put("/add-team-to-customer", Services.AddTeamIDToCustomer)
 	route.Put("/change-customers-team", Services.UpdateCustomersTeamID)
 	route.Put("/delete-customers-team/:team", Services.DeleteTeamIDFromCustomers)
-
-	route.Delete("/id", Services.DeleteCustomerById)
 
 }

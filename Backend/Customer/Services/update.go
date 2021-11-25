@@ -1,6 +1,7 @@
 package Services
 
 import (
+	"log"
 	"mf-customer-services/DB"
 	"mf-customer-services/Model"
 	"time"
@@ -164,4 +165,41 @@ func DeleteCustomerTags(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(result)
+}
+
+func UpdateManyCustomers(c *fiber.Ctx) error {
+	col := DB.MI.DBCol
+
+	var customers []Model.Customer = make([]Model.Customer, 0)
+
+	var results []Model.Customer = make([]Model.Customer, 0)
+	result := new(Model.Customer)
+
+	err := c.BodyParser(&customers)
+	if err != nil {
+		log.Println("UpdateManyCustomers parse     ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	for _, customer := range customers {
+		filter := bson.D{{"id", customer.ID}}
+		update := bson.D{{"$set", &customer}}
+		res, err := col.UpdateOne(c.Context(), filter, update)
+		if err != nil {
+			log.Println("UpdateManyCustomers UpdateOne     ", err)
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+		log.Println(customer.ID, "    ", res.ModifiedCount)
+
+		err = col.FindOne(c.Context(), filter).Decode(&result)
+		if err != nil {
+			log.Println("UpdateManyCustomers FindOne     ", err)
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+
+		results = append(results, *result)
+
+	}
+
+	return c.Status(fiber.StatusOK).JSON(results)
 }

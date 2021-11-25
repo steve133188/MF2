@@ -1,6 +1,8 @@
 package Services
 
 import (
+	"fmt"
+	"log"
 	"mf-customer-services/DB"
 	"mf-customer-services/Model"
 
@@ -47,4 +49,29 @@ func DeleteCustomerById(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
 	})
+}
+
+func DeleteManyCustomers(c *fiber.Ctx) error {
+	col := DB.MI.DBCol
+
+	var data struct {
+		ID []string `json:"id"`
+	}
+
+	err := c.BodyParser(&data)
+	if err != nil {
+		log.Println("DeleteManyCustomer parse      ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+	fmt.Println(data)
+	for _, id := range data.ID {
+		filter := bson.M{"id": id}
+		_, err := col.DeleteOne(c.Context(), filter)
+		if err != nil {
+			log.Println("DeleteManyCustomer DeleteMany      ", err)
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+	}
+
+	return c.SendStatus(fiber.StatusOK)
 }

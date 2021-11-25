@@ -2,12 +2,13 @@ package Services
 
 import (
 	"fmt"
+	"math/rand"
 	"mf-customer-services/DB"
 	"mf-customer-services/Model"
+	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/rs/xid"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -27,9 +28,12 @@ func AddCustomer(c *fiber.Ctx) error {
 		})
 	}
 
-	id := xid.New()
+	// id := xid.New()
 
-	data.ID = id.String()
+	rand.Seed(time.Now().UnixNano())
+	id := strconv.Itoa(rand.Int())
+
+	data.ID = id
 	data.UpdatedAt = time.Now()
 	data.CreatedAt = time.Now()
 
@@ -141,18 +145,6 @@ func AddTags(c *fiber.Ctx) error {
 			"error":   err.Error(),
 		})
 	}
-
-	// data.ID = xid.New().String()
-
-	// result, err := customersCollection.InsertOne(c.Context(), data)
-
-	// if err != nil {
-	// 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-	// 		"success": false,
-	// 		"message": "Failed to insert",
-	// 		"error":   err.Error(),
-	// 	})
-	// }
 
 	return c.Status(fiber.StatusOK).JSON(exist)
 }
