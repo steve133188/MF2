@@ -94,35 +94,6 @@ func GetUserByName(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(user)
 }
 
-// func GetValidPassword(c *fiber.Ctx) error {
-// 	collection := DB.MI.DBCol
-// 	paramPassword := c.Params("password")
-// 	paramEmail := c.Params("email")
-// 	user := &Model.User{}
-
-// 	query := bson.D{{Key: "email", Value: paramEmail}}
-
-// 	err := collection.FindOne(c.Context(), query).Decode(user)
-// 	if err != nil {
-// 		fmt.Println(err)
-// 	}
-
-// 	match := Util.CheckPasswordHash(paramPassword, user.Password)
-
-// 	if !match {
-// 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-// 			"success": false,
-// 		})
-// 	}
-
-// 	// customer.Date = customer.Date.Add(time.Hour * 8)
-
-// 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-// 		"success": true,
-// 	})
-
-// }
-
 func GetUserByPhone(c *fiber.Ctx) error {
 	col := DB.MI.UserDBCol
 

@@ -36,7 +36,6 @@ func AddAgent(c *fiber.Ctx) error {
 	usersCollection := DB.MI.UserDBCol
 
 	data := new(Model.User)
-	exist := new(Model.User)
 
 	err := c.BodyParser(&data)
 	if err != nil {
@@ -51,16 +50,34 @@ func AddAgent(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
-	emailExisted := usersCollection.FindOne(c.Context(), bson.D{{Key: "email", Value: data.Email}}).Decode(exist)
-	if (emailExisted) == nil {
-		log.Println("AddAgent FindOne email: ", err)
+	count, err := usersCollection.CountDocuments(c.Context(), bson.D{{"email", data.Email}})
+	if err != nil {
+		log.Println("AddAgent count email: ", err)
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
+	if count != 0 {
+		log.Println("email existed: ", err)
+		return c.SendStatus(fiber.StatusBadRequest)
+	}
 
-	userNameExisted := usersCollection.FindOne(c.Context(), bson.D{{Key: "username", Value: data.UserName}}).Decode(exist)
-	if userNameExisted == nil {
-		log.Println("AddAgent FindOne name: ", err)
+	count, err = usersCollection.CountDocuments(c.Context(), bson.D{{"username", data.UserName}})
+	if err != nil {
+		log.Println("AddAgent count name: ", err)
 		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+	if count != 0 {
+		log.Println("name existed: ", err)
+		return c.SendStatus(fiber.StatusBadRequest)
+	}
+
+	count, err = usersCollection.CountDocuments(c.Context(), bson.D{{"phone", data.Phone}})
+	if err != nil {
+		log.Println("AddAgent count phone: ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+	if count != 0 {
+		log.Println("phone existed: ", err)
+		return c.SendStatus(fiber.StatusBadRequest)
 	}
 
 	_, err = usersCollection.InsertOne(c.Context(), data)
@@ -76,16 +93,3 @@ func AddAgent(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusCreated).JSON(user)
 }
-
-// func TestLogin(c *fiber.Ctx) error {
-// 	token := c.Request().Header.Peek("Authorization")
-// 	_, err := Util.ParseToken(string(token))
-// 	if err != nil {
-// 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-// 			"success": false,
-// 		})
-// 	}
-// 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-// 		"success": true,
-// 	})
-// }

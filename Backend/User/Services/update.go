@@ -92,5 +92,5 @@ func UpdateChannelInfoByPhone(c *fiber.Ctx) error {
 	}
 	customer := new(Model.User)
 	col.FindOne(c.Context(), bson.D{{"phone", chanInfo.Phone}}).Decode(&customer)
-	return c.Status(fiber.StatusCreated).JSON(chanInfo)
+	return c.Status(fiber.StatusCreated).JSON(customer)
 }
