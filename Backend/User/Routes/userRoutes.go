@@ -22,6 +22,7 @@ func UsersRoute(route fiber.Router) {
 
 	//team
 	route.Get("/team/:id", Services.GetUsersByTeamID)
+	route.Get("/team", Services.GetUserWithNoTeam)
 	route.Put("/add-team-to-user", Services.AddTeamIDToUser)
 	route.Put("/change-users-team", Services.UpdateUsersTeamID)
 	route.Put("/delete-users-team/:team", Services.DeleteTeamIDFromUsers)

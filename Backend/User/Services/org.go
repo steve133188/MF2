@@ -118,3 +118,25 @@ func GetUsersByTeamID(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(results)
 }
+
+func GetUserWithNoTeam(c *fiber.Ctx) error {
+	col := DB.MI.UserDBCol
+
+	filter := bson.D{{"team_id", ""}}
+
+	cursor, err := col.Find(c.Context(), filter)
+	if err != nil {
+		log.Println("GetUserWithNoTeam Find     ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	var users []Model.User = make([]Model.User, 0)
+
+	err = cursor.All(c.Context(), &users)
+	if err != nil {
+		log.Println("GetUserWithNoTeam All     ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(users)
+}
