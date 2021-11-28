@@ -55,6 +55,7 @@ func OrgRoute(route fiber.Router) {
 	route.Get("/parent/:parentId", Services.GetOrgByParentID)
 	route.Get("/id/:id", Services.GetOrgByID)
 	route.Get("/name/:id", Services.GetNameByID)
+	route.Get("/struct/:id", Services.GetOrgStructByID)
 
 	route.Put("/", Services.EditOrgName)
 	route.Delete("/id/:id", Services.DeleteOrgById)

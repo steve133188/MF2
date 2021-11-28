@@ -1,6 +1,7 @@
 package Services
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"mf-aoc-service/DB"
@@ -280,4 +281,40 @@ func deleteChildArray(c *fiber.Ctx, col *mongo.Collection, children []string) er
 	}
 
 	return nil
+}
+
+func GetOrgStructByID(c *fiber.Ctx) error {
+	col := DB.MI.OrgDBCol
+
+	id := c.Params("id")
+
+	var orgs []Model.ORG = make([]Model.ORG, 0)
+
+	result, err := ReturnWholeorgStruct(col, id, orgs)
+	if err != nil {
+		log.Println("GetOrgStructByID    ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(result)
+
+}
+
+func ReturnWholeorgStruct(col *mongo.Collection, id string, orgs []Model.ORG) ([]Model.ORG, error) {
+	org := new(Model.ORG)
+	err := col.FindOne(context.TODO(), bson.D{{"id", id}}).Decode(&org)
+	if err != nil {
+		log.Println("ReturnWholeorgStruct ", "id     ", err)
+		return nil, err
+	}
+
+	if org.ParentID != "" {
+		orgs, err = ReturnWholeorgStruct(col, org.ParentID, orgs)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	orgs = append(orgs, *org)
+	return orgs, nil
 }
