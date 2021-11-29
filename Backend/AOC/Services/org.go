@@ -2,7 +2,6 @@ package Services
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"mf-aoc-service/DB"
 	"mf-aoc-service/Model"
@@ -36,7 +35,6 @@ func CreateDivision(c *fiber.Ctx) error {
 	}
 
 	data.ID = xid.New().String()
-	fmt.Println(data.Type)
 	if data.Type != "team" || data.Type != "division" {
 		c.SendStatus(fiber.StatusBadRequest)
 	}
@@ -48,13 +46,11 @@ func CreateDivision(c *fiber.Ctx) error {
 	if data.ParentID != "" {
 		nFilter := bson.D{{"id", data.ParentID}}
 		nUpdate := bson.D{{"$push", bson.D{{"children_id", data.ID}}}}
-		res, err := col.UpdateOne(c.Context(), nFilter, nUpdate)
+		_, err := col.UpdateOne(c.Context(), nFilter, nUpdate)
 		if err != nil {
 			log.Println("CreateDivision UpdateOne ", err)
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}
-		fmt.Println(res.ModifiedCount)
-		fmt.Println(res.MatchedCount)
 
 	}
 
@@ -290,7 +286,7 @@ func GetOrgStructByID(c *fiber.Ctx) error {
 
 	var orgs []Model.ORG = make([]Model.ORG, 0)
 
-	result, err := ReturnWholeorgStruct(col, id, orgs)
+	result, err := ReturnWholeorgStructUpward(col, id, orgs)
 	if err != nil {
 		log.Println("GetOrgStructByID    ", err)
 		return c.SendStatus(fiber.StatusInternalServerError)
@@ -300,7 +296,7 @@ func GetOrgStructByID(c *fiber.Ctx) error {
 
 }
 
-func ReturnWholeorgStruct(col *mongo.Collection, id string, orgs []Model.ORG) ([]Model.ORG, error) {
+func ReturnWholeorgStructUpward(col *mongo.Collection, id string, orgs []Model.ORG) ([]Model.ORG, error) {
 	org := new(Model.ORG)
 	err := col.FindOne(context.TODO(), bson.D{{"id", id}}).Decode(&org)
 	if err != nil {
@@ -309,7 +305,7 @@ func ReturnWholeorgStruct(col *mongo.Collection, id string, orgs []Model.ORG) ([
 	}
 
 	if org.ParentID != "" {
-		orgs, err = ReturnWholeorgStruct(col, org.ParentID, orgs)
+		orgs, err = ReturnWholeorgStructUpward(col, org.ParentID, orgs)
 		if err != nil {
 			return nil, err
 		}
@@ -317,4 +313,53 @@ func ReturnWholeorgStruct(col *mongo.Collection, id string, orgs []Model.ORG) ([
 
 	orgs = append(orgs, *org)
 	return orgs, nil
+}
+
+var orgParentSlice []string = make([]string, 0)
+var orgChildSlice []string = make([]string, 0)
+
+func GetOrgStructDownward(c *fiber.Ctx) error {
+	col := DB.MI.OrgDBCol
+
+	id := c.Params("parentID")
+
+	orgParentSlice = nil
+	orgParentSlice = append(orgParentSlice, id)
+
+	var orgs []Model.ORG = make([]Model.ORG, 0)
+
+	orgs, err := ReturnWholeOrgStructDownward(col, orgs)
+	if err != nil {
+		c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(orgs)
+}
+
+func ReturnWholeOrgStructDownward(col *mongo.Collection, orgs []Model.ORG) ([]Model.ORG, error) {
+	org := new(Model.ORG)
+
+	for _, v := range orgParentSlice {
+		err := col.FindOne(context.TODO(), bson.D{{"id", v}}).Decode(&org)
+		if err != nil {
+			log.Println("ReturnWholeOrgStructDownward FindOne    ", err)
+			return nil, err
+		}
+		orgs = append(orgs, *org)
+
+		if len(org.ChildrenID) != 0 {
+			for _, v := range org.ChildrenID {
+				orgChildSlice = append(orgChildSlice, v)
+			}
+		}
+	}
+
+	if len(orgChildSlice) != 0 {
+		orgParentSlice = orgChildSlice
+		orgChildSlice = nil
+		orgs, _ = ReturnWholeOrgStructDownward(col, orgs)
+	}
+
+	return orgs, nil
+
 }

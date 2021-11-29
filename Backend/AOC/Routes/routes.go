@@ -52,10 +52,12 @@ func AdminRoute(route fiber.Router) {
 func OrgRoute(route fiber.Router) {
 	route.Post("/", Services.CreateDivision)
 	route.Get("/root", Services.GetRootDivisions)
+	route.Get("/root-struct/:id", Services.GetOrgStructDownward)
 	route.Get("/parent/:parentId", Services.GetOrgByParentID)
 	route.Get("/id/:id", Services.GetOrgByID)
 	route.Get("/name/:id", Services.GetNameByID)
 	route.Get("/struct/:id", Services.GetOrgStructByID)
+	route.Get("/family/:parentID", Services.GetOrgStructDownward)
 
 	route.Put("/", Services.EditOrgName)
 	route.Delete("/id/:id", Services.DeleteOrgById)
