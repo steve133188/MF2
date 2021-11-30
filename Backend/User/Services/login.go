@@ -113,8 +113,9 @@ func ChangeUserPassword(c *fiber.Ctx) error {
 	usersCollection := DB.MI.UserDBCol
 	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	var user struct {
-		Email    string `json:"email" bson:"email"`
-		Password string `json:"password" bson:"password"`
+		Email       string `json:"email" bson:"email"`
+		OldPassword string `json:"old_password" bson:"old_password"`
+		NewPassword string `json:"new_password" bson:"new_password"`
 	}
 	result := new(Model.User)
 
@@ -122,7 +123,16 @@ func ChangeUserPassword(c *fiber.Ctx) error {
 		log.Println("ChangeUserPassword parse", err)
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
-	password, err := Util.HashPassword(user.Password)
+
+	usersCollection.FindOne(c.Context(), bson.D{{"email", user.Email}}).Decode(&result)
+
+	match := Util.CheckPasswordHash(user.OldPassword, result.Password)
+	if !match {
+		log.Println("ChangeUserPassword WrongPassword    ")
+		return c.SendStatus(fiber.StatusBadRequest)
+	}
+
+	password, err := Util.HashPassword(user.NewPassword)
 	if err != nil {
 		log.Println("ChangeUserPassword hashpassword ", err)
 		return c.SendStatus(fiber.StatusInternalServerError)
