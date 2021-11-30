@@ -9,7 +9,6 @@ import (
 func ChannelRoute(route fiber.Router) {
 	route.Get("/", Services.GetAllChannelInfo)
 	route.Get("/id/:id", Services.GetChannelInfoById)
-
 	route.Post("/", Services.AddChannel)
 
 	route.Put("/id/:id", Services.UpdateChannelById)
@@ -60,6 +59,7 @@ func OrgRoute(route fiber.Router) {
 	route.Get("/name/:id", Services.GetNameByID)
 	route.Get("/struct/:id", Services.GetOrgStructByID)
 	route.Get("/family/:parentID", Services.GetOrgStructDownward)
+	route.Get("/team", Services.GetAllTeams)
 
 	route.Put("/", Services.EditOrgName)
 	route.Delete("/id/:id", Services.DeleteOrgById)

@@ -363,3 +363,25 @@ func ReturnWholeOrgStructDownward(col *mongo.Collection, orgs []Model.ORG) ([]Mo
 	return orgs, nil
 
 }
+
+func GetAllTeams(c *fiber.Ctx) error {
+	col := DB.MI.OrgDBCol
+
+	filter := bson.D{{"type", "team"}}
+
+	var orgs []Model.ORG = make([]Model.ORG, 0)
+
+	cursor, err := col.Find(c.Context(), filter)
+	if err != nil {
+		log.Println("GetAllTeams Find    ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	err = cursor.All(c.Context(), &orgs)
+	if err != nil {
+		log.Println("GetAllTeams All    ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(orgs)
+}
