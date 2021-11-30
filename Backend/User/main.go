@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"mf-user-servies/DB"
 	"mf-user-servies/Routes"
@@ -28,6 +29,8 @@ func main() {
 			log.Println("testing parse    ", err)
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}
+
+		fmt.Println(c.JSON(data))
 
 		return c.Status(fiber.StatusOK).JSON(data)
 	})
