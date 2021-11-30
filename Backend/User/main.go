@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"mf-user-servies/DB"
 	"mf-user-servies/Routes"
 	"mf-user-servies/Services"
@@ -19,8 +20,16 @@ func main() {
 	app.Use(cors.New())
 
 	DB.MongoConnect()
-	app.Get("/test", func(c *fiber.Ctx) error {
-		return c.JSON(fiber.Map{"code": 200, "message": "Hello, MF-Users-Services"})
+	app.Post("/test", func(c *fiber.Ctx) error {
+		var data []interface{}
+
+		err := c.BodyParser(&data)
+		if err != nil {
+			log.Println("testing parse    ", err)
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+
+		return c.Status(fiber.StatusOK).JSON(data)
 	})
 
 	app.Post("/api/users/login", Services.Login)
@@ -28,6 +37,7 @@ func main() {
 	app.Post("/api/users/addMany", Services.AddManyAgent)
 	app.Post("/api/users/forgot-password", Services.ForgotPassword)
 	app.Put("/api/users/check-auth/:email", Services.CheckUserAuthority)
+
 	// app.Post("/api/users/forgot-password", Services.ForgotPassword)
 
 	app.Use(jwtware.New(jwtware.Config{
