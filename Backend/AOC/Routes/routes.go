@@ -20,10 +20,12 @@ func ChannelRoute(route fiber.Router) {
 func AdminRoute(route fiber.Router) {
 	route.Get("/tags", Services.GetAllTags)
 	route.Get("/tag/name/:name", Services.GetTagByName)
+	route.Get("/tag/id/:id", Services.GetTagByID)
+
 	route.Get("/taglist", Services.GetTagList)
-	route.Post("/tags", Services.AddTag)
-	route.Put("/tage/name/:name", Services.UpdateTagsByName)
-	route.Delete("/tages/name/:name", Services.DeleteTagsByName)
+	route.Post("/tag", Services.AddTag)
+	route.Put("/tag", Services.UpdateTagsByID)
+	route.Delete("/tag/id/:id", Services.DeleteTagsByID)
 
 	//role CRUD
 	route.Get("/roles", Services.GetAllRoles)

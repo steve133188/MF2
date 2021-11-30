@@ -29,8 +29,8 @@ type ORG struct {
 }
 
 type Tags struct {
-	ID      string `json:"id" bson:"id:"`
-	Tags    string `json:"tags" bson:"tags"`
+	ID      string `json:"id" bson:"id"`
+	Tag     string `json:"tag" bson:"tag"`
 	Total   int    `json:"total" bson:"total"`
 	Created string `json:"created" bson:"created"`
 	Updated string `json:"updated" bson:"updated"`

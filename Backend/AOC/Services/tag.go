@@ -46,25 +46,25 @@ func AddTag(c *fiber.Ctx) error {
 }
 
 //Delete
-func DeleteTagsByName(c *fiber.Ctx) error {
+func DeleteTagsByID(c *fiber.Ctx) error {
 	collection := DB.MI.TagsDBCol
 
 	// get param
-	paramID := c.Params("name")
+	paramID := c.Params("id")
 
 	// find and delete todo
-	query := bson.D{{Key: "name", Value: paramID}}
+	query := bson.D{{Key: "id", Value: paramID}}
 
 	err := collection.FindOneAndDelete(c.Context(), query).Err()
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			if err != nil {
-				log.Println("DeleteTagsByName ", err)
+				log.Println("DeleteTagsByID ", err)
 				return c.SendStatus(fiber.StatusNotFound)
 			}
 		}
 
-		log.Println("DeleteTagsByName ", err)
+		log.Println("DeleteTagsByID ", err)
 		return c.SendStatus(fiber.StatusBadRequest)
 	}
 
@@ -101,7 +101,7 @@ func GetTagByName(c *fiber.Ctx) error {
 
 	todo := &Model.Tags{}
 
-	query := bson.D{{Key: "name", Value: paramID}}
+	query := bson.D{{Key: "tag", Value: paramID}}
 
 	err := collection.FindOne(c.Context(), query).Decode(todo)
 	if err != nil {
@@ -112,32 +112,58 @@ func GetTagByName(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(todo)
 }
 
+func GetTagByID(c *fiber.Ctx) error {
+	collection := DB.MI.TagsDBCol
+
+	paramID := c.Params("id")
+
+	todo := &Model.Tags{}
+
+	query := bson.D{{Key: "id", Value: paramID}}
+
+	err := collection.FindOne(c.Context(), query).Decode(todo)
+	if err != nil {
+		log.Println("GetTagByID FindOne ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(todo)
+}
+
 //Update
-func UpdateTagsByName(c *fiber.Ctx) error {
+func UpdateTagsByID(c *fiber.Ctx) error {
 	collection := DB.MI.TagsDBCol
 	// ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	todo := new(Model.Tags)
-	if err := c.BodyParser(todo); err != nil {
-		log.Println("UpdateTagsByName parse ", err)
+	if err := c.BodyParser(&todo); err != nil {
+		log.Println("UpdateTagsByID parse ", err)
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
-	update := bson.D{{Key: "$set", Value: todo}}
+	todo.Updated = time.Now().Format("January 2 2006 15:04:05")
+	update := bson.D{{"$set", todo}}
 
-	_, err := collection.UpdateOne(c.Context(), bson.D{{Key: "name", Value: c.Params("name")}}, update)
+	_, err := collection.UpdateOne(c.Context(), bson.D{{"id", todo.ID}}, update)
 	if err != nil {
-		log.Println("UpdateTagsByName UpdateOne ", err)
+		log.Println("UpdateTagsByID UpdateOne ", err)
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
-	return c.Status(fiber.StatusCreated).JSON(todo)
+
+	result := new(Model.Tags)
+
+	err = collection.FindOne(c.Context(), bson.D{{"id", todo.ID}}).Decode((&result))
+	if err != nil {
+		log.Println("UpdateTagsByID FindOne ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(result)
 }
 
 func GetTagList(c *fiber.Ctx) error {
-	col := DB.MI.RoleDBCol
+	col := DB.MI.TagsDBCol
 
-	var data []struct {
-		Tags string `json:"tags"`
-	}
+	var tags []Model.Tags = make([]Model.Tags, 0)
 
 	cursor, err := col.Find(c.Context(), bson.D{{}}, options.Find())
 	if err != nil {
@@ -145,7 +171,7 @@ func GetTagList(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
-	err = cursor.All(c.Context(), &data)
+	err = cursor.All(c.Context(), &tags)
 	if err != nil {
 		log.Println("GetTagList All: ", err)
 		return c.SendStatus(fiber.StatusInternalServerError)
@@ -153,9 +179,9 @@ func GetTagList(c *fiber.Ctx) error {
 	defer cursor.Close(c.Context())
 
 	var name []string
-	for _, v := range data {
-		if v.Tags != "" {
-			name = append(name, v.Tags)
+	for _, v := range tags {
+		if v.Tag != "" {
+			name = append(name, v.Tag)
 		}
 	}
 
