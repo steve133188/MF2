@@ -2,6 +2,7 @@ package Services
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"mf-aoc-service/DB"
 	"mf-aoc-service/Model"
@@ -408,55 +409,54 @@ func GetAllTeams(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(orgs)
 }
 
-// func GetFamilyByID(c *fiber.Ctx) error {
-// 	col := DB.MI.OrgDBCol
+func GetFamilyByID(c *fiber.Ctx) error {
+	col := DB.MI.OrgDBCol
 
-// 	id := c.Params("id")
+	id := c.Params("id")
 
-// 	results, err := test(col, id)
-// 	if err != nil {
-// 		log.Println("GetFamilyByID Failed", err)
-// 		return c.SendStatus(fiber.StatusInternalServerError)
-// 	}
+	results, err := test(col, id)
+	if err != nil {
+		log.Println("GetFamilyByID Failed", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
 
-// 	return c.Status(fiber.StatusOK).JSON(results)
-// }
+	return c.Status(fiber.StatusOK).JSON(results)
+}
 
-// type orgStruct struct {
-// 	ID         string      `json:"id" bson:"id"`
-// 	Type       string      `json:"type" bson:"type"`
-// 	ChildrenID []orgStruct `json:"children_id" bson:"children_id"`
-// 	ParentID   string      `json:"parent_id" bson:"parent_id"`
-// 	Name       string      `json:"name" bson:"name"`
-// }
+type orgStruct struct {
+	ID       string      `json:"id" bson:"id"`
+	Type     string      `json:"type" bson:"type"`
+	ParentID string      `json:"parent_id" bson:"parent_id"`
+	Name     string      `json:"name" bson:"name"`
+	Children []orgStruct `json:"children" bson:"children"`
+}
 
-// func test(col *mongo.Collection, id string) ([]orgStruct, error) {
-// 	org := new(Model.ORG)
+func test(col *mongo.Collection, id string) ([]orgStruct, error) {
+	org := new(Model.ORG)
 
-// 	err := col.FindOne(context.TODO(), bson.D{{"id", id}}).Decode(&org)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	err := col.FindOne(context.TODO(), bson.D{{"id", id}}).Decode(&org)
+	if err != nil {
+		return nil, err
+	}
 
-// 	data := new(orgStruct)
-// 	res, _ := json.Marshal(org)
-// 	json.Unmarshal(res, &data)
-// 	results := make([]orgStruct, 0)
+	data := new(orgStruct)
+	res, _ := json.Marshal(org)
+	json.Unmarshal(res, &data)
+	results := make([]orgStruct, 0)
 
-// 	if len(org.ChildrenID) != 0 {
+	if len(org.ChildrenID) != 0 {
+		data.Children = make([]orgStruct, 0)
+		for _, v := range org.ChildrenID {
+			result, err := test(col, v)
+			if err != nil {
+				return nil, err
+			}
+			data.Children = append(data.Children, result...)
 
-// 		for _, v := range org.ChildrenID {
-// 			result, err := test(col, v)
-// 			if err != nil {
-// 				return nil, err
-// 			}
-// 			data.ChildrenID = append(data.ChildrenID, result...)
-// 			results = append(results, *data)
-// 		}
+		}
+	}
 
-// 	} else {
-// 		results = append(results, *data)
-// 	}
+	results = append(results, *data)
 
-// 	return results, nil
-// }
+	return results, nil
+}
