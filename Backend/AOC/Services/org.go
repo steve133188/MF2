@@ -243,6 +243,28 @@ func DeleteOrgById(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusOK)
 }
 
+func DeleteChildren(c *fiber.Ctx) error {
+	col := DB.MI.OrgDBCol
+
+	parentID := c.Params("id")
+
+	_, err := col.UpdateOne(c.Context(), bson.D{{"id", parentID}}, bson.D{{"$set", bson.D{{"children_id", make([]string, 0)}}}})
+	if err != nil {
+		log.Println("DeleteChildren UpdateOne    ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	org := new(Model.ORG)
+
+	err = col.FindOne(c.Context(), bson.D{{"id", parentID}}).Decode(&org)
+	if err != nil {
+		log.Println("DeleteChildren FindOne    ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(org)
+}
+
 func deleteChildArray(c *fiber.Ctx, col *mongo.Collection, children []string) error {
 	for k, id := range children {
 		log.Println(k)
@@ -385,3 +407,56 @@ func GetAllTeams(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(orgs)
 }
+
+// func GetFamilyByID(c *fiber.Ctx) error {
+// 	col := DB.MI.OrgDBCol
+
+// 	id := c.Params("id")
+
+// 	results, err := test(col, id)
+// 	if err != nil {
+// 		log.Println("GetFamilyByID Failed", err)
+// 		return c.SendStatus(fiber.StatusInternalServerError)
+// 	}
+
+// 	return c.Status(fiber.StatusOK).JSON(results)
+// }
+
+// type orgStruct struct {
+// 	ID         string      `json:"id" bson:"id"`
+// 	Type       string      `json:"type" bson:"type"`
+// 	ChildrenID []orgStruct `json:"children_id" bson:"children_id"`
+// 	ParentID   string      `json:"parent_id" bson:"parent_id"`
+// 	Name       string      `json:"name" bson:"name"`
+// }
+
+// func test(col *mongo.Collection, id string) ([]orgStruct, error) {
+// 	org := new(Model.ORG)
+
+// 	err := col.FindOne(context.TODO(), bson.D{{"id", id}}).Decode(&org)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	data := new(orgStruct)
+// 	res, _ := json.Marshal(org)
+// 	json.Unmarshal(res, &data)
+// 	results := make([]orgStruct, 0)
+
+// 	if len(org.ChildrenID) != 0 {
+
+// 		for _, v := range org.ChildrenID {
+// 			result, err := test(col, v)
+// 			if err != nil {
+// 				return nil, err
+// 			}
+// 			data.ChildrenID = append(data.ChildrenID, result...)
+// 			results = append(results, *data)
+// 		}
+
+// 	} else {
+// 		results = append(results, *data)
+// 	}
+
+// 	return results, nil
+// }
