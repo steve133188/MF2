@@ -17,11 +17,17 @@ func AddTeamIDToUser(c *fiber.Ctx) error {
 		TeamID    string `json:"team_id" bson:"team_id"`
 	}
 
+	err := c.BodyParser(&data)
+	if err != nil {
+		log.Println("AddTeanIDToUser parse ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
 	filter := bson.D{{"phone", data.UserPhone}}
 	update := bson.D{{"$set", bson.D{{"team_id", data.TeamID}}}}
 
 	result := new(Model.User)
-	err := col.FindOne(c.Context(), bson.D{{"phone", data.UserPhone}}).Decode(&result)
+	err = col.FindOne(c.Context(), bson.D{{"phone", data.UserPhone}}).Decode(&result)
 	if err != nil {
 		log.Println("AddTeanIDToUser FindOne ", err)
 		return c.SendStatus(fiber.StatusInternalServerError)
@@ -45,6 +51,39 @@ func AddTeamIDToUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(result)
 }
 
+func UpdateUserTeam(c *fiber.Ctx) error {
+	col := DB.MI.UserDBCol
+
+	var data struct {
+		UserPhone string `json:"user_phone" bson:"user_phone"`
+		TeamID    string `json:"team_id" bson:"team_id"`
+	}
+
+	err := c.BodyParser(&data)
+	if err != nil {
+		log.Println("UpdateUserTeam parse ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	filter := bson.D{{"phone", data.UserPhone}}
+	update := bson.D{{"$set", bson.D{{"team_id", data.TeamID}}}}
+
+	result := new(Model.User)
+	_, err = col.UpdateOne(c.Context(), filter, update)
+	if err != nil {
+		log.Println("AddTeanIDToUser UpdateOne ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	err = col.FindOne(c.Context(), bson.D{{"phone", data.UserPhone}}).Decode(&result)
+	if err != nil {
+		log.Println("AddTeanIDToUser FindOne ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(result)
+}
+
 func UpdateUsersTeamID(c *fiber.Ctx) error {
 	col := DB.MI.UserDBCol
 
@@ -53,10 +92,16 @@ func UpdateUsersTeamID(c *fiber.Ctx) error {
 		NewId string `json:"new_id" bson:"new_id"`
 	}
 
-	filter := bson.D{{"old_id", data.OldId}}
+	err := c.BodyParser(&data)
+	if err != nil {
+		log.Println("AddTeanIDToUser parse ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	filter := bson.D{{"team_id", data.OldId}}
 	update := bson.D{{"$set", bson.D{{"team_id", data.NewId}}}}
 
-	_, err := col.UpdateMany(c.Context(), filter, update)
+	_, err = col.UpdateMany(c.Context(), filter, update)
 	if err != nil {
 		log.Println("UpdateUsersTeamID UpdateMany ", err)
 		return c.SendStatus(fiber.StatusInternalServerError)
