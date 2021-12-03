@@ -16,6 +16,7 @@ func CustomersRoute(route fiber.Router) {
 	route.Post("/addMany", Services.AddManyCustomer)
 	route.Put("/id", Services.UpdateCustomerByID)
 	route.Put("/many", Services.UpdateManyCustomers)
+	route.Put("/phone", Services.PutPhoneToCustomer)
 
 	route.Delete("/id", Services.DeleteCustomerById)
 	route.Delete("/many", Services.DeleteManyCustomers)

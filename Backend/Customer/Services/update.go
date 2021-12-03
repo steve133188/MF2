@@ -203,3 +203,42 @@ func UpdateManyCustomers(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(results)
 }
+
+func PutPhoneToCustomer(c *fiber.Ctx) error {
+	col := DB.MI.DBCol
+
+	var data struct {
+		ID    string `json:"id"`
+		Phone string `json:"phone"`
+	}
+
+	err := c.BodyParser(&data)
+	if err != nil {
+		log.Println("PutPhoneToCustomer parse    ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	filter := bson.D{{"id", data.ID}}
+	update := bson.D{{"$set", bson.D{{"phone", data.Phone}}}}
+
+	res, err := col.UpdateOne(c.Context(), filter, update)
+	if err != nil {
+		log.Println("PutPhoneToCustomer UpdateOne    ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	if res.ModifiedCount == 0 {
+		log.Println("PutPhoneToCustomer Update Failed    ", err)
+		return c.SendStatus(fiber.StatusNotModified)
+	}
+
+	customer := new(Model.Customer)
+
+	err = col.FindOne(c.Context(), filter).Decode(&customer)
+	if err != nil {
+		log.Println("PutPhoneToCustomer FindOne    ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(customer)
+}
