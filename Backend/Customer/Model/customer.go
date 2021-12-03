@@ -7,7 +7,7 @@ type Customer struct {
 	Name         string   `json:"name" bson:"name"`
 	FirstName    string   `json:"first_name" bson:"first_name"`
 	LastName     string   `json:"last_name" bson:"last_name"`
-	Phones       []string `json:"phones" bson:"phones"`
+	Phone        string   `json:"phone" bson:"phone"`
 	Organization string   `json:"organization" bson:"organization"`
 	Channels     []string `json:"channels" bson:"channels"`
 
