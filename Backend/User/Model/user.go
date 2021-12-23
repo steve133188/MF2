@@ -47,14 +47,19 @@ type User struct {
 	Status    string `json:"status" bson:"status"`
 	// Interface    string      `json:"interface" bson:"interface"`
 	// AssignTo     string      `json:"assign_to" bson:"assign_to"`
-	Leads       string   `json:"leads" bson:"leads"`
-	TeamID      string   `json:"team_id" bson:"team_id"`
-	LastLogin   string   `json:"last_login" bson:"last_login"`
-	Authority   Auth     `json:"authority" bson:"authority"`
-	Channels    []string `json:"channels" bson:"channels"`
-	ChannelInfo Info     `json:"channel_info" bson:"channel_info"`
-	Phone       string   `json:"phone" bson:"phone"`
-	ChekAuth    bool     `json:"check_auth" bson:"check_auth" default:"false"`
+	Leads       string `json:"leads" bson:"leads"`
+	TeamID      string `json:"team_id" bson:"team_id"`
+	LastLogin   string `json:"last_login" bson:"last_login"`
+	Authority   Auth   `json:"authority" bson:"authority"`
+	Channels    []Chan `json:"channels" bson:"channels"`
+	ChannelInfo Info   `json:"channel_info" bson:"channel_info"`
+	Phone       string `json:"phone" bson:"phone"`
+	ChekAuth    bool   `json:"check_auth" bson:"check_auth" default:"false"`
+}
+
+type Chan struct {
+	ChannelName string `json:"channel_name" bson:"channel_name"`
+	Url         string `json:"url" bson:"url"`
 }
 
 type Roles struct {
