@@ -460,3 +460,35 @@ func test(col *mongo.Collection, id string) ([]orgStruct, error) {
 
 	return results, nil
 }
+
+func GetAllOrgUnits(c *fiber.Ctx) error {
+	col := DB.MI.OrgDBCol
+
+	var datas []Model.ORG = make([]Model.ORG, 0)
+
+	filter := bson.D{{"parent_id", ""}}
+
+	cursor, err := col.Find(c.Context(), filter)
+	if err != nil {
+		log.Println("GetRootDivision Find ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+	defer cursor.Close(c.Context())
+
+	err = cursor.All(c.Context(), &datas)
+	if err != nil {
+		log.Println("GetRootDivision All ", err)
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	results := make([]orgStruct, 0)
+	for _, v := range datas {
+		result, err := test(col, v.ID)
+		if err != nil {
+			log.Println("GetFamilyByID Failed", err)
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+		results = append(results, result...)
+	}
+	return c.Status(fiber.StatusOK).JSON(results)
+}
