@@ -63,10 +63,10 @@ func handleRequest(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyRe
 			return handler.AddAgentToCustomer(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
 		case "/customer/del-agent":
 			return handler.DeleteCustomerAgent(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
-		// case "/customers/edit-tags":
-		// 	return handler.EditCustomersTag(req, os.Getenv("TABLE"), dynaClient)
-		// case "/customers/del-tags":
-		// 	return handler.DeleteCustomersTag(req, os.Getenv("TABLE"), dynaClient)
+		case "/customers/edit-tags":
+			return handler.EditCustomersTag(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
+		case "/customers/del-tags":
+			return handler.DeleteCustomersTag(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
 		case "/customer/group":
 			return handler.UpdateGroupToCustomer(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
 		case "/customers/group":
@@ -87,8 +87,8 @@ func handleRequest(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyRe
 		switch req.Resource {
 		case "/customer/{id}":
 			return handler.DeleteCustomerItem(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
-		case "/customers":
-			return handler.DeleteCustomers(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
+		//case "/customers":
+		//	return handler.DeleteCustomers(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
 		default:
 			log.Println("InvalidRoute")
 			return handler.ApiResponse(http.StatusMethodNotAllowed, handler.ErrMsg{aws.String("InvalidRoute")}), nil
