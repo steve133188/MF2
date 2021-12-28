@@ -54,36 +54,7 @@ func UpdateCustomerItem(req events.APIGatewayProxyRequest, table string, dynaCli
 	return ApiResponse(http.StatusOK, nil), nil
 }
 
-func UpdateGroupToCustomer(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
-	customer := new(model.Customer)
-
-	err := json.Unmarshal([]byte(req.Body), &customer)
-	if err != nil {
-		fmt.Printf("FailedToUnmarshalReqBody, %s", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{(aws.String("FailedToUnmarshalReqBody"))}), nil
-	}
-
-	customer.UpdateAt = time.Now().Format(os.Getenv("TIMEFORMAT"))
-
-	_, err = dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
-		TableName: &table,
-		Key: map[string]types.AttributeValue{
-			"customer_id": &types.AttributeValueMemberN{Value: strconv.Itoa(customer.CustomerID)},
-		},
-		UpdateExpression: aws.String("set customer_group = :g, update_at = :t"),
-		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":g": &types.AttributeValueMemberS{Value: customer.Group},
-			":t": &types.AttributeValueMemberS{Value: customer.UpdateAt},
-		},
-		ConditionExpression: aws.String("attribute_exists(customer_id)"),
-	})
-	if err != nil {
-		fmt.Println("FailedToUpdate, ", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUpdate")}), nil
-	}
-
-	return ApiResponse(http.StatusOK, nil), nil
-}
+//customer team ************************************************************************************************************************
 
 func UpdateCustomerTeam(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
 	customer := new(model.Customer)
@@ -105,6 +76,161 @@ func UpdateCustomerTeam(req events.APIGatewayProxyRequest, table string, dynaCli
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":te": &types.AttributeValueMemberS{Value: strconv.Itoa(customer.TeamID)},
 			":t":  &types.AttributeValueMemberS{Value: customer.UpdateAt},
+		},
+		ConditionExpression: aws.String("attribute_exists(customer_id)"),
+	})
+	if err != nil {
+		fmt.Println("FailedToUpdate, ", err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUpdate")}), nil
+	}
+
+	return ApiResponse(http.StatusOK, nil), nil
+}
+
+func EditCustomersTeam(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
+	var data struct {
+		OldTeam string `json:"old_team"`
+		NewTeam string `json:"new_team"`
+	}
+
+	err := json.Unmarshal([]byte(req.Body), &data)
+	if err != nil {
+		fmt.Println("FailedToUnmarshalReqData, ", err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqData")}), nil
+	}
+
+	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
+		TableName:        &table,
+		FilterExpression: aws.String("team_id = :g"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":g": &types.AttributeValueMemberN{Value: data.OldTeam},
+		},
+		Limit: aws.Int32(50),
+	})
+
+	customers := make([]model.Customer, 0)
+
+	for p.HasMorePages() {
+		out, err := p.NextPage(context.TODO())
+		if err != nil {
+			fmt.Println("ErrorInNextPage, ", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("ErrorInNextPage")}), nil
+		}
+
+		pItems := make([]model.Customer, 0)
+		err = attributevalue.UnmarshalListOfMaps(out.Items, &pItems)
+		if err != nil {
+			fmt.Println("UnmarshalListOfMaps, ", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("ErrorUnmarshalListOfMapsInNextPage")}), nil
+		}
+
+		customers = append(customers, pItems...)
+	}
+
+	for _, v := range customers {
+		_, err = dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
+			TableName: aws.String(table),
+			Key: map[string]types.AttributeValue{
+				"customer_id": &types.AttributeValueMemberN{Value: strconv.Itoa(v.CustomerID)},
+			},
+			UpdateExpression: aws.String("Set #cg = :ng"),
+			ExpressionAttributeNames: map[string]string{
+				"#cg": "team_id",
+			},
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":ng": &types.AttributeValueMemberN{Value: data.NewTeam},
+			},
+		})
+		if err != nil {
+			fmt.Println("FailedToUpdateTeam, CustomerID = ", v.CustomerID, ", ", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUpdateTeam, CustomerID = " + strconv.Itoa(v.CustomerID) + ", " + err.Error())}), nil
+		}
+	}
+
+	return ApiResponse(http.StatusOK, nil), nil
+
+}
+
+func DeleteCustomerTeams(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
+	var data struct {
+		DeleteTeam string `json:"delete_team"`
+	}
+
+	err := json.Unmarshal([]byte(req.Body), &data)
+	if err != nil {
+		fmt.Println("FailedToUnmarshalReqData, ", err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqData")}), nil
+	}
+
+	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
+		TableName:        &table,
+		FilterExpression: aws.String("team_id = :g"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":g": &types.AttributeValueMemberN{Value: data.DeleteTeam},
+		},
+		Limit: aws.Int32(50),
+	})
+
+	customers := make([]model.Customer, 0)
+
+	for p.HasMorePages() {
+		out, err := p.NextPage(context.TODO())
+		if err != nil {
+			fmt.Println("ErrorInNextPage, ", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("ErrorInNextPage")}), nil
+		}
+
+		pItems := make([]model.Customer, 0)
+		err = attributevalue.UnmarshalListOfMaps(out.Items, &pItems)
+		if err != nil {
+			fmt.Println("UnmarshalListOfMaps, ", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("ErrorUnmarshalListOfMapsInNextPage")}), nil
+		}
+
+		customers = append(customers, pItems...)
+	}
+
+	for _, v := range customers {
+		removeStr := "remove team_id"
+		_, err = dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
+			TableName: aws.String(table),
+			Key: map[string]types.AttributeValue{
+				"customer_id": &types.AttributeValueMemberN{Value: strconv.Itoa(v.CustomerID)},
+			},
+			UpdateExpression: aws.String(removeStr),
+		})
+		if err != nil {
+			fmt.Println("FailedToDeleteTeam, CustomerID = ", v.CustomerID, ", ", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToDeleteTeam, CustomerID = " + strconv.Itoa(v.CustomerID) + ", " + err.Error())}), nil
+		}
+	}
+
+	return ApiResponse(http.StatusOK, nil), nil
+
+}
+
+//customer group ************************************************************************************************************************
+
+func UpdateGroupToCustomer(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
+	customer := new(model.Customer)
+
+	err := json.Unmarshal([]byte(req.Body), &customer)
+	if err != nil {
+		fmt.Printf("FailedToUnmarshalReqBody, %s", err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{(aws.String("FailedToUnmarshalReqBody"))}), nil
+	}
+
+	customer.UpdateAt = time.Now().Format(os.Getenv("TIMEFORMAT"))
+
+	_, err = dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
+		TableName: &table,
+		Key: map[string]types.AttributeValue{
+			"customer_id": &types.AttributeValueMemberN{Value: strconv.Itoa(customer.CustomerID)},
+		},
+		UpdateExpression: aws.String("set customer_group = :g, update_at = :t"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":g": &types.AttributeValueMemberS{Value: customer.Group},
+			":t": &types.AttributeValueMemberS{Value: customer.UpdateAt},
 		},
 		ConditionExpression: aws.String("attribute_exists(customer_id)"),
 	})
@@ -179,6 +305,66 @@ func UpdateCustomersGroup(req events.APIGatewayProxyRequest, table string, dynaC
 	return ApiResponse(http.StatusOK, nil), nil
 
 }
+
+func DeleteCustomersGroup(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
+	var data struct {
+		DeleteGroup string `json:"delete_group"`
+	}
+
+	err := json.Unmarshal([]byte(req.Body), &data)
+	if err != nil {
+		fmt.Println("FailedToUnmarshalReqData, ", err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqData")}), nil
+	}
+
+	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
+		TableName:        &table,
+		FilterExpression: aws.String("customer_group = :g"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":g": &types.AttributeValueMemberS{Value: data.DeleteGroup},
+		},
+		Limit: aws.Int32(50),
+	})
+
+	customers := make([]model.Customer, 0)
+
+	for p.HasMorePages() {
+		out, err := p.NextPage(context.TODO())
+		if err != nil {
+			fmt.Println("ErrorInNextPage, ", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("ErrorInNextPage")}), nil
+		}
+
+		pItems := make([]model.Customer, 0)
+		err = attributevalue.UnmarshalListOfMaps(out.Items, &pItems)
+		if err != nil {
+			fmt.Println("UnmarshalListOfMaps, ", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("ErrorUnmarshalListOfMapsInNextPage")}), nil
+		}
+
+		customers = append(customers, pItems...)
+	}
+
+	for _, v := range customers {
+		removeStr := "remove customer_group"
+		_, err = dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
+			TableName: aws.String(table),
+			Key: map[string]types.AttributeValue{
+				"customer_id": &types.AttributeValueMemberN{Value: strconv.Itoa(v.CustomerID)},
+			},
+			UpdateExpression: aws.String(removeStr),
+		})
+		if err != nil {
+			fmt.Println("FailedToDeleteGroup, CustomerID = ", v.CustomerID, ", ", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToDeleteGroup, CustomerID = " + strconv.Itoa(v.CustomerID) + ", " + err.Error())}), nil
+		}
+	}
+
+	return ApiResponse(http.StatusOK, nil), nil
+
+}
+
+//customer tag ************************************************************************************************************************
 
 func AddTagToCustomer(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
 	var data struct {
@@ -285,7 +471,7 @@ func EditCustomersTag(req events.APIGatewayProxyRequest, table string, dynaClien
 		TableName:        &table,
 		FilterExpression: aws.String("contains(tags_id, :g)"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":g": &types.AttributeValueMemberS{Value: data.OldTag},
+			":g": &types.AttributeValueMemberN{Value: data.OldTag},
 		},
 		Limit: aws.Int32(50),
 	})
@@ -328,10 +514,8 @@ func EditCustomersTag(req events.APIGatewayProxyRequest, table string, dynaClien
 			Key: map[string]types.AttributeValue{
 				"customer_id": &types.AttributeValueMemberN{Value: strconv.Itoa(v.CustomerID)},
 			},
-			UpdateExpression: aws.String("Set #cg = :ng"),
-			ExpressionAttributeNames: map[string]string{
-				"#cg": "tags_id[" + tagIndex + "].field",
-			},
+			UpdateExpression: aws.String("set tags_id[" + tagIndex + "].field = :ng"),
+			ReturnValues:     types.ReturnValueUpdatedNew,
 			ExpressionAttributeValues: map[string]types.AttributeValue{
 				":ng": &types.AttributeValueMemberN{Value: data.NewTag},
 			},
@@ -421,7 +605,7 @@ func DeleteCustomersTag(req events.APIGatewayProxyRequest, table string, dynaCli
 		TableName:        &table,
 		FilterExpression: aws.String("contains(tags_id, :g)"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":g": &types.AttributeValueMemberS{Value: data.DeleteTag},
+			":g": &types.AttributeValueMemberN{Value: data.DeleteTag},
 		},
 		Limit: aws.Int32(50),
 	})
@@ -459,15 +643,13 @@ func DeleteCustomersTag(req events.APIGatewayProxyRequest, table string, dynaCli
 			}
 		}
 
+		removeStr := "remove tags_id[" + tagIndex + "]"
 		_, err = dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
 			TableName: aws.String(table),
 			Key: map[string]types.AttributeValue{
 				"customer_id": &types.AttributeValueMemberN{Value: strconv.Itoa(v.CustomerID)},
 			},
-			UpdateExpression: aws.String("remove #cg"),
-			ExpressionAttributeNames: map[string]string{
-				"#cg": "tags_id[" + tagIndex + "]",
-			},
+			UpdateExpression: aws.String(removeStr),
 		})
 		if err != nil {
 			fmt.Println("FailedToRemoveTag, CustomerID = ", v.CustomerID, ", ", err)
@@ -478,6 +660,8 @@ func DeleteCustomersTag(req events.APIGatewayProxyRequest, table string, dynaCli
 	return ApiResponse(http.StatusOK, nil), nil
 
 }
+
+//customer agent ************************************************************************************************************************
 
 func AddAgentToCustomer(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
 	var data struct {
