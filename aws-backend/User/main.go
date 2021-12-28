@@ -49,19 +49,16 @@ func handleRequest(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyRe
 			return handler.UpdateUserTeam(req, table, dynaClient)
 		case "/api/users/team":
 			return handler.UpdateUsersTeam(req, table, dynaClient)
-		// case "/api/users/del-team":
-		// 	return handler.DeleteUsersTeam(req, table, dynaClient)
 		case "/api/user/role":
 			return handler.UpdateUserRole(req, table, dynaClient)
 		case "/api/users/role":
 			return handler.UpdateUsersRole(req, table, dynaClient)
-		// case "/api/users/del-role":
-		// 	return handler.DeleteUsersRole(req, table, dynaClient)
 		case "/api/user/add-channels":
 			return handler.AddUserChannels(req, table, dynaClient)
 		case "/api/user/edit-channels":
 			return handler.EditUserChannels(req, table, dynaClient)
-
+		case "/api/user/del-channels":
+			return handler.DeleteUserChannels(req, table, dynaClient)
 		default:
 			return handler.ApiResponse(http.StatusBadRequest, handler.ErrMsg{aws.String("InvalidPutMethod")}), nil
 

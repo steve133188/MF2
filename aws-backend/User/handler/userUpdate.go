@@ -396,6 +396,75 @@ func AddUserChannels(req events.APIGatewayProxyRequest, table string, dynaClient
 		UserID   int        `json:"user_id"`
 		Channels model.Chan `json:"channels"`
 	}
+	err := json.Unmarshal([]byte(req.Body), &data)
+	if err != nil {
+		fmt.Println("UserID = ", data.UserID, err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UserID = " + strconv.Itoa(data.UserID) + err.Error())}), nil
+	}
+
+	gout, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
+		TableName: aws.String(table),
+		Key: map[string]types.AttributeValue{
+			"user_id": &types.AttributeValueMemberN{Value: strconv.Itoa(data.UserID)},
+		},
+	})
+	if err != nil {
+		fmt.Println(err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String(err.Error())}), nil
+	}
+	if gout.Item == nil {
+		fmt.Println("UserNotExist, UserID = ", data.UserID)
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("UserNotExist, UserID = " + strconv.Itoa(data.UserID))}), nil
+	}
+
+	user := new(model.User)
+	err = attributevalue.UnmarshalMap(gout.Item, &user)
+	if err != nil {
+		fmt.Println(err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String(err.Error())}), nil
+	}
+
+	//checking if channels is existed
+	for _, v := range user.Channels {
+		if v.ChannelName == data.Channels.ChannelName {
+			fmt.Println("ChannelExist, ChannelName = ", data.Channels.ChannelName)
+			return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("ChannelExist, ChannelName = " + data.Channels.ChannelName)}), nil
+		}
+	}
+
+	user.Channels = append(user.Channels, data.Channels)
+
+	lav, err := attributevalue.MarshalList(user.Channels)
+	if err != nil {
+		fmt.Println(err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String(err.Error())}), nil
+	}
+
+	fmt.Println("lav = ", lav)
+	out, err := dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
+		TableName: aws.String(table),
+		Key: map[string]types.AttributeValue{
+			"user_id": &types.AttributeValueMemberN{Value: strconv.Itoa(data.UserID)},
+		},
+		UpdateExpression: aws.String("Set channels = :ch"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":ch": &types.AttributeValueMemberL{Value: lav},
+		},
+		ReturnValues: types.ReturnValueAllNew,
+	})
+	if err != nil {
+		fmt.Println(err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String(err.Error())}), nil
+	}
+
+	return ApiResponse(http.StatusOK, out.Attributes), nil
+}
+
+func EditUserChannels(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
+	var data struct {
+		UserID   int        `json:"user_id"`
+		Channels model.Chan `json:"channels"`
+	}
 
 	err := json.Unmarshal([]byte(req.Body), &data)
 	if err != nil {
@@ -403,11 +472,126 @@ func AddUserChannels(req events.APIGatewayProxyRequest, table string, dynaClient
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UserID = " + strconv.Itoa(data.UserID) + err.Error())}), nil
 	}
 
+	gout, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
+		TableName: aws.String(table),
+		Key: map[string]types.AttributeValue{
+			"user_id": &types.AttributeValueMemberN{Value: strconv.Itoa(data.UserID)},
+		},
+	})
+	if err != nil {
+		fmt.Println(err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String(err.Error())}), nil
+	}
+	if gout.Item == nil {
+		fmt.Println("UserNotExist, UserID = ", data.UserID)
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("UserNotExist, UserID = " + strconv.Itoa(data.UserID))}), nil
+	}
+
+	user := new(model.User)
+	err = attributevalue.UnmarshalMap(gout.Item, &user)
+	if err != nil {
+		fmt.Println(err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String(err.Error())}), nil
+	}
+
+	found := false
+	var key int
+	for k, v := range user.Channels {
+		if v.ChannelName == data.Channels.ChannelName {
+			found = true
+			key = k
+		}
+	}
+
+	if !found {
+		fmt.Println("ChannelNotExist, ChannelName = ", data.Channels.ChannelName)
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("ChannelNotExist, ChannelName = " + data.Channels.ChannelName)}), nil
+	}
+
+	updateStr := "Set channels[" + strconv.Itoa(key) + "].channel_url = :url"
+
 	out, err := dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
 		TableName: aws.String(table),
 		Key: map[string]types.AttributeValue{
 			"user_id": &types.AttributeValueMemberN{Value: strconv.Itoa(data.UserID)},
 		},
-		UpdateExpression: aws.String("Set channels = list_append(channels, :ch"),
+		UpdateExpression: aws.String(updateStr),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":url": &types.AttributeValueMemberS{Value: data.Channels.ChannelUrl},
+		},
+		ReturnValues: types.ReturnValueAllNew,
 	})
+	if err != nil {
+		fmt.Println(err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String(err.Error())}), nil
+	}
+
+	return ApiResponse(http.StatusOK, out.Attributes), nil
+
+}
+
+func DeleteUserChannels(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
+	var data struct {
+		UserID   int        `json:"user_id"`
+		Channels model.Chan `json:"channels"`
+	}
+
+	err := json.Unmarshal([]byte(req.Body), &data)
+	if err != nil {
+		fmt.Println("UserID = ", data.UserID, err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UserID = " + strconv.Itoa(data.UserID) + err.Error())}), nil
+	}
+
+	gout, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
+		TableName: aws.String(table),
+		Key: map[string]types.AttributeValue{
+			"user_id": &types.AttributeValueMemberN{Value: strconv.Itoa(data.UserID)},
+		},
+	})
+	if err != nil {
+		fmt.Println(err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String(err.Error())}), nil
+	}
+	if gout.Item == nil {
+		fmt.Println("UserNotExist, UserID = ", data.UserID)
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("UserNotExist, UserID = " + strconv.Itoa(data.UserID))}), nil
+	}
+
+	user := new(model.User)
+	err = attributevalue.UnmarshalMap(gout.Item, &user)
+	if err != nil {
+		fmt.Println(err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String(err.Error())}), nil
+	}
+
+	found := false
+	var key int
+	for k, v := range user.Channels {
+		if v.ChannelName == data.Channels.ChannelName {
+			found = true
+			key = k
+		}
+	}
+	if !found {
+		fmt.Println("ChannelNotExist, ChannelName = ", data.Channels.ChannelName)
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("ChannelNotExist, ChannelName = " + data.Channels.ChannelName)}), nil
+	}
+
+	updateStr := "REMOVE channels[" + strconv.Itoa(key) + "]"
+
+	out, err := dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
+		TableName: aws.String(table),
+		Key: map[string]types.AttributeValue{
+			"user_id": &types.AttributeValueMemberN{Value: strconv.Itoa(data.UserID)},
+		},
+		UpdateExpression: aws.String(updateStr),
+
+		ReturnValues: types.ReturnValueAllNew,
+	})
+	if err != nil {
+		fmt.Println(err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String(err.Error())}), nil
+	}
+
+	return ApiResponse(http.StatusOK, out.Attributes), nil
 }

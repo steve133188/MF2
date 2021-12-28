@@ -29,10 +29,34 @@ func SendEmail(address string, HashPassword string) error {
 	// Message.
 	var body bytes.Buffer
 
-	t, err1 := template.ParseFiles("Util/template.html")
-	if err1 != nil {
-		fmt.Println(err1.Error())
-	}
+	input := `<!DOCTYPE html>
+	<html>
+		<body>
+			<div>
+				<h3>Hello</h3>
+				<p>
+					You recently requested to reset your password for your Matrix Forcce account. Please use the following password:
+					<br>
+					<h2>{{.Password}}</h2>
+					<br>
+					to login to your account and reset your password.
+					<br>
+					
+					Regards,
+					<br>
+					Matrix Force Team
+				</p>
+			</div>
+			
+		</body>
+	</html>`
+
+	// t, err1 := template.ParseFiles("template.html")
+	// if err1 != nil {
+	// 	fmt.Println(err1.Error())
+	// }
+
+	t := template.Must(template.New("test").Parse(input))
 
 	// Authentication.
 	auth := smtp.PlainAuth("", from, password, smtpHost)
@@ -62,7 +86,7 @@ func SendEmail(address string, HashPassword string) error {
 		fmt.Println(exErr)
 	}
 	// body.Write([]byte(message))
-	message += "\r\n" + base64.StdEncoding.EncodeToString([]byte(body.Bytes()))
+	message += "\r\n" + base64.StdEncoding.EncodeToString(body.Bytes())
 
 	// message += body.String()
 

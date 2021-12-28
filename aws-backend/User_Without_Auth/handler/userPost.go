@@ -5,8 +5,10 @@ import (
 	"aws-lambda-user-without-auth/utils"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -28,13 +30,34 @@ func AddUser(req events.APIGatewayProxyRequest, table string, dynaClient *dynamo
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqBody")}), nil
 	}
 
-	if len(user.Email) == 0 && len(user.Password) == 0 {
-		fmt.Println("MissingPasswordOrEmail")
-		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("MissingPasswordOrEmail")}), nil
+	check := len(user.Email) != 0 && len(user.Password) != 0 && len(user.Username) != 0 && len(user.Phone) != 0
+	if !check {
+		fmt.Println("MissingPasswordOrEmailOrUsernameOrPhone")
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("MissingPasswordOrEmailOrUsernameOrPhone")}), nil
+	}
+
+	status, err := scanCheckExisting(dynaClient, table, "email", user.Email)
+	if err != nil {
+		fmt.Println(err)
+		return ApiResponse(status, ErrMsg{aws.String(err.Error())}), nil
+	}
+	status, err = scanCheckExisting(dynaClient, table, "username", user.Username)
+	if err != nil {
+		fmt.Println(err)
+		return ApiResponse(status, ErrMsg{aws.String(err.Error())}), nil
+	}
+	status, err = scanCheckExisting(dynaClient, table, "phone", user.Phone)
+	if err != nil {
+		fmt.Println(err)
+		return ApiResponse(status, ErrMsg{aws.String(err.Error())}), nil
 	}
 
 	if user.UserID == 0 {
-		user.UserID = utils.IdGenerator()
+		user.UserID, err = strconv.Atoi(user.Phone)
+		if err != nil {
+			fmt.Println(err)
+			return ApiResponse(http.StatusInternalServerError, aws.String(err.Error())), nil
+		}
 	}
 
 	user.CreateAt = time.Now().Format("2006-01-02 15:04:05")
@@ -43,6 +66,7 @@ func AddUser(req events.APIGatewayProxyRequest, table string, dynaClient *dynamo
 		fmt.Println("FailedToHasPassword")
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToHasPassword")}), nil
 	}
+	user.Channels = make([]model.Chan, 0)
 
 	av, err := attributevalue.MarshalMap(&user)
 	if err != nil {
@@ -53,7 +77,7 @@ func AddUser(req events.APIGatewayProxyRequest, table string, dynaClient *dynamo
 	_, err = dynaClient.PutItem(context.TODO(), &dynamodb.PutItemInput{
 		TableName:           aws.String(table),
 		Item:                av,
-		ConditionExpression: aws.String("attribute_not_exists(user_id) AND attribute_not_exists(email) AND attribute_not_exists(username)"),
+		ConditionExpression: aws.String("attribute_not_exists(user_id)"),
 	})
 	if err != nil {
 		fmt.Printf("FailedToAddItem, %s", err)
@@ -61,6 +85,26 @@ func AddUser(req events.APIGatewayProxyRequest, table string, dynaClient *dynamo
 	}
 
 	return ApiResponse(http.StatusOK, user), nil
+}
+
+func scanCheckExisting(dynaclient *dynamodb.Client, table string, key string, value string) (int, error) {
+	check, err := dynaclient.Scan(context.TODO(), &dynamodb.ScanInput{
+		TableName:        aws.String(table),
+		FilterExpression: aws.String("#key = :val"),
+		ExpressionAttributeNames: map[string]string{
+			"#key": key,
+		},
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":val": &types.AttributeValueMemberS{Value: value},
+		},
+	})
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+	if len(check.Items) != 0 {
+		return http.StatusBadRequest, errors.New(key + " existed")
+	}
+	return 0, nil
 }
 
 func UserLogin(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
@@ -84,14 +128,22 @@ func UserLogin(req events.APIGatewayProxyRequest, table string, dynaClient *dyna
 	// 	},
 	// })
 
-	out, err := dynaClient.Query(context.TODO(), &dynamodb.QueryInput{
-		TableName:              aws.String(table),
-		IndexName:              aws.String("email-index"),
-		KeyConditionExpression: aws.String("email = :emailVal"),
+	out, err := dynaClient.Scan(context.TODO(), &dynamodb.ScanInput{
+		TableName:        aws.String(table),
+		FilterExpression: aws.String("email = :emailVal"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":emailVal": &types.AttributeValueMemberS{Value: user.Email},
 		},
 	})
+
+	// out, err := dynaClient.Query(context.TODO(), &dynamodb.QueryInput{
+	// 	TableName:              aws.String(table),
+	// 	IndexName:              aws.String("email-index"),
+	// 	KeyConditionExpression: aws.String("email = :emailVal"),
+	// 	ExpressionAttributeValues: map[string]types.AttributeValue{
+	// 		":emailVal": &types.AttributeValueMemberS{Value: user.Email},
+	// 	},
+	// })
 
 	if err != nil {
 		fmt.Println("Login: FailedToGetUser    ", err)
@@ -107,6 +159,20 @@ func UserLogin(req events.APIGatewayProxyRequest, table string, dynaClient *dyna
 		fmt.Println("Login: Error in UnmarshalMap    ", err)
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalData")}), nil
 	}
+
+	find.Status = "online"
+	find.LastLogin = time.Now().Format("2006-01-02 15:04:05")
+	_, err = dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
+		TableName: aws.String(table),
+		Key: map[string]types.AttributeValue{
+			"user_id": &types.AttributeValueMemberN{Value: strconv.Itoa(find.UserID)},
+		},
+		UpdateExpression: aws.String("Set user_status = :s, last_login = :t"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":s": &types.AttributeValueMemberS{Value: find.Status},
+			":t": &types.AttributeValueMemberS{Value: find.LastLogin},
+		},
+	})
 
 	passwordCheck := utils.CheckPasswordHash(user.Password, find.Password)
 	if !passwordCheck {
@@ -147,12 +213,11 @@ func UserForgotPassword(req events.APIGatewayProxyRequest, table string, dynaCli
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshal")}), nil
 	}
 
-	out, err := dynaClient.Query(context.TODO(), &dynamodb.QueryInput{
-		TableName:              aws.String(table),
-		IndexName:              aws.String("email-index"),
-		KeyConditionExpression: aws.String("email = :emailVal"),
+	out, err := dynaClient.Scan(context.TODO(), &dynamodb.ScanInput{
+		TableName:        aws.String(table),
+		FilterExpression: aws.String("email = :email"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":emailVal": &types.AttributeValueMemberS{Value: address.Address},
+			":email": &types.AttributeValueMemberS{Value: address.Address},
 		},
 	})
 	if err != nil {
@@ -179,18 +244,22 @@ func UserForgotPassword(req events.APIGatewayProxyRequest, table string, dynaCli
 	_, err = dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
 		TableName: &table,
 		Key: map[string]types.AttributeValue{
-			"user_id": &types.AttributeValueMemberN{Value: string(user.UserID)},
+			"user_id": &types.AttributeValueMemberN{Value: strconv.Itoa(user.UserID)},
 		},
 		UpdateExpression: aws.String("set password = :pw"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":pw":    &types.AttributeValueMemberS{Value: password},
-			":email": &types.AttributeValueMemberS{Value: user.Email},
+			":pw": &types.AttributeValueMemberS{Value: password},
 		},
-		ConditionExpression: aws.String("email = :email"),
 	})
 	if err != nil {
 		fmt.Printf("FailedToUpdatePassword, %s", err)
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUpdatePassword")}), nil
+	}
+
+	err = utils.SendEmail(address.Address, randomPassword)
+	if err != nil {
+		fmt.Println(err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String(err.Error())}), nil
 	}
 
 	return ApiResponse(http.StatusOK, nil), nil

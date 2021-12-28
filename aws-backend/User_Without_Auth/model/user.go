@@ -31,5 +31,5 @@ type Auth struct {
 
 type Chan struct {
 	ChannelName string `json:"channel_name" dynamodbav:"channel_name"`
-	Url         string `json:"url" dynamodbav:"url"`
+	ChannelUrl  string `json:"channel_url" dynamodbav:"channel_url"`
 }
