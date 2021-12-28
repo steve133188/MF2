@@ -368,3 +368,75 @@ func GetCustomersByAgentsID(req events.APIGatewayProxyRequest, table string, dyn
 	return ApiResponse(http.StatusOK, fullCustomers), nil
 
 }
+
+func GetCustomersByChannel(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
+	fmt.Println("req.Parameters = ", req.PathParameters)
+
+	channelsList := req.MultiValueQueryStringParameters["channel"]
+	// "contains(tags_id, :t1) AND contains(tags_id, :t2)"
+	dataVal := make(map[string]types.AttributeValue)
+	var filterStr string
+
+	for k, v := range channelsList {
+		if k != 0 {
+			filterStr += " AND contains(channels, :t" + strconv.Itoa(k) + ")"
+		} else {
+			filterStr += "contains(channels, :t" + strconv.Itoa(k) + ")"
+		}
+
+		key := ":t" + strconv.Itoa(k)
+		dataVal[key] = &types.AttributeValueMemberN{Value: v}
+
+	}
+
+	res, _ := json.Marshal(dataVal)
+
+	fmt.Println("dataVal = ", string(res))
+	fmt.Println("filterStr = ", filterStr)
+
+	var customers []model.Customer = make([]model.Customer, 0)
+
+	out, err := dynaClient.Scan(context.TODO(), &dynamodb.ScanInput{
+		TableName:                 aws.String(table),
+		FilterExpression:          aws.String(filterStr),
+		ExpressionAttributeValues: dataVal,
+	})
+	if err != nil {
+		fmt.Printf("FailedToScan, %s", err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToScan")}), nil
+	}
+
+	fmt.Println("count = ", out.Count)
+
+	err = attributevalue.UnmarshalListOfMaps(out.Items, &customers)
+	if err != nil {
+		fmt.Printf("FailedToUnmarshalListOfMap, %s", err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalListOfMap")}), nil
+	}
+
+	fullCustomers := make([]model.FullCustomer, 0)
+
+	for k, v := range customers {
+		fullCustomer := new(model.FullCustomer)
+		users, team, tags, err := FieldHandler(v.AgentsID, v.TeamID, v.TagsID, dynaClient)
+		if err != nil {
+			fmt.Printf("ErrorFromFieldHandler, %s", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("ErrorFromFieldHandler")}), nil
+		}
+
+		err = attributevalue.UnmarshalMap(out.Items[k], &fullCustomer)
+		if err != nil {
+			fmt.Printf("FailedToUnmarshalMap, %s", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalMap")}), nil
+		}
+		fmt.Printf("fullcustomer = %v", fullCustomer)
+		fullCustomer.Agents = users
+		fullCustomer.Team = team
+		fullCustomer.Tags = tags
+
+		fullCustomers = append(fullCustomers, *fullCustomer)
+	}
+
+	return ApiResponse(http.StatusOK, fullCustomers), nil
+
+}

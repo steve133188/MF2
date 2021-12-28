@@ -2,11 +2,11 @@ package handler
 
 import (
 	"aws-lambda-customer/model"
-	"aws-lambda-customer/utils"
 	"context"
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -25,7 +25,11 @@ func AddCustomerItem(req events.APIGatewayProxyRequest, table string, dynaClient
 	}
 
 	if customer.CustomerID == 0 {
-		customer.CustomerID = utils.IdGenerator()
+		customer.CustomerID, err = strconv.Atoi(customer.Phone)
+		if err != nil {
+			log.Printf("WrongIDFormat: %s", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("WrongIDFormat")}), nil
+		}
 	}
 	customer.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
 	customer.UpdateAt = time.Now().Format("2006-01-02 15:04:05")

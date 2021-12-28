@@ -39,6 +39,8 @@ func handleRequest(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyRe
 			return handler.GetCustomersByGroup(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
 		case "/customers/agent":
 			return handler.GetCustomersByAgentsID(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
+		case "/customers/channel":
+			return handler.GetCustomersByChannel(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
 		default:
 			log.Println("InvalidRoute")
 			return handler.ApiResponse(http.StatusMethodNotAllowed, handler.ErrMsg{aws.String("InvalidRoute")}), nil
@@ -55,30 +57,46 @@ func handleRequest(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyRe
 		switch req.Resource {
 		case "/customer":
 			return handler.UpdateCustomerItem(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
+			// tag ************************************************************************************************************************
 		case "/customer/add-tag":
 			return handler.AddTagToCustomer(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
 		case "/customer/del-tag":
 			return handler.DeleteCustomerTag(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
-		case "/customer/add-agent":
-			return handler.AddAgentToCustomer(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
-		case "/customer/del-agent":
-			return handler.DeleteCustomerAgent(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
+		case "/customers/add-tag":
+			return handler.AddTagToCustomers(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
 		case "/customers/edit-tags":
 			return handler.EditCustomersTag(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
 		case "/customers/del-tags":
 			return handler.DeleteCustomersTag(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
+			//group ************************************************************************************************************************
 		case "/customer/group":
 			return handler.UpdateGroupToCustomer(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
+		case "/customers/add-group":
+			return handler.AddGroupToCustomers(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
 		case "/customers/group":
 			return handler.UpdateCustomersGroup(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
-		case "/customers/del-groups":
-			return handler.DeleteCustomersGroup(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
+		//case "/customers/del-groups":
+		//	return handler.UpdateCustomersGroup(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
+		//team ************************************************************************************************************************
 		case "/customer/team":
 			return handler.UpdateCustomerTeam(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
-		case "/customers/edit-teams":
+		case "/customers/add-teams":
+			return handler.AddCustomersTeam(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
+		case "/customers/teams":
 			return handler.EditCustomersTeam(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
-		case "/customers/del-teams":
-			return handler.DeleteCustomerTeams(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
+		//case "/customers/del-teams":
+		//	return handler.EditCustomersTeam(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
+		//agent ************************************************************************************************************************
+		case "/customer/add-agent":
+			return handler.AddAgentToCustomer(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
+		case "/customer/del-agent":
+			return handler.DeleteCustomerAgent(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
+		case "/customers/add-agent":
+			return handler.AddAgentToCustomers(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
+		case "/customers/edit-agent":
+			return handler.EditCustomersAgent(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
+		case "/customers/del-agent":
+			return handler.DeleteCustomersAgent(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
 		default:
 			log.Println("InvalidRoute")
 			return handler.ApiResponse(http.StatusMethodNotAllowed, handler.ErrMsg{aws.String("InvalidRoute")}), nil
