@@ -12,6 +12,7 @@ func GetAllContact(userID int, customers []model.Customer) int {
 		for _, vAgent := range v.AgentsID {
 			if vAgent == userID {
 				count++
+				break
 			}
 		}
 	}
@@ -80,7 +81,7 @@ func GetCommunicationNumber(userID int, messages []model.Message) int {
 	var countList []int
 	for i, v := range messages {
 		if strings.Contains(v.Sender, strconv.Itoa(userID)) || strings.Contains(v.Receiver, strconv.Itoa(userID)) {
-			if len(countList) == 0 || intInSlice(messages[i].RoomID, countList) {
+			if len(countList) == 0 || !intInSlice(messages[i].RoomID, countList) {
 				countList = append(countList, messages[i].RoomID)
 				count++
 			}
