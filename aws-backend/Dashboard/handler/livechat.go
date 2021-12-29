@@ -3,9 +3,12 @@ package handler
 import (
 	"context"
 	"fmt"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"log"
 	"mf2-aws-dashboard/model"
 	"os"
+	"sort"
+	"strconv"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -81,15 +84,44 @@ func UpdateLivechat() error {
 		customers = append(customers, pCustomers...)
 	}
 
-	// message list
-	messages := make([]model.Message, 0)
-	mp := dynamodb.NewScanPaginator(svc, &dynamodb.ScanInput{
-		TableName: aws.String(os.Getenv("MESSAGETABLE")),
+	// tag list
+	tags := make([]model.Tag, 0)
+	tp := dynamodb.NewScanPaginator(svc, &dynamodb.ScanInput{
+		TableName: aws.String(os.Getenv("TAGTABLE")),
 		Limit:     aws.Int32(100),
 	})
 
+	for tp.HasMorePages() {
+		outs, err := tp.NextPage(context.TODO())
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+
+		pTags := make([]model.Tag, 0)
+		err = attributevalue.UnmarshalListOfMaps(outs.Items, &pTags)
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+
+		tags = append(tags, pTags...)
+	}
+
+	// message list
+	messages := make([]model.Message, 0)
+	mp := dynamodb.NewScanPaginator(svc, &dynamodb.ScanInput{
+		TableName:        aws.String(os.Getenv("MESSAGETABLE")),
+		FilterExpression: aws.String("timestamp >= :st AND timestamp <= :et"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":st": &types.AttributeValueMemberN{Value: strconv.FormatInt(timeStart, 10)},
+			":et": &types.AttributeValueMemberN{Value: strconv.FormatInt(timeEnd, 10)},
+		},
+		Limit: aws.Int32(100),
+	})
+
 	for mp.HasMorePages() {
-		outs, err := cp.NextPage(context.TODO())
+		outs, err := mp.NextPage(context.TODO())
 		if err != nil {
 			fmt.Println(err)
 			return err
@@ -105,27 +137,43 @@ func UpdateLivechat() error {
 		messages = append(messages, pMessages...)
 	}
 
-	// put items into Users
+	// sort messages from early time to later time
+	sort.Slice(messages, func(i, j int) bool {
+		return messages[i].TimeStamp < messages[j].TimeStamp
+	})
 
+	// put items into Users
+	livechat.Users = make(map[int]model.UserInfo)
 	for _, v := range userList {
 		userId := v.UserID
 		userInfo := new(model.UserInfo)
 		userInfo.AllContacts = GetAllContact(userId, customers)
-
+		userInfo.TotalMsgSent = GetTotalMsgSent(userId, messages)
+		userInfo.TotalMsgRev = GetTotalMsgRev(userId, messages)
+		userInfo.RespTime = GetRespTime(userId, messages)
+		userInfo.CommunicationNumber = GetCommunicationNumber(userId, messages)
+		userInfo.Tags = GetTags(userId, customers, tags)
+		livechat.Users[userId] = *userInfo
 	}
 
-	livechat.Users = make(map[int]model.UserInfo)
+	av, err := attributevalue.MarshalMap(&livechat)
+	if err != nil {
+		log.Printf("FailedToMarshalMap: %s", err)
+		return err
+	}
 
-}
-
-func GetAllContact(userID int, customers []model.Customer) int {
-	var count int
-	for _, v := range customers {
-		for _, vAgent := range v.AgentsID {
-			if vAgent == userID {
-				count++
-			}
+	_, err = svc.PutItem(context.TODO(), &dynamodb.PutItemInput{
+		TableName:           aws.String(os.Getenv("LIVECHATTABLE")),
+		Item:                av,
+		ConditionExpression: aws.String("attribute_not_exists(TimeStamp)"),
+	})
+	if err != nil {
+		if err.Error() == "ConditionalCheckFailedException" {
+			log.Printf("ItemExisted: %s", err)
 		}
+		log.Printf("ErrorToAddItem: %s", err)
+		return err
 	}
-	return count
+
+	return nil
 }
