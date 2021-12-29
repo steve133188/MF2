@@ -161,7 +161,7 @@ func UserLogin(req events.APIGatewayProxyRequest, table string, dynaClient *dyna
 	}
 
 	find.Status = "online"
-	find.LastLogin = time.Now().Format("2006-01-02 15:04:05")
+	find.LastLogin = time.Now().Unix()
 	_, err = dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
 		TableName: aws.String(table),
 		Key: map[string]types.AttributeValue{
@@ -170,7 +170,7 @@ func UserLogin(req events.APIGatewayProxyRequest, table string, dynaClient *dyna
 		UpdateExpression: aws.String("Set user_status = :s, last_login = :t"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":s": &types.AttributeValueMemberS{Value: find.Status},
-			":t": &types.AttributeValueMemberS{Value: find.LastLogin},
+			":t": &types.AttributeValueMemberN{Value: strconv.FormatInt(find.LastLogin, 10)},
 		},
 	})
 

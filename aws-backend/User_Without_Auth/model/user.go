@@ -14,7 +14,7 @@ type User struct {
 	Subscriptions []int  `json:"subscriptions" dynamodbav:"subscriptions"`
 	CheckAuth     bool   `json:"check_auth" dynamodbav:"check_auth" default:"false"`
 	CreateAt      string `json:"create_at" dynamodbav:"create_at"`
-	LastLogin     string `json:"last_login" dynamodbav:"last_login"`
+	LastLogin     int64  `json:"last_login" dynamodbav:"last_login"`
 }
 
 type Auth struct {
