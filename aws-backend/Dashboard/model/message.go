@@ -2,7 +2,7 @@ package model
 
 type Message struct {
 	RoomID      int    `json:"room_id" dynamodbav:"room_id"`
-	TimeStamp   string `json:"timestamp" dynamodbav:"timestamp"`
+	TimeStamp   int64  `json:"timestamp" dynamodbav:"timestamp"`
 	Receiver    string `json:"receiver" dynamodbav:"receiver"`
 	Sender      string `json:"sender" dynamodbav:"sender"`
 	MediaUrl    string `json:"media_url" dynamodbav:"media_url"`
