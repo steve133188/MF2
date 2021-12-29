@@ -27,9 +27,9 @@ func handleRequest(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyRe
 	switch req.HTTPMethod {
 	case "GET":
 		switch req.Resource {
-		case "/api/dashboard/livechat":
+		case "/dashboard/livechat":
 			return handler.GetLiveChat(req, os.Getenv("DASHBOARDTABLE"), dynaClient)
-		case "/api/dashboard/agent":
+		case "/dashboard/agent":
 			return handler.GetAgent(req, os.Getenv("DASHBOARDTABLE"), dynaClient)
 		default:
 			return handler.ApiResponse(http.StatusBadRequest, handler.ErrMsg{aws.String("InvalidRoute")}), nil
