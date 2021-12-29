@@ -17,8 +17,7 @@ type UserInfo struct {
 	AllContacts         int
 	TotalMsgSent        int
 	TotalMsgRev         int
-	RespTime            respTime
-	CommunicationHours  int
+	RespTime            RespTime
 	CommunicationNumber int
 	Tags                map[string]int
 }
@@ -36,7 +35,7 @@ type chann struct {
 }
 
 //min as unit
-type respTime struct {
+type RespTime struct {
 	Longest int
 	Average int
 	First   int
