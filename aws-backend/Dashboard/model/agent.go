@@ -18,8 +18,8 @@ type AgentInfo struct {
 	ActiveContacts   int
 	UnhandledContact int
 	TotalMsgSent     int
-	AvgRespTime      int
-	AvgFirstRespTime int
+	AvgRespTime      int64
+	AvgFirstRespTime int64
 }
 
 type Role struct {

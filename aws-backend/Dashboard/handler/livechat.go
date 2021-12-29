@@ -3,7 +3,6 @@ package handler
 import (
 	"context"
 	"fmt"
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"log"
 	"mf2-aws-dashboard/model"
 	"os"
@@ -11,10 +10,12 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
-	"github.com/aws/aws-sdk-go/aws"
 )
 
 func UpdateLivechat() error {
@@ -150,7 +151,10 @@ func UpdateLivechat() error {
 		userInfo.AllContacts = GetAllContact(userId, customers)
 		userInfo.TotalMsgSent = GetTotalMsgSent(userId, messages)
 		userInfo.TotalMsgRev = GetTotalMsgRev(userId, messages)
-		userInfo.RespTime = GetRespTime(userId, messages)
+		userInfo.RespTime, err = GetRespTime(userId, messages)
+		if err != nil {
+			return err
+		}
 		userInfo.CommunicationNumber = GetCommunicationNumber(userId, messages)
 		userInfo.Tags = GetTags(userId, customers, tags)
 		livechat.Users[userId] = *userInfo

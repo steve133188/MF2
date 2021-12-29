@@ -3,7 +3,6 @@ package handler
 import (
 	"mf2-aws-dashboard/model"
 	"strconv"
-	"strings"
 )
 
 func GetAllContact(userID int, customers []model.Customer) int {
@@ -21,7 +20,7 @@ func GetAllContact(userID int, customers []model.Customer) int {
 func GetTotalMsgSent(userID int, messages []model.Message) int {
 	var count int
 	for _, v := range messages {
-		if strings.Contains(v.Sender, strconv.Itoa(userID)) {
+		if v.Sender == userID {
 			count++
 		}
 	}
@@ -31,24 +30,32 @@ func GetTotalMsgSent(userID int, messages []model.Message) int {
 func GetTotalMsgRev(userID int, messages []model.Message) int {
 	var count int
 	for _, v := range messages {
-		if strings.Contains(v.Receiver, strconv.Itoa(userID)) {
+		if v.Receiver == userID {
 			count++
 		}
 	}
 	return count
 }
 
-func GetRespTime(userID int, messages []model.Message) model.RespTime {
+func GetRespTime(userID int, messages []model.Message) (model.RespTime, error) {
 	var respTime model.RespTime
 	var respTimeArr []int64
 
 	//get All response time
 	i := 0
 	for i < len(messages) {
-		if strings.Contains(messages[i].Receiver, strconv.Itoa(userID)) {
+		if messages[i].Receiver == userID {
 			for j := i; j < len(messages); j++ {
-				if strings.Contains(messages[j].Sender, messages[i].Receiver) {
-					respTimeArr = append(respTimeArr, messages[j].TimeStamp-messages[i].TimeStamp)
+				if messages[j].Sender == messages[i].Receiver {
+					jtime, err := strconv.ParseInt(messages[j].TimeStamp, 10, 64)
+					if err != nil {
+						return model.RespTime{}, err
+					}
+					itime, err := strconv.ParseInt(messages[i].TimeStamp, 10, 64)
+					if err != nil {
+						return model.RespTime{}, err
+					}
+					respTimeArr = append(respTimeArr, jtime-itime)
 				}
 			}
 		}
@@ -56,7 +63,7 @@ func GetRespTime(userID int, messages []model.Message) model.RespTime {
 	}
 
 	if len(respTimeArr) == 0 {
-		return respTime
+		return respTime, nil
 	}
 
 	//calculate the sum and maximum
@@ -72,14 +79,14 @@ func GetRespTime(userID int, messages []model.Message) model.RespTime {
 	respTime.First = int(respTimeArr[0])
 	respTime.Longest = int(max)
 	respTime.Average = int(sum) / len(respTimeArr)
-	return respTime
+	return respTime, nil
 }
 
 func GetCommunicationNumber(userID int, messages []model.Message) int {
 	var count int
 	var countList []int
 	for i, v := range messages {
-		if strings.Contains(v.Sender, strconv.Itoa(userID)) || strings.Contains(v.Receiver, strconv.Itoa(userID)) {
+		if v.Sender == userID || v.Receiver == userID {
 			if len(countList) == 0 || intInSlice(messages[i].RoomID, countList) {
 				countList = append(countList, messages[i].RoomID)
 				count++
