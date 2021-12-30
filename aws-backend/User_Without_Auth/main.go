@@ -4,7 +4,6 @@ import (
 	"aws-lambda-user-without-auth/handler"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -12,8 +11,6 @@ import (
 )
 
 func handleRequest(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
-	cstZone := time.FixedZone("CST", 8*3600)
-	time.Local = cstZone
 	dynaClient, err := handler.DynamodbConfig()
 	if err != nil {
 		return handler.ApiResponse(http.StatusInternalServerError, handler.ErrMsg{aws.String("ErrorToLoadDynamodbConfig")}), nil

@@ -31,8 +31,8 @@ func AddCustomerItem(req events.APIGatewayProxyRequest, table string, dynaClient
 			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("WrongIDFormat")}), nil
 		}
 	}
-	customer.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
-	customer.UpdateAt = time.Now().Format("2006-01-02 15:04:05")
+	customer.CreatedAt = time.Now().Unix()
+	customer.UpdateAt = time.Now().Unix()
 
 	av, err := attributevalue.MarshalMap(&customer)
 	if err != nil {

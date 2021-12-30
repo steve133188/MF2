@@ -113,6 +113,7 @@ func UpdateAgent() error {
 
 		messages = append(messages, pMessages...)
 	}
+
 	sort.Slice(messages, func(i, j int) bool {
 		return messages[i].TimeStamp < messages[j].TimeStamp
 	})

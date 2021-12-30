@@ -16,8 +16,8 @@ type Customer struct {
 	Country    string   `json:"country" dynamodbav:"country"`
 	Address    string   `json:"address" dynamodbav:"address"`
 	Gender     string   `json:"gender" dynamodbav:"gender"`
-	CreatedAt  string   `json:"created_at" dynamodbav:"created_at"`
-	UpdateAt   string   `json:"update_at" dynamodbav:"update_at"`
+	CreatedAt  int64    `json:"created_at" dynamodbav:"created_at"`
+	UpdateAt   int64    `json:"update_at" dynamodbav:"update_at"`
 }
 
 type FullCustomer struct {

@@ -27,8 +27,8 @@ func AddTag(req events.APIGatewayProxyRequest, table string, dynaClient *dynamod
 	}
 
 	tag.TagID = utils.IdGenerator()
-	tag.CreatedAt = time.Now().Format(os.Getenv("TIMEFORMAT"))
-	tag.UpdateAt = time.Now().Format(os.Getenv("TIMEFORMAT"))
+	tag.CreatedAt = time.Now().Unix()
+	tag.UpdateAt = time.Now().Unix()
 
 	av, err := attributevalue.MarshalMap(&tag)
 	if err != nil {

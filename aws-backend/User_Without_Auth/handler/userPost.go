@@ -60,7 +60,7 @@ func AddUser(req events.APIGatewayProxyRequest, table string, dynaClient *dynamo
 		}
 	}
 
-	user.CreateAt = time.Now().Format("2006-01-02 15:04:05")
+	user.CreateAt = time.Now().Unix()
 	user.Password, err = utils.HashPassword(user.Password)
 	if err != nil {
 		fmt.Println("FailedToHasPassword")

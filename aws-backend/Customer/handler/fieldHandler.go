@@ -47,11 +47,11 @@ func FieldHandler(Agents []int, TeamID int, Tags []int, dynaClient *dynamodb.Cli
 	tout, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
 		TableName: aws.String(os.Getenv("ORGTABLE")),
 		Key: map[string]types.AttributeValue{
-			"team_id": &types.AttributeValueMemberN{Value: strconv.Itoa(teamID)},
+			"org_id": &types.AttributeValueMemberN{Value: strconv.Itoa(teamID)},
 		},
 	})
 	if err != nil {
-		fmt.Printf("FailedToGetUser, teamID = %v, %s", teamID, err)
+		fmt.Printf("FailedToGetOrgItem, OrgID = %v, %s", teamID, err)
 		return nil, model.Team{}, nil, err
 	}
 
@@ -73,7 +73,7 @@ func FieldHandler(Agents []int, TeamID int, Tags []int, dynaClient *dynamodb.Cli
 			},
 		})
 		if err != nil {
-			fmt.Printf("FailedToGetUser, tagID = %v, %s", v, err)
+			fmt.Printf("FailedToGetTag, tagID = %v, %s", v, err)
 			return nil, model.Team{}, nil, err
 		}
 		tag := new(model.Tag)

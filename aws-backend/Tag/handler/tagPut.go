@@ -25,7 +25,7 @@ func UpdateTag(req events.APIGatewayProxyRequest, table string, dynaClient *dyna
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqBody, " + err.Error())}), nil
 	}
 
-	updateTime := time.Now().Format(os.Getenv("TIMEFORMAT"))
+	updateTime := time.Now().Unix()
 
 	_, err = dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
 		TableName: aws.String(os.Getenv("TABLE")),
@@ -35,7 +35,7 @@ func UpdateTag(req events.APIGatewayProxyRequest, table string, dynaClient *dyna
 		UpdateExpression: aws.String("Set tag_name = :n, update_at = :t"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":n": &types.AttributeValueMemberS{Value: tag.TagName},
-			":t": &types.AttributeValueMemberS{Value: updateTime},
+			":t": &types.AttributeValueMemberN{Value: strconv.FormatInt(updateTime, 10)},
 		},
 	})
 	if err != nil {
