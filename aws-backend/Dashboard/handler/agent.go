@@ -8,6 +8,7 @@ import (
 	"os"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -227,7 +228,7 @@ func GetActiveContacts(userId int, customers []model.Customer, messages []model.
 	count := 0
 	for _, v := range messages {
 		for _, k := range customers {
-			if k.CustomerID == v.RoomID && v.Sender == userId {
+			if k.CustomerID == v.RoomID && strings.Contains(v.Sender, strconv.Itoa(userId)) {
 				count++
 				break
 			}
@@ -241,14 +242,14 @@ func GetAvgRespTime(userId int, messages []model.Message) (int64, error) {
 	var count int64 = 0
 
 	for k, v := range messages {
-		if v.Receiver == userId {
+		if strings.Contains(v.Receiver, strconv.Itoa(userId)) {
 			target := v.Sender
 			time, err := strconv.ParseInt(v.TimeStamp, 10, 64)
 			if err != nil {
 				return 0, err
 			}
 			for i := k + 1; i < len(messages); i++ {
-				if messages[i].Receiver == target && messages[i].Sender == userId {
+				if messages[i].Receiver == target && messages[i].Sender == strconv.Itoa(userId) {
 					respTime, err := strconv.ParseInt(messages[i].TimeStamp, 10, 64)
 					if err != nil {
 						return 0, err
@@ -269,16 +270,16 @@ func GetAvgRespTime(userId int, messages []model.Message) (int64, error) {
 func GetAvgFirstRespTime(userId int, messages []model.Message) (int64, error) {
 	var totalTime int64 = 0
 	var count int64 = 0
-	existedList := make([]int, 0)
+	existedList := make([]string, 0)
 	for k, v := range messages {
-		if v.Receiver == userId {
+		if strings.Contains(v.Receiver, strconv.Itoa(userId)) {
 			target := v.Sender
 			time, err := strconv.ParseInt(v.TimeStamp, 10, 64)
 			if err != nil {
 				return 0, err
 			}
 			for i := k + 1; i < len(messages); i++ {
-				if messages[i].Receiver == target && messages[i].Sender == userId {
+				if messages[i].Receiver == target && messages[i].Sender == strconv.Itoa(userId) {
 					for _, v := range existedList {
 						if v == target {
 							break

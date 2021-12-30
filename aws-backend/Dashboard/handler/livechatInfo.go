@@ -3,6 +3,7 @@ package handler
 import (
 	"mf2-aws-dashboard/model"
 	"strconv"
+	"strings"
 )
 
 func GetAllContact(userID int, customers []model.Customer) int {
@@ -20,7 +21,7 @@ func GetAllContact(userID int, customers []model.Customer) int {
 func GetTotalMsgSent(userID int, messages []model.Message) int {
 	var count int
 	for _, v := range messages {
-		if v.Sender == userID {
+		if strings.Contains(v.Sender, strconv.Itoa(userID)) {
 			count++
 		}
 	}
@@ -30,7 +31,7 @@ func GetTotalMsgSent(userID int, messages []model.Message) int {
 func GetTotalMsgRev(userID int, messages []model.Message) int {
 	var count int
 	for _, v := range messages {
-		if v.Receiver == userID {
+		if strings.Contains(v.Receiver, strconv.Itoa(userID)) {
 			count++
 		}
 	}
@@ -44,7 +45,7 @@ func GetRespTime(userID int, messages []model.Message) (model.RespTime, error) {
 	//get All response time
 	i := 0
 	for i < len(messages) {
-		if messages[i].Receiver == userID {
+		if strings.Contains(messages[i].Receiver, strconv.Itoa(userID)) {
 			for j := i; j < len(messages); j++ {
 				if messages[j].Sender == messages[i].Receiver {
 					jtime, err := strconv.ParseInt(messages[j].TimeStamp, 10, 64)
@@ -86,7 +87,7 @@ func GetCommunicationNumber(userID int, messages []model.Message) int {
 	var count int
 	var countList []int
 	for i, v := range messages {
-		if v.Sender == userID || v.Receiver == userID {
+		if strings.Contains(v.Receiver, strconv.Itoa(userID)) || strings.Contains(v.Sender, strconv.Itoa(userID)) {
 			if len(countList) == 0 || intInSlice(messages[i].RoomID, countList) {
 				countList = append(countList, messages[i].RoomID)
 				count++

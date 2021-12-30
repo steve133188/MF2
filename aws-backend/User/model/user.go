@@ -13,8 +13,8 @@ type User struct {
 	Channels      []Chan `json:"channels" dynamodbav:"channels"`
 	Subscriptions []int  `json:"subscriptions" dynamodbav:"subscriptions"`
 	CheckAuth     bool   `json:"check_auth" dynamodbav:"check_auth" default:"false"`
-	CreateAt      string `json:"create_at" dynamodbav:"create_at"`
-	LastLogin     string `json:"last_login" dynamodbav:"last_login"`
+	CreateAt      int64  `json:"create_at" dynamodbav:"create_at"`
+	LastLogin     int64  `json:"last_login" dynamodbav:"last_login"`
 }
 
 type FullUser struct {
@@ -22,7 +22,8 @@ type FullUser struct {
 	Username      string `json:"username" dynamodbav:"username"`
 	Email         string `json:"email" dynamodbav:"email"`
 	Password      string `json:"password" dynamodbav:"password"`
-	Phone         string `json:"phone" dynamodbav:"phone"`
+	Phone         int    `json:"phone" dynamodbav:"phone"`
+	CountryCode   int    `json:"country_code" dynamodbav:"country_code"`
 	Leads         int    `json:"leads" dynamodbav:"leads"`
 	Status        string `json:"user_status" dynamodbav:"user_status"`
 	TeamID        int    `json:"team_id" dynamodbav:"team_id"`
@@ -33,8 +34,8 @@ type FullUser struct {
 	Channels      []Chan `json:"channels" dynamodbav:"channels"`
 	Subscriptions []int  `json:"subscriptions" dynamodbav:"subscriptions"`
 	CheckAuth     bool   `json:"check_auth" dynamodbav:"check_auth" default:"false"`
-	CreateAt      string `json:"create_at" dynamodbav:"create_at"`
-	LastLogin     string `json:"last_login" dynamodbav:"last_login"`
+	CreateAt      int64  `json:"create_at" dynamodbav:"create_at"`
+	LastLogin     int64  `json:"last_login" dynamodbav:"last_login"`
 }
 type Auth struct {
 	Dashboard        bool `json:"dashboard" dynamodbav:"dashboard" default:"false"`

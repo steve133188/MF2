@@ -27,7 +27,7 @@ func UpdateCustomerItem(req events.APIGatewayProxyRequest, table string, dynaCli
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalInputData")}), nil
 	}
 
-	customer.UpdateAt = time.Now().Format(os.Getenv("TIMEFORMAT"))
+	customer.UpdateAt = time.Now().Unix()
 
 	av, err := attributevalue.MarshalMap(&customer)
 	if err != nil {
@@ -65,7 +65,7 @@ func UpdateCustomerTeam(req events.APIGatewayProxyRequest, table string, dynaCli
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{(aws.String("FailedToUnmarshalReqBody"))}), nil
 	}
 
-	customer.UpdateAt = time.Now().Format(os.Getenv("TIMEFORMAT"))
+	customer.UpdateAt = time.Now().Unix()
 
 	_, err = dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
 		TableName: &table,
@@ -75,7 +75,7 @@ func UpdateCustomerTeam(req events.APIGatewayProxyRequest, table string, dynaCli
 		UpdateExpression: aws.String("set team_id = :te, update_at = :t"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":te": &types.AttributeValueMemberS{Value: strconv.Itoa(customer.TeamID)},
-			":t":  &types.AttributeValueMemberS{Value: customer.UpdateAt},
+			":t":  &types.AttributeValueMemberN{Value: strconv.FormatInt(customer.UpdateAt, 10)},
 		},
 		ConditionExpression: aws.String("attribute_exists(customer_id)"),
 	})
@@ -254,7 +254,7 @@ func UpdateGroupToCustomer(req events.APIGatewayProxyRequest, table string, dyna
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{(aws.String("FailedToUnmarshalReqBody"))}), nil
 	}
 
-	customer.UpdateAt = time.Now().Format(os.Getenv("TIMEFORMAT"))
+	customer.UpdateAt = time.Now().Unix()
 
 	_, err = dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
 		TableName: &table,
@@ -264,7 +264,7 @@ func UpdateGroupToCustomer(req events.APIGatewayProxyRequest, table string, dyna
 		UpdateExpression: aws.String("set customer_group = :g, update_at = :t"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":g": &types.AttributeValueMemberS{Value: customer.Group},
-			":t": &types.AttributeValueMemberS{Value: customer.UpdateAt},
+			":t": &types.AttributeValueMemberN{Value: strconv.FormatInt(customer.UpdateAt, 10)},
 		},
 		ConditionExpression: aws.String("attribute_exists(customer_id)"),
 	})
