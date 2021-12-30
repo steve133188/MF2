@@ -855,6 +855,12 @@ func AddAgentToCustomer(req events.APIGatewayProxyRequest, table string, dynaCli
 	}
 
 	fmt.Println("UpdateResult, ", out.Attributes)
+	err = ChangeAgentLeads('+', 1, data.Agents, dynaClient)
+	if err != nil {
+		fmt.Println("FailedToChangeLeads, ", err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToChangeLeads")}), nil
+
+	}
 
 	return ApiResponse(http.StatusOK, nil), nil
 }
@@ -895,13 +901,20 @@ func AddAgentToCustomers(req events.APIGatewayProxyRequest, table string, dynaCl
 		}
 	}
 
+	err = ChangeAgentLeads('+', len(customerIDs), data.AgentID, dynaClient)
+	if err != nil {
+		fmt.Println("FailedToChangeLeads, ", err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToChangeLeads")}), nil
+
+	}
+
 	return ApiResponse(http.StatusOK, nil), nil
 }
 
 func EditCustomersAgent(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
 	var data struct {
-		OldAgent string `json:"old_agent"`
-		NewAgent string `json:"new_agent"`
+		OldAgent int `json:"old_agent"`
+		NewAgent int `json:"new_agent"`
 	}
 
 	err := json.Unmarshal([]byte(req.Body), &data)
@@ -914,7 +927,7 @@ func EditCustomersAgent(req events.APIGatewayProxyRequest, table string, dynaCli
 		TableName:        &table,
 		FilterExpression: aws.String("contains(agents_id, :g)"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":g": &types.AttributeValueMemberN{Value: data.OldAgent},
+			":g": &types.AttributeValueMemberN{Value: strconv.Itoa(data.OldAgent)},
 		},
 		Limit: aws.Int32(50),
 	})
@@ -939,14 +952,13 @@ func EditCustomersAgent(req events.APIGatewayProxyRequest, table string, dynaCli
 	}
 
 	// change old tag to int
-	oldAgentInt, _ := strconv.Atoi(data.OldAgent)
 
 	for _, v := range customers {
 
 		//set index for update tag
 		var agentIndex string
 		for i, old := range v.AgentsID {
-			if old == oldAgentInt {
+			if old == data.OldAgent {
 				agentIndex = strconv.Itoa(i)
 				break
 			}
@@ -960,13 +972,29 @@ func EditCustomersAgent(req events.APIGatewayProxyRequest, table string, dynaCli
 			UpdateExpression: aws.String("set agents_id[" + agentIndex + "].field = :ng"),
 			ReturnValues:     types.ReturnValueUpdatedNew,
 			ExpressionAttributeValues: map[string]types.AttributeValue{
-				":ng": &types.AttributeValueMemberN{Value: data.NewAgent},
+				":ng": &types.AttributeValueMemberN{Value: strconv.Itoa(data.NewAgent)},
 			},
 		})
 		if err != nil {
 			fmt.Println("FailedToUpdateAgentToMany, CustomerID = ", v.CustomerID, ", ", err)
 			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUpdateAgentToMany, CustomerID = " + strconv.Itoa(v.CustomerID) + ", " + err.Error())}), nil
 		}
+	}
+
+	tempList := make([]int, 0)
+	tempList = append(tempList, data.OldAgent)
+	err = ChangeAgentLeads('-', len(customers), tempList, dynaClient)
+	if err != nil {
+		fmt.Println("FailedToChangeLeads, ", err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToChangeLeads")}), nil
+
+	}
+	tempList[0] = data.NewAgent
+	err = ChangeAgentLeads('+', len(customers), tempList, dynaClient)
+	if err != nil {
+		fmt.Println("FailedToChangeLeads, ", err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToChangeLeads")}), nil
+
 	}
 
 	return ApiResponse(http.StatusOK, nil), nil
@@ -1030,12 +1058,19 @@ func DeleteCustomerAgent(req events.APIGatewayProxyRequest, table string, dynaCl
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUpdateItem")}), nil
 	}
 
+	err = ChangeAgentLeads('-', 1, data.Agents, dynaClient)
+	if err != nil {
+		fmt.Println("FailedToChangeLeads, ", err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToChangeLeads")}), nil
+
+	}
+
 	return ApiResponse(http.StatusOK, nil), nil
 }
 
 func DeleteCustomersAgent(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
 	var data struct {
-		DeleteAgent string `json:"delete_agent"`
+		DeleteAgent int `json:"delete_agent"`
 	}
 
 	err := json.Unmarshal([]byte(req.Body), &data)
@@ -1048,7 +1083,7 @@ func DeleteCustomersAgent(req events.APIGatewayProxyRequest, table string, dynaC
 		TableName:        &table,
 		FilterExpression: aws.String("contains(agents_id, :g)"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":g": &types.AttributeValueMemberN{Value: data.DeleteAgent},
+			":g": &types.AttributeValueMemberN{Value: strconv.Itoa(data.DeleteAgent)},
 		},
 		Limit: aws.Int32(50),
 	})
@@ -1073,14 +1108,12 @@ func DeleteCustomersAgent(req events.APIGatewayProxyRequest, table string, dynaC
 	}
 
 	// change old tag to int
-	deleteAgentInt, _ := strconv.Atoi(data.DeleteAgent)
-
 	for _, v := range customers {
 
 		//set update index
 		var agentIndex string
 		for i, old := range v.TagsID {
-			if old == deleteAgentInt {
+			if old == data.DeleteAgent {
 				agentIndex = strconv.Itoa(i)
 				break
 			}
@@ -1100,6 +1133,83 @@ func DeleteCustomersAgent(req events.APIGatewayProxyRequest, table string, dynaC
 		}
 	}
 
+	tempList := make([]int, 0)
+	tempList = append(tempList, data.DeleteAgent)
+	err = ChangeAgentLeads('-', len(customers), tempList, dynaClient)
+	if err != nil {
+		fmt.Println("FailedToChangeLeads, ", err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToChangeLeads")}), nil
+
+	}
+
 	return ApiResponse(http.StatusOK, nil), nil
 
+}
+
+func ChangeAgentLeads(operator byte, changeValue int, agentID []int, dynaClient *dynamodb.Client) error {
+
+	dataVal := make(map[string]types.AttributeValue)
+	var filterStr string
+
+	for k, v := range agentID {
+		if k != 0 {
+			filterStr += " OR user_id = :t" + strconv.Itoa(k) + ")"
+		} else {
+			filterStr += "user_id = :t" + strconv.Itoa(k) + ")"
+		}
+
+		key := ":t" + strconv.Itoa(k)
+		dataVal[key] = &types.AttributeValueMemberN{Value: strconv.Itoa(v)}
+
+	}
+
+	agents := make([]model.User, 0)
+	out, err := dynaClient.Scan(context.TODO(), &dynamodb.ScanInput{
+		TableName:                 aws.String(os.Getenv("USERTABLE")),
+		FilterExpression:          aws.String(filterStr),
+		ExpressionAttributeValues: dataVal,
+	})
+	if err != nil {
+		fmt.Printf("FailedToScan User Leads, %s", err)
+		return err
+	}
+
+	fmt.Println("count = ", out.Count)
+
+	err = attributevalue.UnmarshalListOfMaps(out.Items, &agents)
+	if err != nil {
+		fmt.Printf("FailedToUnmarshalListOfMap User Leads, %s", err)
+		return err
+	}
+
+	for _, v := range agents {
+
+		//set update index
+		switch operator {
+		case '+':
+			v.Leads += changeValue
+		case '-':
+			v.Leads -= changeValue
+		default:
+			break
+		}
+
+		_, err = dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
+			TableName: aws.String(os.Getenv("USERTABLE")),
+			Key: map[string]types.AttributeValue{
+				"user_id": &types.AttributeValueMemberN{Value: strconv.Itoa(v.UserID)},
+			},
+			UpdateExpression: aws.String("SET leads = :t"),
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":t": &types.AttributeValueMemberN{Value: strconv.Itoa(v.Leads)},
+			},
+			ReturnValues: types.ReturnValueAllNew,
+		})
+		if err != nil {
+			fmt.Println("FailedToChangeLeads, CustomerID = ", v, ", ", err)
+			return err
+		}
+	}
+
+	return nil
 }
