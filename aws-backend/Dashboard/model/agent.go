@@ -1,25 +1,25 @@
 package model
 
 type Agent struct {
-	PK        string
-	TimeStamp int64
-	Agents    map[int]AgentInfo
+	PK        string            `json:"pk" dynamodbav:"PK"`
+	TimeStamp int64             `json:"time_stamp" dynamodbav:"timestamp"`
+	Agents    map[int]AgentInfo `json:"agents" dynamodbav:"agents"`
 }
 
 //AssignedContacts: customer table assignee == user
 //ActiveContacts: no. of customer with communication
 //UnhandledContact: customer -> user, user unread
 type AgentInfo struct {
-	UserName         string
-	UserRoleName     string
-	UserStatus       string
-	LastLogin        int64
-	AssignedContacts int
-	ActiveContacts   int
-	UnhandledContact int
-	TotalMsgSent     int
-	AvgRespTime      int64
-	AvgFirstRespTime int64
+	UserName         string `json:"user_name" dynamodbav:"user_name"`
+	UserRoleName     string `json:"user_role_name" dynamodbav:"user_role_name"`
+	UserStatus       string `json:"user_status" dynamodbav:"user_status"`
+	LastLogin        int64  `json:"last_login" dynamodbav:"last_login"`
+	AssignedContacts int    `json:"assigned_contacts" dynamodbav:"assigned_contacts"`
+	ActiveContacts   int    `json:"active_contacts" dynamodbav:"active_contacts"`
+	UnhandledContact int    `json:"unhandled_contact" dynamodbav:"unhandled_contact"`
+	TotalMsgSent     int    `json:"total_msg_sent" dynamodbav:"total_msg_sent"`
+	AvgRespTime      int64  `json:"avg_resp_time" dynamodbav:"avg_resp_time"`
+	AvgFirstRespTime int64  `json:"avg_first_resp_time" dynamodbav:"avg_first_resp_time"`
 }
 
 type Role struct {

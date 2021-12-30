@@ -96,9 +96,8 @@ func GetCommunicationNumber(userID int, messages []model.Message) int {
 	return count
 }
 
-func GetTags(userID int, customers []model.Customer, tags []model.Tag) map[string]int {
-	var tagIDs map[int]int
-
+func GetTags(userID int, customers []model.Customer, tags []model.Tag) []model.Tags {
+	tagIDs := make(map[int]int)
 	//find out all the tags
 	for _, v := range customers {
 		if intInSlice(userID, v.AgentsID) {
@@ -113,10 +112,13 @@ func GetTags(userID int, customers []model.Customer, tags []model.Tag) map[strin
 	}
 
 	//set tag ID to tag name
-	var tagNo map[string]int
+	tagNo := make([]model.Tags, 0)
 	for _, v := range tags {
 		if _, found := tagIDs[v.TagID]; found {
-			tagNo[v.TagName] = tagIDs[v.TagID]
+			temp := new(model.Tags)
+			temp.Name = v.TagName
+			temp.No = tagIDs[v.TagID]
+			tagNo = append(tagNo, *temp)
 		}
 	}
 	return tagNo
