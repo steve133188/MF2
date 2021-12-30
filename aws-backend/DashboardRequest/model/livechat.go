@@ -1,9 +1,9 @@
 package model
 
 type LiveChat struct {
-	PK        string
-	TimeStamp int64
-	Users     map[int]UserInfo
+	PK        string           `json:"pk,omitempty" dynamodbav:"pk"`
+	TimeStamp int64            `json:"time_stamp,omitempty" dynamodbav:"time_stamp"`
+	Users     map[int]UserInfo `json:"users,omitempty" dynamodbav:"users"`
 }
 
 //AllContacts --> Customer table, number of customers with assignee

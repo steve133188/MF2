@@ -21,7 +21,7 @@ func GetLiveChat(req events.APIGatewayProxyRequest, table string, dynaClient *dy
 	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
 		TableName:        &table,
 		Limit:            aws.Int32(50),
-		FilterExpression: aws.String("PK = livechat AND TimeStamp >= :st AND TimeStamp <= :et"),
+		FilterExpression: aws.String("pk = livechat AND timeStamp >= :st AND timeStamp <= :et"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":st": &types.AttributeValueMemberN{Value: startDate},
 			":et": &types.AttributeValueMemberN{Value: endData},
@@ -56,7 +56,7 @@ func GetAgent(req events.APIGatewayProxyRequest, table string, dynaClient *dynam
 	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
 		TableName:        &table,
 		Limit:            aws.Int32(50),
-		FilterExpression: aws.String("PK = agent AND TimeStamp >= :st AND TimeStamp <= :et"),
+		FilterExpression: aws.String("pk = agent AND timeStamp >= :st AND timeStamp <= :et"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":st": &types.AttributeValueMemberN{Value: startDate},
 			":et": &types.AttributeValueMemberN{Value: endData},
