@@ -113,7 +113,10 @@ func UpdateLivechat() error {
 	messages := make([]model.Message, 0)
 	mp := dynamodb.NewScanPaginator(svc, &dynamodb.ScanInput{
 		TableName:        aws.String(os.Getenv("MESSAGETABLE")),
-		FilterExpression: aws.String("timestamp >= :st AND timestamp <= :et"),
+		FilterExpression: aws.String("#n >= :st AND #n <= :et"),
+		ExpressionAttributeNames: map[string]string{
+			"#n": "timestamp",
+		},
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":st": &types.AttributeValueMemberN{Value: strconv.FormatInt(timeStart, 10)},
 			":et": &types.AttributeValueMemberN{Value: strconv.FormatInt(timeEnd, 10)},
@@ -158,7 +161,11 @@ func UpdateLivechat() error {
 		userInfo.CommunicationNumber = GetCommunicationNumber(userId, messages)
 		userInfo.Tags = GetTags(userId, customers, tags)
 		livechat.Users[userId] = *userInfo
+		fmt.Println(userInfo)
 	}
+
+	fmt.Println(livechat)
+	fmt.Println(&livechat)
 
 	av, err := attributevalue.MarshalMap(&livechat)
 	if err != nil {
@@ -167,9 +174,9 @@ func UpdateLivechat() error {
 	}
 
 	_, err = svc.PutItem(context.TODO(), &dynamodb.PutItemInput{
-		TableName:           aws.String(os.Getenv("LIVECHATTABLE")),
-		Item:                av,
-		ConditionExpression: aws.String("attribute_not_exists(TimeStamp)"),
+		TableName: aws.String(os.Getenv("LIVECHATTABLE")),
+		Item:      av,
+		//ConditionExpression: aws.String("attribute_not_exists(TimeStamp)"),
 	})
 	if err != nil {
 		if err.Error() == "ConditionalCheckFailedException" {

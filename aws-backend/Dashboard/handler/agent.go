@@ -89,7 +89,10 @@ func UpdateAgent() error {
 	messages := make([]model.Message, 0)
 	mp := dynamodb.NewScanPaginator(svc, &dynamodb.ScanInput{
 		TableName:        aws.String(os.Getenv("MESSAGETABLE")),
-		FilterExpression: aws.String("timestamp >= :st AND timestamp <= :et"),
+		FilterExpression: aws.String("#n >= :st AND #n <= :et"),
+		ExpressionAttributeNames: map[string]string{
+			"#n": "timestamp",
+		},
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":st": &types.AttributeValueMemberN{Value: strconv.FormatInt(timeStart, 10)},
 			":et": &types.AttributeValueMemberN{Value: strconv.FormatInt(timeEnd, 10)},
@@ -168,14 +171,14 @@ func UpdateAgent() error {
 		// }
 	}
 
-	av, err := attributevalue.MarshalMap(agent.Agents)
+	av, err := attributevalue.MarshalMap(&agent)
 	if err != nil {
 		return err
 	}
 	_, err = svc.PutItem(context.TODO(), &dynamodb.PutItemInput{
-		TableName:           aws.String(os.Getenv("AGENTTABLE")),
-		Item:                av,
-		ConditionExpression: aws.String("attribute_not_exists(TimeStamp)"),
+		TableName: aws.String(os.Getenv("AGENTTABLE")),
+		Item:      av,
+		//ConditionExpression: aws.String("attribute_not_exists(TimeStamp)"),
 	})
 	if err != nil {
 		if err.Error() == "ConditionalCheckFailedException" {
@@ -190,7 +193,7 @@ func UpdateAgent() error {
 func GetRoleName(dynaClient *dynamodb.Client, roleId int) (string, error) {
 	role := new(model.Role)
 	out, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
-		TableName: aws.String("ROLETABLE"),
+		TableName: aws.String(os.Getenv("ROLETABLE")),
 		Key: map[string]types.AttributeValue{
 			"role_id": &types.AttributeValueMemberN{Value: strconv.Itoa(roleId)},
 		},
@@ -257,6 +260,9 @@ func GetAvgRespTime(userId int, messages []model.Message) (int64, error) {
 			}
 		}
 	}
+	if count == 0 {
+		return 0, nil
+	}
 	return totalTime / count, nil
 }
 
@@ -289,6 +295,9 @@ func GetAvgFirstRespTime(userId int, messages []model.Message) (int64, error) {
 				}
 			}
 		}
+	}
+	if count == 0 {
+		return 0, nil
 	}
 	return totalTime / count, nil
 }
