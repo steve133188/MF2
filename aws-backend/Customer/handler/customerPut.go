@@ -978,11 +978,6 @@ func EditCustomersAgent(req events.APIGatewayProxyRequest, table string, dynaCli
 	}
 
 	// change old tag to int
-<<<<<<< HEAD
-	oldAgentInt, _ := strconv.Atoi(data.OldAgent)
-	updateTime := time.Now().Unix()
-=======
->>>>>>> b3bfb838ddbed1469c92f2237cd31732e897edfe
 
 	for _, v := range customers {
 
@@ -1003,12 +998,7 @@ func EditCustomersAgent(req events.APIGatewayProxyRequest, table string, dynaCli
 			UpdateExpression: aws.String("set agents_id[" + agentIndex + "].field = :ng, update_at = :u"),
 			ReturnValues:     types.ReturnValueUpdatedNew,
 			ExpressionAttributeValues: map[string]types.AttributeValue{
-<<<<<<< HEAD
-				":ng": &types.AttributeValueMemberN{Value: data.NewAgent},
-				":u":  &types.AttributeValueMemberN{Value: strconv.FormatInt(updateTime, 10)},
-=======
 				":ng": &types.AttributeValueMemberN{Value: strconv.Itoa(data.NewAgent)},
->>>>>>> b3bfb838ddbed1469c92f2237cd31732e897edfe
 			},
 		})
 		if err != nil {
@@ -1144,11 +1134,6 @@ func DeleteCustomersAgent(req events.APIGatewayProxyRequest, table string, dynaC
 	}
 
 	// change old tag to int
-<<<<<<< HEAD
-	deleteAgentInt, _ := strconv.Atoi(data.DeleteAgent)
-	updateTime := time.Now().Unix()
-=======
->>>>>>> b3bfb838ddbed1469c92f2237cd31732e897edfe
 	for _, v := range customers {
 
 		//set update index
