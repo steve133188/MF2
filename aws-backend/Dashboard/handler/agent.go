@@ -89,13 +89,13 @@ func UpdateAgent() error {
 	messages := make([]model.Message, 0)
 	mp := dynamodb.NewScanPaginator(svc, &dynamodb.ScanInput{
 		TableName:        aws.String(os.Getenv("MESSAGETABLE")),
-		FilterExpression: aws.String("#n >= :st AND #n <= :et"),
+		FilterExpression: aws.String("#n BETWEEN :st AND :et"),
 		ExpressionAttributeNames: map[string]string{
 			"#n": "timestamp",
 		},
 		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":st": &types.AttributeValueMemberN{Value: strconv.FormatInt(timeStart, 10)},
-			":et": &types.AttributeValueMemberN{Value: strconv.FormatInt(timeEnd, 10)},
+			":st": &types.AttributeValueMemberS{Value: strconv.FormatInt(timeStart, 10)},
+			":et": &types.AttributeValueMemberS{Value: strconv.FormatInt(timeEnd, 10)},
 		},
 		Limit: aws.Int32(100),
 	})
@@ -116,6 +116,7 @@ func UpdateAgent() error {
 
 		messages = append(messages, pMessages...)
 	}
+
 	sort.Slice(messages, func(i, j int) bool {
 		return messages[i].TimeStamp < messages[j].TimeStamp
 	})
