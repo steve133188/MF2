@@ -2,7 +2,7 @@ package model
 
 type LiveChat struct {
 	PK        string           `json:"pk,omitempty" dynamodbav:"pk"`
-	TimeStamp int64            `json:"time_stamp,omitempty" dynamodbav:"time_stamp"`
+	TimeStamp int64            `json:"time_stamp,omitempty" dynamodbav:"timestamp"`
 	Users     map[int]UserInfo `json:"users,omitempty" dynamodbav:"users"`
 }
 

@@ -2,7 +2,7 @@ package model
 
 type Agent struct {
 	PK        string            `json:"pk,omitempty" dynamodbav:"pk"`
-	TimeStamp int64             `json:"time_stamp,omitempty" dynamodbav:"time_stamp"`
+	TimeStamp int64             `json:"time_stamp,omitempty" dynamodbav:"timestamp"`
 	Agents    map[int]AgentInfo `json:"agents,omitempty" dynamodbav:"agents"`
 }
 
