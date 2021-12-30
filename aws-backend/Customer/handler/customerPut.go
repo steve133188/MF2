@@ -1134,6 +1134,7 @@ func DeleteCustomersAgent(req events.APIGatewayProxyRequest, table string, dynaC
 	}
 
 	// change old tag to int
+	updateTime := time.Now().Unix()
 	for _, v := range customers {
 
 		//set update index
