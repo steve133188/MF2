@@ -47,7 +47,7 @@ func FieldHandler(Agents []int, TeamID int, Tags []int, dynaClient *dynamodb.Cli
 	tout, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
 		TableName: aws.String(os.Getenv("ORGTABLE")),
 		Key: map[string]types.AttributeValue{
-			"team_id": &types.AttributeValueMemberN{Value: strconv.Itoa(teamID)},
+			"org_id": &types.AttributeValueMemberN{Value: strconv.Itoa(teamID)},
 		},
 	})
 	if err != nil {

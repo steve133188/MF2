@@ -82,7 +82,7 @@ type Tag struct {
 }
 
 type Team struct {
-	TeamID     int    `json:"team_id" dynamodbav:"team_id"`
+	TeamID     int    `json:"org_id" dynamodbav:"org_id"`
 	Type       string `json:"type" dynamodbav:"type"`
 	ChildrenID []int  `json:"children_id" dynamodbav:"children_id"`
 	ParentID   int    `json:"parent_id" dynamodbav:"parent_id"`

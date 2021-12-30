@@ -385,7 +385,7 @@ func GetCustomersByChannel(req events.APIGatewayProxyRequest, table string, dyna
 		}
 
 		key := ":t" + strconv.Itoa(k)
-		dataVal[key] = &types.AttributeValueMemberN{Value: v}
+		dataVal[key] = &types.AttributeValueMemberS{Value: v}
 
 	}
 
