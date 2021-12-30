@@ -5,7 +5,8 @@ type User struct {
 	Username      string `json:"username" dynamodbav:"username"`
 	Email         string `json:"email" dynamodbav:"email"`
 	Password      string `json:"password" dynamodbav:"password"`
-	Phone         string `json:"phone" dynamodbav:"phone"`
+	Phone         int    `json:"phone" dynamodbav:"phone"`
+	CountryCode   int    `json:"country_code" dynamodbav:"country_code"`
 	RoleID        int    `json:"role_id" dynamodbav:"role_id"`
 	Leads         int    `json:"leads" dynamodbav:"leads"`
 	Status        string `json:"user_status" dynamodbav:"user_status"`

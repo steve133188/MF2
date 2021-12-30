@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -25,11 +24,7 @@ func AddCustomerItem(req events.APIGatewayProxyRequest, table string, dynaClient
 	}
 
 	if customer.CustomerID == 0 {
-		customer.CustomerID, err = strconv.Atoi(customer.Phone)
-		if err != nil {
-			log.Printf("WrongIDFormat: %s", err)
-			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("WrongIDFormat")}), nil
-		}
+		customer.CustomerID = customer.Phone
 	}
 	customer.CreatedAt = time.Now().Unix()
 	customer.UpdateAt = time.Now().Unix()

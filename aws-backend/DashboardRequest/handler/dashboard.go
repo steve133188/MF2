@@ -15,16 +15,20 @@ import (
 func GetLiveChat(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
 	//fmt.Println("req.Parameters = ", req.PathParameters)
 
-	startDate := req.PathParameters["start"]
-	endData := req.PathParameters["end"]
+	startDate := req.QueryStringParameters["start"]
+	endDate := req.QueryStringParameters["end"]
+	fmt.Println(startDate, endDate)
 
 	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
 		TableName:        &table,
 		Limit:            aws.Int32(50),
-		FilterExpression: aws.String("pk = livechat AND timeStamp >= :st AND timeStamp <= :et"),
+		FilterExpression: aws.String("#n BETWEEN :sd AND :ed"),
+		ExpressionAttributeNames: map[string]string{
+			"#n": "timestamp",
+		},
 		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":st": &types.AttributeValueMemberN{Value: startDate},
-			":et": &types.AttributeValueMemberN{Value: endData},
+			":sd": &types.AttributeValueMemberN{Value: startDate},
+			":ed": &types.AttributeValueMemberN{Value: endDate},
 		},
 	})
 
@@ -50,16 +54,19 @@ func GetLiveChat(req events.APIGatewayProxyRequest, table string, dynaClient *dy
 func GetAgent(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
 	//fmt.Println("req.Parameters = ", req.PathParameters)
 
-	startDate := req.PathParameters["start"]
-	endData := req.PathParameters["end"]
+	startDate := req.QueryStringParameters["start"]
+	endDate := req.QueryStringParameters["end"]
 
 	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
 		TableName:        &table,
 		Limit:            aws.Int32(50),
-		FilterExpression: aws.String("pk = agent AND timeStamp >= :st AND timeStamp <= :et"),
+		FilterExpression: aws.String("#n >= :st AND #n <= :et"),
+		ExpressionAttributeNames: map[string]string{
+			"#n": "timestamp",
+		},
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":st": &types.AttributeValueMemberN{Value: startDate},
-			":et": &types.AttributeValueMemberN{Value: endData},
+			":et": &types.AttributeValueMemberN{Value: endDate},
 		},
 	})
 

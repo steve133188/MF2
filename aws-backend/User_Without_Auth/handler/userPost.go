@@ -30,7 +30,7 @@ func AddUser(req events.APIGatewayProxyRequest, table string, dynaClient *dynamo
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqBody")}), nil
 	}
 
-	check := len(user.Email) != 0 && len(user.Password) != 0 && len(user.Username) != 0 && len(user.Phone) != 0
+	check := len(user.Email) != 0 && len(user.Password) != 0 && len(user.Username) != 0 && user.Phone >= 0
 	if !check {
 		fmt.Println("MissingPasswordOrEmailOrUsernameOrPhone")
 		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("MissingPasswordOrEmailOrUsernameOrPhone")}), nil
@@ -46,18 +46,14 @@ func AddUser(req events.APIGatewayProxyRequest, table string, dynaClient *dynamo
 		fmt.Println(err)
 		return ApiResponse(status, ErrMsg{aws.String(err.Error())}), nil
 	}
-	status, err = scanCheckExisting(dynaClient, table, "phone", user.Phone)
+	status, err = scanCheckExisting(dynaClient, table, "phone", strconv.Itoa(user.Phone))
 	if err != nil {
 		fmt.Println(err)
 		return ApiResponse(status, ErrMsg{aws.String(err.Error())}), nil
 	}
 
 	if user.UserID == 0 {
-		user.UserID, err = strconv.Atoi(user.Phone)
-		if err != nil {
-			fmt.Println(err)
-			return ApiResponse(http.StatusInternalServerError, aws.String(err.Error())), nil
-		}
+		user.UserID = user.Phone
 	}
 
 	user.CreateAt = time.Now().Unix()

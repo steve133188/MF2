@@ -1,9 +1,9 @@
 package model
 
 type Agent struct {
-	PK        string            `json:"pk,omitempty" dynamodbav:"pk"`
-	TimeStamp int64             `json:"time_stamp,omitempty" dynamodbav:"timestamp"`
-	Agents    map[int]AgentInfo `json:"agents,omitempty" dynamodbav:"agents"`
+	PK        string               `json:"PK" dynamodbav:"PK"`
+	TimeStamp int64                `json:"timestamp" dynamodbav:"timestamp"`
+	Agents    map[string]AgentInfo `json:"agents" dynamodbav:"agents"`
 }
 
 //AssignedContacts: customer table assignee == user
@@ -18,8 +18,8 @@ type AgentInfo struct {
 	ActiveContacts   int    `json:"active_contacts" dynamodbav:"active_contacts"`
 	UnhandledContact int    `json:"unhandled_contact" dynamodbav:"unhandled_contact"`
 	TotalMsgSent     int    `json:"total_msg_sent" dynamodbav:"total_msg_sent"`
-	AvgRespTime      int    `json:"avg_resp_time" dynamodbav:"avg_resp_time"`
-	AvgFirstRespTime int    `json:"avg_first_resp_time" dynamodbav:"avg_first_resp_time"`
+	AvgRespTime      int64  `json:"avg_resp_time" dynamodbav:"avg_resp_time"`
+	AvgFirstRespTime int64  `json:"avg_first_resp_time" dynamodbav:"avg_first_resp_time"`
 }
 
 type Role struct {
