@@ -1,9 +1,21 @@
 package model
 
 type Dashboard struct {
-	PK        string     `json:"PK" dynamodbav:"PK"`
-	TimeStamp int64      `json:"timestamp" dynamodbav:"timestamp"`
-	User      []UserInfo `json:"user" dynamodbav:"user"`
+	PK        string    `json:"PK" dynamodbav:"PK"`
+	TimeStamp int64     `json:"timestamp" dynamodbav:"timestamp"`
+	Channel   []Channel `json:"channel" dynamodbav:"Channel"`
+}
+
+type Channel struct {
+	User []UserInfo
+
+	ChannelName string `json:"channel_name" dynamodbav:"channel_name"`
+
+	AvgTotalRespTime         int64 `json:"avg_resp_time" dynamodbav:"avg_resp_time"`
+	AvgTotalFirstRespTime    int64 `json:"avg_total_first_resp_time" dynamodbav:"avg_total_first_resp_time"`
+	TotalMsgSent             int   `json:"total_msg_sent" dynamodbav:"total_msg_sent"`
+	TotalMsgRev              int   `json:"total_msg_rev" dynamodbav:"total_msg_rev"`
+	TotalCommunicationNumber int   `json:"total_communication_number" dynamodbav:"total_communication_number"`
 }
 
 type UserInfo struct {
@@ -19,17 +31,7 @@ type UserInfo struct {
 	AllContacts      int    `json:"all_contacts" dynamodbav:"all_contacts"`
 	Tags             []Tags `json:"tags" dynamodbav:"tags"`
 
-	ChannelData              []ChannelData ` json:"channel_data" dynamodbav:"channel_data" `
-	AvgTotalRespTime         int64         `json:"avg_resp_time" dynamodbav:"avg_resp_time"`
-	AvgTotalFirstRespTime    int64         `json:"avg_total_first_resp_time" dynamodbav:"avg_total_first_resp_time"`
-	TotalMsgSent             int           `json:"total_msg_sent" dynamodbav:"total_msg_sent"`
-	TotalMsgRev              int           `json:"total_msg_rev" dynamodbav:"total_msg_rev"`
-	TotalCommunicationNumber int           `json:"total_communication_number" dynamodbav:"total_communication_number"`
-}
-
-type ChannelData struct {
-	ChannelName string `json:"channel_name" dynamodbav:"channel_name"`
-
+	//ChannelData              []ChannelData ` json:"channel_data" dynamodbav:"channel_data" `
 	AvgRespTime     int64 `json:"avg_resp_time" dynamodbav:"avg_resp_time"`
 	FirstRespTime   int64 `json:"first_resp_time" dynamodbav:"first_resp_time"`
 	LongestRespTime int64 `json:"longest_resp_time" dynamodbav:"longest_resp_time"`
