@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"aws-lambda-customer/model"
 	"context"
 	"fmt"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"log"
 	"net/http"
 
@@ -20,16 +22,38 @@ func DeleteCustomerItem(req events.APIGatewayProxyRequest, table string, dynaCli
 		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("MissingCustomerID")}), nil
 	}
 
-	out, err := dynaClient.DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
+	//find agent id
+	out, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
+		TableName: aws.String(table),
+		Key: map[string]types.AttributeValue{
+			"customer_id": &types.AttributeValueMemberN{Value: customerId},
+		},
+	})
+	if err != nil {
+		log.Printf("FailedToGetItem CustomerID = %v, %s", customerId, err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToGetItem")}), nil
+	}
+
+	if out.Item == nil {
+		log.Printf("ItemNotExist CustomerID = %v, %s", customerId, err)
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("ItemNotExist")}), nil
+	}
+	customer := new(model.Customer)
+	err = attributevalue.UnmarshalMap(out.Item, &customer)
+	if err != nil {
+		log.Printf("UnmarshalMapError CustomerID = %v, %s", customerId, err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UnmarshalMapError")}), nil
+	}
+
+	//delete
+	out2, err := dynaClient.DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
 		TableName: aws.String(table),
 		Key: map[string]types.AttributeValue{
 			"customer_id": &types.AttributeValueMemberN{Value: customerId},
 		},
 		ConditionExpression: aws.String("attribute_exists(customer_id)"),
+		ReturnValues:        types.ReturnValueAllOld,
 	})
-
-	log.Println("error = ", err.Error())
-
 	if err != nil {
 
 		if err.Error() == "ConditionalCheckFailedException" {
@@ -40,7 +64,14 @@ func DeleteCustomerItem(req events.APIGatewayProxyRequest, table string, dynaCli
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToDeleteItem")}), nil
 	}
 
-	log.Println("out.Attributes = ", out.Attributes)
+	log.Println("out.Attributes = ", out2.Attributes)
+
+	err = ChangeAgentLeads('-', 1, customer.AgentsID, dynaClient)
+	if err != nil {
+		fmt.Println("FailedToChangeLeads, ", err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToChangeLeads")}), nil
+
+	}
 
 	return ApiResponse(http.StatusOK, map[string]string{"message": "success"}), nil
 }
@@ -49,7 +80,37 @@ func DeleteCustomers(req events.APIGatewayProxyRequest, table string, dynaClient
 	customerIDs := req.MultiValueQueryStringParameters["id"]
 
 	for _, v := range customerIDs {
-		_, err := dynaClient.DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
+		//find agent id
+		out, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
+			TableName: aws.String(table),
+			Key: map[string]types.AttributeValue{
+				"customer_id": &types.AttributeValueMemberN{Value: v},
+			},
+		})
+		if err != nil {
+			log.Printf("FailedToGetItem CustomerID = %v, %s", v, err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToGetItem")}), nil
+		}
+
+		if out.Item == nil {
+			log.Printf("ItemNotExist CustomerID = %v, %s", v, err)
+			return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("ItemNotExist")}), nil
+		}
+		customer := new(model.Customer)
+		err = attributevalue.UnmarshalMap(out.Item, &customer)
+		if err != nil {
+			log.Printf("UnmarshalMapError CustomerID = %v, %s", v, err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UnmarshalMapError")}), nil
+		}
+		err = ChangeAgentLeads('-', 1, customer.AgentsID, dynaClient)
+		if err != nil {
+			fmt.Println("FailedToChangeLeads, ", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToChangeLeads")}), nil
+
+		}
+
+		//delete
+		_, err = dynaClient.DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
 			TableName: aws.String(table),
 			Key: map[string]types.AttributeValue{
 				"customer_id": &types.AttributeValueMemberN{Value: v},
