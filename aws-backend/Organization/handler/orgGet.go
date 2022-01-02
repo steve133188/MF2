@@ -134,18 +134,13 @@ func GetChildrenOrgObject(dynaClient *dynamodb.Client, id int, table string) ([]
 }
 
 func GetTeamName(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
-	type data struct {
-		Name string `json:"name" dynamodbav:"name"`
-	}
-	name := make([]data, 0)
+	org := make([]model.Organization, 0)
 	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
-		TableName:            aws.String(table),
-		Limit:                aws.Int32(100),
-		FilterExpression:     aws.String("#type = :team"),
-		ProjectionExpression: aws.String("#name"),
+		TableName:        aws.String(table),
+		Limit:            aws.Int32(100),
+		FilterExpression: aws.String("#type = :team"),
 		ExpressionAttributeNames: map[string]string{
 			"#type": "type",
-			"#name": "name",
 		},
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":team": &types.AttributeValueMemberS{Value: "team"},
@@ -159,19 +154,14 @@ func GetTeamName(req events.APIGatewayProxyRequest, table string, dynaClient *dy
 			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("ScanningError")}), nil
 		}
 
-		pName := make([]data, 0)
-		err = attributevalue.UnmarshalListOfMaps(out.Items, &pName)
+		pOrg := make([]model.Organization, 0)
+		err = attributevalue.UnmarshalListOfMaps(out.Items, &pOrg)
 		if err != nil {
 			fmt.Println("UnmarshalListOfMapsError", err)
 			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UnmarshalListOfMapsError")}), nil
 		}
-		name = append(name, pName...)
+		org = append(org, pOrg...)
 	}
 
-	result := make([]string, 0)
-	for _, v := range name {
-		result = append(result, v.Name)
-	}
-
-	return ApiResponse(http.StatusOK, result), nil
+	return ApiResponse(http.StatusOK, org), nil
 }
