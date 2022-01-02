@@ -3,6 +3,7 @@ package main
 import (
 	"aws-lambda-org/middleware"
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -28,6 +29,8 @@ func orgHandler(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyRespo
 
 	svc := dynamodb.NewFromConfig(cfg)
 	dynaClient := svc
+	fmt.Println(req.HTTPMethod)
+	fmt.Println(req.Resource)
 	switch req.HTTPMethod {
 	case "GET":
 		switch req.Resource {
@@ -35,6 +38,8 @@ func orgHandler(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyRespo
 			return handler.GetOrgItems(req, os.Getenv("TABLE"), dynaClient)
 		case "/org/{id}":
 			return handler.GetOrgItemByID(req, os.Getenv("TABLE"), dynaClient)
+		case "/org/team":
+			return handler.GetTeamName(req, os.Getenv("TABLE"), dynaClient)
 		// case "/org/root":
 		// 	return handler.GetRootOrg(req, os.Getenv("TABLE"), dynaClient)
 		// case "/org/family/{id}":

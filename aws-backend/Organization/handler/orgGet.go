@@ -132,3 +132,46 @@ func GetChildrenOrgObject(dynaClient *dynamodb.Client, id int, table string) ([]
 	results = append(results, *data)
 	return results, nil, http.StatusOK
 }
+
+func GetTeamName(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
+	type data struct {
+		Name string `json:"name" dynamodbav:"name"`
+	}
+	name := make([]data, 0)
+	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
+		TableName:            aws.String(table),
+		Limit:                aws.Int32(100),
+		FilterExpression:     aws.String("#type = :team"),
+		ProjectionExpression: aws.String("#name"),
+		ExpressionAttributeNames: map[string]string{
+			"#type": "type",
+			"#name": "name",
+		},
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":team": &types.AttributeValueMemberS{Value: "team"},
+		},
+	})
+
+	for p.HasMorePages() {
+		out, err := p.NextPage(context.TODO())
+		if err != nil {
+			fmt.Println("FailedToScanNextPage", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("ScanningError")}), nil
+		}
+
+		pName := make([]data, 0)
+		err = attributevalue.UnmarshalListOfMaps(out.Items, &pName)
+		if err != nil {
+			fmt.Println("UnmarshalListOfMapsError", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UnmarshalListOfMapsError")}), nil
+		}
+		name = append(name, pName...)
+	}
+
+	result := make([]string, 0)
+	for _, v := range name {
+		result = append(result, v.Name)
+	}
+
+	return ApiResponse(http.StatusOK, result), nil
+}
