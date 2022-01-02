@@ -4,6 +4,7 @@ import (
 	"aws-lambda-customer/model"
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -47,6 +48,15 @@ func AddCustomerItem(req events.APIGatewayProxyRequest, table string, dynaClient
 		}
 		log.Printf("ErrorToAddItem: %s", err)
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("ErrorToAddItem")}), nil
+
+	}
+
+	fmt.Println("Adding leads to Agent:", customer.AgentsID)
+	err = ChangeAgentLeads('+', 1, customer.AgentsID, dynaClient)
+	if err != nil {
+		fmt.Println("FailedToChangeLeads, ", err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToChangeLeads")}), nil
+
 	}
 
 	return ApiResponse(http.StatusOK, customer), nil
