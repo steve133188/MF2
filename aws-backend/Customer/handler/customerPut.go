@@ -449,7 +449,7 @@ func AddGroupToCustomers(req events.APIGatewayProxyRequest, table string, dynaCl
 func AddTagToCustomer(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
 	var data struct {
 		CustomerId int   `json:"customer_id"`
-		Tags       []int `json:"tags_id"`
+		Tags       []int `json:"tag_id"`
 	}
 
 	err := json.Unmarshal([]byte(req.Body), &data)
@@ -518,7 +518,7 @@ func AddTagToCustomer(req events.APIGatewayProxyRequest, table string, dynaClien
 		Key: map[string]types.AttributeValue{
 			"customer_id": &types.AttributeValueMemberN{Value: strconv.Itoa(data.CustomerId)},
 		},
-		UpdateExpression: aws.String("SET tags_id = list_append(tags_id, :t), update_at = :u"),
+		UpdateExpression: aws.String("SET tags_id = list_append(tags_id, :t) update_at = :u"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":t": &types.AttributeValueMemberL{Value: res},
 			":u": &types.AttributeValueMemberN{Value: strconv.FormatInt(updateTime, 10)},
@@ -536,9 +536,10 @@ func AddTagToCustomer(req events.APIGatewayProxyRequest, table string, dynaClien
 }
 
 func AddTagToCustomers(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
-	customerIDs := req.MultiValueQueryStringParameters["id"]
+	//customerIDs := req.MultiValueQueryStringParameters["id"]
 	var data struct {
-		Tags []int `json:"tags_id"`
+		CustomerID []int `json:"customer_id"`
+		Tags       []int `json:"tags_id"`
 	}
 
 	err := json.Unmarshal([]byte(req.Body), &data)
@@ -555,11 +556,11 @@ func AddTagToCustomers(req events.APIGatewayProxyRequest, table string, dynaClie
 
 	updateTime := time.Now().Unix()
 
-	for _, v := range customerIDs {
+	for _, v := range data.CustomerID {
 		_, err = dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
 			TableName: aws.String(table),
 			Key: map[string]types.AttributeValue{
-				"customer_id": &types.AttributeValueMemberN{Value: v},
+				"customer_id": &types.AttributeValueMemberN{Value: strconv.Itoa(v)},
 			},
 			UpdateExpression: aws.String("SET tags_id = list_append(tags_id, :t), update_at = :u "),
 			ExpressionAttributeValues: map[string]types.AttributeValue{
@@ -570,7 +571,7 @@ func AddTagToCustomers(req events.APIGatewayProxyRequest, table string, dynaClie
 		})
 		if err != nil {
 			fmt.Println("FailedToUpdateTag, CustomerID = ", v, ", ", err)
-			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUpdateTag, CustomerID = " + v + ", " + err.Error())}), nil
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUpdateTag, CustomerID = " + strconv.Itoa(v) + ", " + err.Error())}), nil
 		}
 	}
 
@@ -658,7 +659,7 @@ func EditCustomersTag(req events.APIGatewayProxyRequest, table string, dynaClien
 func DeleteCustomerTag(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
 	var data struct {
 		CustomerId int   `json:"customer_id"`
-		Tags       []int `json:"tags_id"`
+		Tags       []int `json:"tag_id"`
 	}
 
 	err := json.Unmarshal([]byte(req.Body), &data)
@@ -700,11 +701,11 @@ func DeleteCustomerTag(req events.APIGatewayProxyRequest, table string, dynaClie
 		Key: map[string]types.AttributeValue{
 			"customer_id": &types.AttributeValueMemberN{Value: strconv.Itoa(data.CustomerId)},
 		},
-		UpdateExpression:    aws.String(tagStr + ", Set update_at = :u"),
+		UpdateExpression:    aws.String(tagStr + " Set update_at = :u"),
 		ReturnValues:        types.ReturnValueUpdatedNew,
 		ConditionExpression: aws.String("attribute_exists(customer_id)"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":u": &types.AttributeValueMemberS{Value: strconv.FormatInt(updateTime, 10)},
+			":u": &types.AttributeValueMemberN{Value: strconv.FormatInt(updateTime, 10)},
 		},
 	})
 	if err != nil {
@@ -776,9 +777,9 @@ func DeleteCustomersTag(req events.APIGatewayProxyRequest, table string, dynaCli
 			Key: map[string]types.AttributeValue{
 				"customer_id": &types.AttributeValueMemberN{Value: strconv.Itoa(v.CustomerID)},
 			},
-			UpdateExpression: aws.String(removeStr + ", Set update_at = :u"),
+			UpdateExpression: aws.String(removeStr + " Set update_at = :u"),
 			ExpressionAttributeValues: map[string]types.AttributeValue{
-				":u": &types.AttributeValueMemberS{Value: strconv.FormatInt(updateTime, 10)},
+				":u": &types.AttributeValueMemberN{Value: strconv.FormatInt(updateTime, 10)},
 			},
 		})
 		if err != nil {
@@ -995,7 +996,7 @@ func EditCustomersAgent(req events.APIGatewayProxyRequest, table string, dynaCli
 			Key: map[string]types.AttributeValue{
 				"customer_id": &types.AttributeValueMemberN{Value: strconv.Itoa(v.CustomerID)},
 			},
-			UpdateExpression: aws.String("set agents_id[" + agentIndex + "] = :ng, update_at = :u"),
+			UpdateExpression: aws.String("set agents_id[" + agentIndex + "] = :ng update_at = :u"),
 			ReturnValues:     types.ReturnValueUpdatedNew,
 			ExpressionAttributeValues: map[string]types.AttributeValue{
 				":ng": &types.AttributeValueMemberN{Value: strconv.Itoa(data.NewAgent)},

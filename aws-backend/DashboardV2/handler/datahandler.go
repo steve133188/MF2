@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
@@ -60,19 +61,37 @@ func GetTags(userID int, customers []model.Customer, tags []model.Tag) []model.T
 	return tagNo
 }
 
-//Contact Info ************************************************************************************************
-
-func GetAllContact(userID int, customers []model.Customer) int {
-	var count int
-	for _, v := range customers {
-		for _, vAgent := range v.AgentsID {
-			if vAgent == userID {
-				count++
+func GetAllTags(user []model.User, customers []model.Customer, tags []model.Tag) []model.Tags {
+	tagIDs := make(map[int]int)
+	//find out all the tags
+	for _, k := range user {
+		for _, v := range customers {
+			if intInSlice(k.UserID, v.AgentsID) {
+				for _, vTag := range v.TagsID {
+					if _, found := tagIDs[vTag]; found {
+						tagIDs[vTag]++
+					} else {
+						tagIDs[vTag] = 1
+					}
+				}
 			}
 		}
 	}
-	return count
+
+	//set tag ID to tag name
+	tagNo := make([]model.Tags, 0)
+	for _, v := range tags {
+		if _, found := tagIDs[v.TagID]; found {
+			temp := new(model.Tags)
+			temp.Name = v.TagName
+			temp.No = tagIDs[v.TagID]
+			tagNo = append(tagNo, *temp)
+		}
+	}
+	return tagNo
 }
+
+//Contact Info ************************************************************************************************
 
 func GetAssignedContacts(userId int, customers []model.Customer) (int, []model.Customer) {
 	count := 0
@@ -89,11 +108,15 @@ func GetAssignedContacts(userId int, customers []model.Customer) (int, []model.C
 	return count, data
 }
 
-func GetActiveContacts(userId int, customers []model.Customer, messages []model.Message) int {
+func GetDeliveredContacts(userId int, customers []model.Customer, messages []model.Message) int {
 	count := 0
-	for _, v := range messages {
+	for i, v := range messages {
 		for _, k := range customers {
-			if k.CustomerID == v.RoomID && strings.Contains(v.Sender, strconv.Itoa(userId)) {
+			sender, err := strconv.Atoi(messages[i].Sender)
+			if err != nil {
+				return count
+			}
+			if k.CustomerID == sender && strings.Contains(v.Sender, strconv.Itoa(userId)) {
 				count++
 				break
 			}
@@ -104,7 +127,7 @@ func GetActiveContacts(userId int, customers []model.Customer, messages []model.
 
 //Message Info ************************************************************************************************
 
-func GetRespTime(userID int, messages []model.Message) (model.RespTime, error) {
+func GetRespTime(userID int, messages []model.Message) (model.RespTime, int, error) {
 	var respTime model.RespTime
 	var respTimeArr []int64
 
@@ -116,11 +139,11 @@ func GetRespTime(userID int, messages []model.Message) (model.RespTime, error) {
 				if messages[j].Sender == messages[i].Receiver {
 					jtime, err := strconv.ParseInt(messages[j].TimeStamp, 10, 64)
 					if err != nil {
-						return model.RespTime{}, err
+						return model.RespTime{}, len(respTimeArr), err
 					}
 					itime, err := strconv.ParseInt(messages[i].TimeStamp, 10, 64)
 					if err != nil {
-						return model.RespTime{}, err
+						return model.RespTime{}, len(respTimeArr), err
 					}
 					respTimeArr = append(respTimeArr, jtime-itime)
 				}
@@ -130,7 +153,7 @@ func GetRespTime(userID int, messages []model.Message) (model.RespTime, error) {
 	}
 
 	if len(respTimeArr) == 0 {
-		return respTime, nil
+		return respTime, 0, nil
 	}
 
 	//calculate the sum and maximum
@@ -146,10 +169,10 @@ func GetRespTime(userID int, messages []model.Message) (model.RespTime, error) {
 	respTime.First = respTimeArr[0]
 	respTime.Longest = max
 	respTime.Average = sum / int64(len(respTimeArr))
-	return respTime, nil
+	return respTime, len(respTimeArr), nil
 }
 
-func GetTotalMsgSent(userID int, messages []model.Message) int {
+func GetMsgSent(userID int, messages []model.Message) int {
 	var count int
 	for _, v := range messages {
 		if strings.Contains(v.Sender, strconv.Itoa(userID)) {
@@ -159,7 +182,7 @@ func GetTotalMsgSent(userID int, messages []model.Message) int {
 	return count
 }
 
-func GetTotalMsgRev(userID int, messages []model.Message) int {
+func GetMsgRev(userID int, messages []model.Message) int {
 	var count int
 	for _, v := range messages {
 		if strings.Contains(v.Receiver, strconv.Itoa(userID)) {
@@ -169,18 +192,52 @@ func GetTotalMsgRev(userID int, messages []model.Message) int {
 	return count
 }
 
-func GetCommunicationNumber(userID int, messages []model.Message) int {
+func GetTotalMsgSent(messages []model.Message) int {
 	var count int
-	var countList []int
-	for i, v := range messages {
-		if strings.Contains(v.Receiver, strconv.Itoa(userID)) || strings.Contains(v.Sender, strconv.Itoa(userID)) {
-			if len(countList) == 0 || intInSlice(messages[i].RoomID, countList) {
-				countList = append(countList, messages[i].RoomID)
-				count++
-			}
+	for _, v := range messages {
+		if v.FromMe {
+			count++
 		}
 	}
 	return count
+}
+
+//func GetCommunicationNumber(userID int, messages []model.Message) int {
+//	var count int
+//	var countList []int
+//	for i, v := range messages {
+//		if strings.Contains(v.Receiver, strconv.Itoa(userID)) || strings.Contains(v.Sender, strconv.Itoa(userID)) {
+//			if len(countList) == 0 || intInSlice(messages[i].RoomID, countList) {
+//				countList = append(countList, messages[i].RoomID)
+//				count++
+//			}
+//		}
+//	}
+//	return count
+//}
+
+//Communication Time ************************************************************************************************
+
+func GetCommunicationHour(start int64, end int64, noOfInterval int, message []model.Message) []int {
+	timeInterval := (end - start) / int64(noOfInterval)
+	noOfMsg := make([]int, noOfInterval)
+
+	for _, v := range message {
+		for i, _ := range noOfMsg {
+			tempTime, err := strconv.ParseInt(v.TimeStamp, 10, 64)
+			if err != nil {
+				fmt.Println("Error type, ", err)
+				return noOfMsg
+			}
+			if (tempTime >= (start + int64(i)*timeInterval)) && (tempTime <= (start + int64(i+1)*timeInterval)) {
+				fmt.Println("Time found")
+				noOfMsg[i]++
+				break
+			}
+			fmt.Println("Compare:", tempTime, (start + int64(i)*timeInterval), (start + int64(i+1)*timeInterval))
+		}
+	}
+	return noOfMsg
 }
 
 //Tool functions ************************************************************************************************

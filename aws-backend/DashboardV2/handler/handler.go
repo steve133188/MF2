@@ -60,6 +60,7 @@ func UpdateDashBoard() error {
 
 		userList = append(userList, pUserList...)
 	}
+	fmt.Println("Successful Scan User")
 
 	// scan all customer list
 	customers := make([]model.Customer, 0)
@@ -84,6 +85,7 @@ func UpdateDashBoard() error {
 
 		customers = append(customers, pCustomers...)
 	}
+	fmt.Println("Successful Scan Customer")
 
 	// scan all tag list
 	tags := make([]model.Tag, 0)
@@ -108,6 +110,7 @@ func UpdateDashBoard() error {
 
 		tags = append(tags, pTags...)
 	}
+	fmt.Println("Successful Scan Tag")
 
 	// scan all message list
 	availableChannel := []string{"whatsapp", "waba"} //current available message channels
@@ -145,7 +148,6 @@ func UpdateDashBoard() error {
 
 			messages = append(messages, pMessages...)
 		}
-		fmt.Println(messages)
 
 		// sort messages from early time to later time
 		sort.Slice(messages, func(i, j int) bool {
@@ -157,6 +159,8 @@ func UpdateDashBoard() error {
 		tempChannelMsg.ChannelMessage = messages
 		channelMsg = append(channelMsg, *tempChannelMsg)
 	}
+	fmt.Println(channelMsg)
+	fmt.Println("Successful Scan Message")
 
 	// put items into the Dashboard struct
 	dashboard.Channel = make([]model.Channel, 0)
@@ -183,16 +187,8 @@ func UpdateDashBoard() error {
 			userInfo.UserStatus = k.Status
 			userInfo.LastLogin = k.LastLogin
 
-			//contact info
-			count, assignedCustomers := GetAssignedContacts(k.UserID, customers)
-			userInfo.AssignedContacts = count
-			userInfo.ActiveContacts += GetActiveContacts(k.UserID, assignedCustomers, v.ChannelMessage)
-			userInfo.UnhandledContact = userInfo.AssignedContacts - userInfo.ActiveContacts
-			userInfo.AllContacts = GetAllContact(k.UserID, customers)
-			userInfo.Tags = GetTags(k.UserID, customers, tags)
-
 			//user dashboard info
-			respTime, err := GetRespTime(k.UserID, v.ChannelMessage)
+			respTime, activeCount, err := GetRespTime(k.UserID, v.ChannelMessage)
 			if err != nil {
 				return err
 			}
@@ -200,26 +196,55 @@ func UpdateDashBoard() error {
 			userInfo.FirstRespTime = respTime.First
 			userInfo.LongestRespTime = respTime.Longest
 
-			userInfo.MsgSent = GetTotalMsgSent(k.UserID, v.ChannelMessage)
-			userInfo.MsgRev = GetTotalMsgRev(k.UserID, v.ChannelMessage)
-			userInfo.CommunicationNumber = GetCommunicationNumber(k.UserID, v.ChannelMessage)
+			userInfo.MsgSent = GetMsgSent(k.UserID, v.ChannelMessage)
+			userInfo.MsgRev = GetMsgRev(k.UserID, v.ChannelMessage)
+			//userInfo.CommunicationNumber = GetCommunicationNumber(k.UserID, v.ChannelMessage)
+
+			//contact info
+
+			count, assignedCustomers := GetAssignedContacts(k.UserID, customers)
+			userInfo.AssignedContacts = count
+			userInfo.ActiveContacts = activeCount
+			userInfo.DeliveredContacts = GetDeliveredContacts(k.UserID, assignedCustomers, v.ChannelMessage)
+			userInfo.UnhandledContact = userInfo.AssignedContacts - userInfo.ActiveContacts - userInfo.DeliveredContacts
+
+			userInfo.NewAddedContacts = 0 //later use
+			userInfo.AllContacts = userInfo.AssignedContacts + userInfo.NewAddedContacts
+			userInfo.Tags = GetTags(k.UserID, customers, tags)
 
 			//channel dashboard info
 			channelData.AvgTotalRespTime += userInfo.AvgRespTime
 			channelData.AvgTotalFirstRespTime += userInfo.FirstRespTime
-			channelData.TotalMsgSent += userInfo.MsgSent
-			channelData.TotalMsgRev += userInfo.MsgRev
-			channelData.TotalCommunicationNumber += userInfo.CommunicationNumber
+			channelData.AvgLongestRespTime += userInfo.LongestRespTime
+			//channelData.TotalCommunicationNumber += userInfo.CommunicationNumber
+
+			channelData.NewAddedContacts += userInfo.NewAddedContacts
+
+			channelData.TotalAssignedContacts += userInfo.AssignedContacts
+			channelData.TotalActiveContacts += userInfo.ActiveContacts
+			channelData.TotalDeliveredContacts += userInfo.DeliveredContacts
+			channelData.TotalUnhandledContact += userInfo.UnhandledContact
 
 			channelData.User = append(channelData.User, *userInfo)
 		}
 
+		channelData.AllContacts = channelData.TotalAssignedContacts + channelData.NewAddedContacts
+		channelData.CommunicationHours = GetCommunicationHour(timeStart, timeEnd, 24, v.ChannelMessage)
+
+		channelData.TotalMsgSent = GetTotalMsgSent(v.ChannelMessage)
+		channelData.TotalMsgRev = len(v.ChannelMessage) - channelData.TotalMsgSent
+
+		// average the total time
 		channelData.AvgTotalFirstRespTime = channelData.AvgTotalFirstRespTime / int64(len(channelData.User))
 		channelData.AvgTotalRespTime = channelData.AvgTotalRespTime / int64(len(channelData.User))
+		channelData.AvgLongestRespTime = channelData.AvgLongestRespTime / int64(len(channelData.User))
 
 		dashboard.Channel = append(dashboard.Channel, *channelData)
+		fmt.Println("Done for Channel:", channelData.ChannelName)
 	}
 
+	dashboard.Tags = GetAllTags(userList, customers, tags)
+	fmt.Println("Done for Dashboard")
 	fmt.Println(dashboard)
 
 	av, err := attributevalue.MarshalMap(&dashboard)

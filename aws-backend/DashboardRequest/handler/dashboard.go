@@ -48,6 +48,7 @@ func GetDashboard(req events.APIGatewayProxyRequest, table string, dynaClient *d
 
 		dashboard = append(dashboard, pItems...)
 	}
+
 	return ApiResponse(http.StatusOK, dashboard), nil
 }
 
