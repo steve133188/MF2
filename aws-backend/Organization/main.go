@@ -1,7 +1,6 @@
 package main
 
 import (
-	"aws-lambda-org/middleware"
 	"context"
 	"fmt"
 	"log"
@@ -81,9 +80,10 @@ func orgHandler(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyRespo
 }
 
 func main() {
-	lambda.Start(
-		middleware.Middleware(
-			middleware.JWTHandler(orgHandler),
-		),
-	)
+	lambda.Start(orgHandler)
+	// lambda.Start(
+	// 	middleware.Middleware(
+	// 		middleware.JWTHandler(orgHandler),
+	// 	),
+	// )
 }
