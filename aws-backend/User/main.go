@@ -32,7 +32,8 @@ func handleRequest(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyRe
 			return handler.GetUsersByRoleID(req, table, dynaClient)
 		case "/api/users/all":
 			return handler.GetUsers(req, table, dynaClient)
-
+		case "/api/users/no-team":
+			return handler.GetUsersWithoutTeam(req, table, dynaClient)
 		default:
 			return handler.ApiResponse(http.StatusBadRequest, handler.ErrMsg{aws.String("InvalidGetMethod")}), nil
 		}

@@ -380,3 +380,35 @@ func GetUsers(req events.APIGatewayProxyRequest, table string, dynaClient *dynam
 
 	return ApiResponse(http.StatusOK, fullUsers), nil
 }
+
+func GetUsersWithoutTeam(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
+	users := make([]model.User, 0)
+
+	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
+		TableName:        aws.String(table),
+		Limit:            aws.Int32(50),
+		FilterExpression: aws.String(" team_id = :val"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":val": &types.AttributeValueMemberN{Value: strconv.Itoa(0)},
+		},
+	})
+
+	for p.HasMorePages() {
+		outs, err := p.NextPage(context.TODO())
+		if err != nil {
+			fmt.Println("GetUsersWithoutTeam ", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("GetUsersWithoutTeam " + err.Error())}), nil
+		}
+
+		pUsers := make([]model.User, 0)
+		err = attributevalue.UnmarshalListOfMaps(outs.Items, &pUsers)
+		if err != nil {
+			fmt.Println("GetUsersWithoutTeam ", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("GetUsersWithoutTeam " + err.Error())}), nil
+		}
+
+		users = append(users, pUsers...)
+	}
+
+	return ApiResponse(http.StatusOK, users), nil
+}
