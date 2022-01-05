@@ -75,7 +75,7 @@ func UpdateCustomerTeam(req events.APIGatewayProxyRequest, table string, dynaCli
 		UpdateExpression: aws.String("set team_id = :te, update_at = :t"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":te": &types.AttributeValueMemberS{Value: strconv.Itoa(customer.TeamID)},
-			":t":  &types.AttributeValueMemberN{Value: strconv.FormatInt(customer.UpdateAt, 10)},
+			":t":  &types.AttributeValueMemberS{Value: strconv.FormatInt(customer.UpdateAt, 10)},
 		},
 		ConditionExpression: aws.String("attribute_exists(customer_id)"),
 	})
