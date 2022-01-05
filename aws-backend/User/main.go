@@ -2,7 +2,6 @@ package main
 
 import (
 	"aws-lambda-user/handler"
-	"aws-lambda-user/middleware"
 	"fmt"
 	"net/http"
 	"os"
@@ -81,9 +80,10 @@ func handleRequest(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyRe
 }
 
 func main() {
-	lambda.Start(
-		middleware.Middleware(
-			middleware.JWTHandler(handleRequest),
-		),
-	)
+	// lambda.Start(
+	// 	middleware.Middleware(
+	// 		middleware.JWTHandler(handleRequest),
+	// 	),
+	// )
+	lambda.Start(handleRequest)
 }
