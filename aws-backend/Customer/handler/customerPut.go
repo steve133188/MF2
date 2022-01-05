@@ -700,7 +700,7 @@ func DeleteCustomerTag(req events.APIGatewayProxyRequest, table string, dynaClie
 		Key: map[string]types.AttributeValue{
 			"customer_id": &types.AttributeValueMemberN{Value: strconv.Itoa(data.CustomerId)},
 		},
-		UpdateExpression:    aws.String(tagStr + ", Set update_at = :u"),
+		UpdateExpression:    aws.String(tagStr + " Set update_at = :u"),
 		ReturnValues:        types.ReturnValueUpdatedNew,
 		ConditionExpression: aws.String("attribute_exists(customer_id)"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
@@ -776,7 +776,7 @@ func DeleteCustomersTag(req events.APIGatewayProxyRequest, table string, dynaCli
 			Key: map[string]types.AttributeValue{
 				"customer_id": &types.AttributeValueMemberN{Value: strconv.Itoa(v.CustomerID)},
 			},
-			UpdateExpression: aws.String(removeStr + ", Set update_at = :u"),
+			UpdateExpression: aws.String(removeStr + " Set update_at = :u"),
 			ExpressionAttributeValues: map[string]types.AttributeValue{
 				":u": &types.AttributeValueMemberS{Value: strconv.FormatInt(updateTime, 10)},
 			},
