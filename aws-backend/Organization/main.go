@@ -39,6 +39,8 @@ func orgHandler(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyRespo
 			return handler.GetOrgItemByID(req, os.Getenv("TABLE"), dynaClient)
 		case "/org/team":
 			return handler.GetTeamName(req, os.Getenv("TABLE"), dynaClient)
+		case "/org/division":
+			return handler.GetAllDivison(req, os.Getenv("TABLE"), dynaClient)
 		// case "/org/root":
 		// 	return handler.GetRootOrg(req, os.Getenv("TABLE"), dynaClient)
 		// case "/org/family/{id}":

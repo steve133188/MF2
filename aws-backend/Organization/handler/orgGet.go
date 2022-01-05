@@ -165,3 +165,37 @@ func GetTeamName(req events.APIGatewayProxyRequest, table string, dynaClient *dy
 
 	return ApiResponse(http.StatusOK, org), nil
 }
+
+func GetAllDivison(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
+	orgs := make([]model.Organization, 0)
+
+	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
+		TableName:        aws.String(table),
+		Limit:            aws.Int32(50),
+		FilterExpression: aws.String("#type = :div"),
+		ExpressionAttributeNames: map[string]string{
+			"#type": "type",
+		},
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":div": &types.AttributeValueMemberS{Value: "division"},
+		},
+	})
+
+	for p.HasMorePages() {
+		outs, err := p.NextPage(context.TODO())
+		if err != nil {
+			fmt.Println("GetAllDivison ", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("GetAllDivison " + err.Error())}), nil
+		}
+
+		pOrgs := make([]model.Organization, 0)
+		err = attributevalue.UnmarshalListOfMaps(outs.Items, &pOrgs)
+		if err != nil {
+			fmt.Println("GetAllDivison", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("GetAllDivison " + err.Error())}), nil
+		}
+		orgs = append(orgs, pOrgs...)
+	}
+
+	return ApiResponse(http.StatusOK, orgs), nil
+}
