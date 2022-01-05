@@ -1,14 +1,31 @@
 package model
 
 type Dashboard struct {
-	PK        string    `json:"PK" dynamodbav:"PK"`
-	TimeStamp int64     `json:"timestamp" dynamodbav:"timestamp"`
-	Channel   []Channel `json:"channel" dynamodbav:"Channel"`
-	Tags      []Tags    `json:"tags" dynamodbav:"tags"`
+	PK        string     `json:"PK" dynamodbav:"PK"`
+	TimeStamp int64      `json:"timestamp" dynamodbav:"timestamp"`
+	Channel   []Channel  `json:"channel" dynamodbav:"Channel"`
+	User      []UserInfo `json:"user" dynamodbav:"user"`
+	Tags      []Tags     `json:"tags" dynamodbav:"tags"`
+
+	AvgTotalRespTime      int64 `json:"avg_resp_time" dynamodbav:"avg_resp_time"`
+	AvgTotalFirstRespTime int64 `json:"avg_total_first_resp_time" dynamodbav:"avg_total_first_resp_time"`
+	AvgLongestRespTime    int64 `json:"longest_resp_time" dynamodbav:"longest_resp_time"`
+
+	TotalMsgSent       int   `json:"total_msg_sent" dynamodbav:"total_msg_sent"`
+	TotalMsgRev        int   `json:"total_msg_rev" dynamodbav:"total_msg_rev"`
+	CommunicationHours []int `json:"communication_hours" dynamodbav:"communication_hours"`
+	//TotalCommunicationNumber int   `json:"total_communication_number" dynamodbav:"total_communication_number"`
+
+	AllContacts            int `json:"all_contacts" dynamodbav:"all_contacts"`
+	NewAddedContacts       int `json:"new_added_contacts" dynamodbav:"new_added_contacts"`
+	TotalAssignedContacts  int `json:"total_assigned_contacts" dynamodbav:"total_assigned_contacts"`
+	TotalActiveContacts    int `json:"total_active_contacts" dynamodbav:"total_active_contacts"`
+	TotalDeliveredContacts int ` json:"total_delivered_contacts" dynamodbav:"total_delivered_contacts"`
+	TotalUnhandledContact  int `json:"total_unhandled_contact" dynamodbav:"total_unhandled_contact"`
 }
 
 type Channel struct {
-	User []UserInfo
+	User []UserInfo `json:"user" dynamodbav:"user"`
 
 	ChannelName string `json:"channel_name" dynamodbav:"channel_name"`
 
@@ -32,6 +49,7 @@ type Channel struct {
 type UserInfo struct {
 	UserID       int    `json:"user_id" dynamodbav:"user_id"`
 	UserName     string `json:"user_name" dynamodbav:"user_name"`
+	TeamID       int    `json:"team_id" dynamodbav:"team_id"`
 	UserRoleName string `json:"user_role_name" dynamodbav:"user_role_name"`
 	UserStatus   string `json:"user_status" dynamodbav:"user_status"`
 	LastLogin    int64  `json:"last_login" dynamodbav:"last_login"`

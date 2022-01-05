@@ -113,7 +113,7 @@ func UpdateDashBoard() error {
 	fmt.Println("Successful Scan Tag")
 
 	// scan all message list
-	availableChannel := []string{"whatsapp", "waba"} //current available message channels
+	availableChannel := []string{"WhatsApp", "WABA"} //current available message channels
 	channelMsg := make([]model.ChannelMsg, 0)
 	for _, v := range availableChannel {
 		messages := make([]model.Message, 0)
@@ -164,7 +164,8 @@ func UpdateDashBoard() error {
 
 	// put items into the Dashboard struct
 	dashboard.Channel = make([]model.Channel, 0)
-	for _, v := range channelMsg {
+	dashboard.User = make([]model.UserInfo, 0)
+	for i, v := range channelMsg {
 		if len(v.ChannelMessage) == 0 {
 			continue
 		}
@@ -173,7 +174,7 @@ func UpdateDashBoard() error {
 		channelData.ChannelName = v.ChannelName
 
 		channelData.User = make([]model.UserInfo, 0)
-		for _, k := range userList {
+		for j, k := range userList {
 
 			// user info
 			userInfo := new(model.UserInfo)
@@ -184,6 +185,7 @@ func UpdateDashBoard() error {
 				fmt.Println("UserID = ", k.UserID, " RoleID = ", k.RoleID, ", ", err)
 				return err
 			}
+			userInfo.TeamID = k.TeamID
 			userInfo.UserStatus = k.Status
 			userInfo.LastLogin = k.LastLogin
 
@@ -226,10 +228,30 @@ func UpdateDashBoard() error {
 			channelData.TotalUnhandledContact += userInfo.UnhandledContact
 
 			channelData.User = append(channelData.User, *userInfo)
+
+			//put item into dashboard user struct
+			if i == 0 {
+				dashboard.User = append(dashboard.User, *userInfo)
+			} else {
+				dashboard.User[j].AvgRespTime += userInfo.AvgRespTime
+				dashboard.User[j].FirstRespTime += userInfo.FirstRespTime
+				dashboard.User[j].LongestRespTime += userInfo.LongestRespTime
+
+				dashboard.User[j].MsgSent += userInfo.MsgSent
+				dashboard.User[j].MsgRev += userInfo.MsgRev
+
+				dashboard.User[j].AssignedContacts += userInfo.AssignedContacts
+				dashboard.User[j].ActiveContacts += userInfo.ActiveContacts
+				dashboard.User[j].DeliveredContacts += userInfo.DeliveredContacts
+				dashboard.User[j].UnhandledContact += userInfo.UnhandledContact
+
+				dashboard.User[j].NewAddedContacts += userInfo.NewAddedContacts
+				dashboard.User[j].AllContacts += userInfo.AllContacts
+			}
 		}
 
 		channelData.AllContacts = channelData.TotalAssignedContacts + channelData.NewAddedContacts
-		channelData.CommunicationHours = GetCommunicationHour(timeStart, timeEnd, 24, v.ChannelMessage)
+		channelData.CommunicationHours = GetCommunicationHour(timeStart, timeEnd, 12, v.ChannelMessage)
 
 		channelData.TotalMsgSent = GetTotalMsgSent(v.ChannelMessage)
 		channelData.TotalMsgRev = len(v.ChannelMessage) - channelData.TotalMsgSent
@@ -240,10 +262,34 @@ func UpdateDashBoard() error {
 		channelData.AvgLongestRespTime = channelData.AvgLongestRespTime / int64(len(channelData.User))
 
 		dashboard.Channel = append(dashboard.Channel, *channelData)
+
+		//Dashboard info
+		dashboard.AvgTotalRespTime += channelData.AvgTotalFirstRespTime
+		dashboard.AvgTotalFirstRespTime += channelData.AvgTotalFirstRespTime
+		dashboard.AvgLongestRespTime += channelData.AvgLongestRespTime
+
+		dashboard.TotalMsgSent += channelData.TotalMsgSent
+		dashboard.TotalMsgRev += channelData.TotalMsgRev
+		for i, c := range channelData.CommunicationHours {
+			dashboard.CommunicationHours[i] += c
+		}
+
+		dashboard.AllContacts += channelData.AllContacts
+		dashboard.NewAddedContacts += channelData.NewAddedContacts
+		dashboard.TotalAssignedContacts += channelData.TotalAssignedContacts
+		dashboard.TotalActiveContacts += channelData.TotalActiveContacts
+		dashboard.TotalDeliveredContacts += channelData.TotalDeliveredContacts
+		dashboard.TotalUnhandledContact += channelData.TotalUnhandledContact
+
 		fmt.Println("Done for Channel:", channelData.ChannelName)
 	}
 
+	dashboard.AvgTotalFirstRespTime = dashboard.AvgTotalFirstRespTime / int64(len(dashboard.Channel))
+	dashboard.AvgTotalRespTime = dashboard.AvgTotalRespTime / int64(len(dashboard.Channel))
+	dashboard.AvgLongestRespTime = dashboard.AvgLongestRespTime / int64(len(dashboard.Channel))
+
 	dashboard.Tags = GetAllTags(userList, customers, tags)
+
 	fmt.Println("Done for Dashboard")
 	fmt.Println(dashboard)
 
