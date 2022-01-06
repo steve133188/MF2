@@ -1,43 +1,45 @@
 package model
 
 type User struct {
-	UserID        int    `json:"user_id" dynamodbav:"user_id"`
-	Username      string `json:"username" dynamodbav:"username"`
-	Email         string `json:"email" dynamodbav:"email"`
-	Password      string `json:"password" dynamodbav:"password"`
-	Phone         int    `json:"phone" dynamodbav:"phone"`
-	CountryCode   int    `json:"country_code" dynamodbav:"country_code"`
-	RoleID        int    `json:"role_id" dynamodbav:"role_id"`
-	Leads         int    `json:"leads" dynamodbav:"leads"`
-	Status        string `json:"user_status" dynamodbav:"user_status"`
-	TeamID        int    `json:"team_id" dynamodbav:"team_id"`
-	Channels      []Chan `json:"channels" dynamodbav:"channels"`
-	Subscriptions []int  `json:"subscriptions" dynamodbav:"subscriptions"`
-	CheckAuth     bool   `json:"check_auth" dynamodbav:"check_auth" default:"false"`
-	CreateAt      int64  `json:"create_at" dynamodbav:"create_at"`
-	LastLogin     int64  `json:"last_login" dynamodbav:"last_login"`
+	UserID        int        `json:"user_id" dynamodbav:"user_id"`
+	Username      string     `json:"username" dynamodbav:"username"`
+	Email         string     `json:"email" dynamodbav:"email"`
+	Password      string     `json:"password" dynamodbav:"password"`
+	Phone         int        `json:"phone" dynamodbav:"phone"`
+	CountryCode   int        `json:"country_code" dynamodbav:"country_code"`
+	RoleID        int        `json:"role_id" dynamodbav:"role_id"`
+	Leads         int        `json:"leads" dynamodbav:"leads"`
+	Status        string     `json:"user_status" dynamodbav:"user_status"`
+	TeamID        int        `json:"team_id" dynamodbav:"team_id"`
+	Channels      []Chan     `json:"channels" dynamodbav:"channels"`
+	ChatAccess    ChatAccess `json:"chat_access" dynamodbav:"chat_access"`
+	Subscriptions []int      `json:"subscriptions" dynamodbav:"subscriptions"`
+	CheckAuth     bool       `json:"check_auth" dynamodbav:"check_auth" default:"false"`
+	CreateAt      int64      `json:"create_at" dynamodbav:"create_at"`
+	LastLogin     int64      `json:"last_login" dynamodbav:"last_login"`
 }
 
 type FullUser struct {
-	UserID        int      `json:"user_id" dynamodbav:"user_id"`
-	Username      string   `json:"username" dynamodbav:"username"`
-	Email         string   `json:"email" dynamodbav:"email"`
-	Password      string   `json:"password" dynamodbav:"password"`
-	Phone         int      `json:"phone" dynamodbav:"phone"`
-	CountryCode   int      `json:"country_code" dynamodbav:"country_code"`
-	Leads         int      `json:"leads" dynamodbav:"leads"`
-	Status        string   `json:"user_status" dynamodbav:"user_status"`
-	TeamID        int      `json:"team_id" dynamodbav:"team_id"`
-	Team          Team     `json:"team" dynamodbav:"team"`
-	RoleID        int      `json:"role_id" dynamodbav:"role_id"`
-	RoleName      string   `json:"role_name" dynamodbav:"role_name"`
-	Authority     Auth     `json:"authority" dynamodbav:"authority"`
-	RoleChannel   []string `json:"role_channel" dynamodbav:"role_channel"`
-	Channels      []Chan   `json:"channels" dynamodbav:"channels"`
-	Subscriptions []int    `json:"subscriptions" dynamodbav:"subscriptions"`
-	CheckAuth     bool     `json:"check_auth" dynamodbav:"check_auth" default:"false"`
-	CreateAt      int64    `json:"create_at" dynamodbav:"create_at"`
-	LastLogin     int64    `json:"last_login" dynamodbav:"last_login"`
+	UserID        int        `json:"user_id" dynamodbav:"user_id"`
+	Username      string     `json:"username" dynamodbav:"username"`
+	Email         string     `json:"email" dynamodbav:"email"`
+	Password      string     `json:"password" dynamodbav:"password"`
+	Phone         int        `json:"phone" dynamodbav:"phone"`
+	CountryCode   int        `json:"country_code" dynamodbav:"country_code"`
+	Leads         int        `json:"leads" dynamodbav:"leads"`
+	Status        string     `json:"user_status" dynamodbav:"user_status"`
+	TeamID        int        `json:"team_id" dynamodbav:"team_id"`
+	Team          Team       `json:"team" dynamodbav:"team"`
+	RoleID        int        `json:"role_id" dynamodbav:"role_id"`
+	RoleName      string     `json:"role_name" dynamodbav:"role_name"`
+	Authority     Auth       `json:"authority" dynamodbav:"authority"`
+	RoleChannel   []string   `json:"role_channel" dynamodbav:"role_channel"`
+	Channels      []Chan     `json:"channels" dynamodbav:"channels"`
+	ChatAccess    ChatAccess `json:"chat_access" dynamodbav:"chat_access"`
+	Subscriptions []int      `json:"subscriptions" dynamodbav:"subscriptions"`
+	CheckAuth     bool       `json:"check_auth" dynamodbav:"check_auth" default:"false"`
+	CreateAt      int64      `json:"create_at" dynamodbav:"create_at"`
+	LastLogin     int64      `json:"last_login" dynamodbav:"last_login"`
 }
 type Auth struct {
 	Dashboard        bool `json:"dashboard" dynamodbav:"dashboard" default:"false"`
@@ -68,4 +70,11 @@ type Role struct {
 	RoleID   int    `json:"role_id" dynamodbav:"role_id"`
 	RoleName string `json:"role_name" dynamodbav:"role_name"`
 	Auth     Auth   `json:"authority" dynamodbav:"authority"`
+}
+
+type ChatAccess struct {
+	Whatsapp string `json:"whatsapp" dynamodbav:"whatsapp"`
+	WABA     string `json:"waba" dynamodbav:"waba"`
+	Messager string `json:"messager" dynamodbav:"messager"`
+	WeChat   string `json:"wechat" dynamodbav:"wechat"`
 }

@@ -594,3 +594,37 @@ func DeleteUserChannels(req events.APIGatewayProxyRequest, table string, dynaCli
 
 	return ApiResponse(http.StatusOK, out.Attributes), nil
 }
+
+func UpdateUserChatAccess(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
+	user := new(model.User)
+
+	err := json.Unmarshal([]byte(req.Body), &user)
+	if err != nil {
+		fmt.Println("UpdateUserChatAccess ", err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UpdateUserChatAccess " + err.Error())}), nil
+	}
+
+	avl, err := attributevalue.MarshalMap(user.ChatAccess)
+	if err != nil {
+		fmt.Println("UpdateUserChatAccess ", err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UpdateUserChatAccess " + err.Error())}), nil
+	}
+
+	_, err = dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
+		TableName: aws.String(table),
+		Key: map[string]types.AttributeValue{
+			"user_id": &types.AttributeValueMemberN{Value: strconv.Itoa(user.UserID)},
+		},
+		ConditionExpression: aws.String("attribute_exists(user_id)"),
+		UpdateExpression:    aws.String("SET chat_access = :val"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":val": &types.AttributeValueMemberM{Value: avl},
+		},
+	})
+	if err != nil {
+		fmt.Println("UpdateUserChatAccess ", err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UpdateUserChatAccess " + err.Error())}), nil
+	}
+
+	return ApiResponse(http.StatusOK, nil), nil
+}

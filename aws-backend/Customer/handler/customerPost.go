@@ -27,6 +27,11 @@ func AddCustomerItem(req events.APIGatewayProxyRequest, table string, dynaClient
 	if customer.CustomerID == 0 {
 		customer.CustomerID = customer.Phone
 	}
+	if customer.CustomerID < 10000000 {
+		fmt.Println("UserIdInValid")
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("UserIdInValid")}), nil
+	}
+
 	customer.CreatedAt = time.Now().Unix()
 	customer.UpdateAt = time.Now().Unix()
 
@@ -51,13 +56,13 @@ func AddCustomerItem(req events.APIGatewayProxyRequest, table string, dynaClient
 
 	}
 
-	fmt.Println("Adding leads to Agent:", customer.AgentsID)
-	err = ChangeAgentLeads('+', 1, customer.AgentsID, dynaClient)
-	if err != nil {
-		fmt.Println("FailedToChangeLeads, ", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToChangeLeads")}), nil
+	// fmt.Println("Adding leads to Agent:", customer.AgentsID)
+	// err = ChangeAgentLeads('+', 1, customer.AgentsID, dynaClient)
+	// if err != nil {
+	// 	fmt.Println("FailedToChangeLeads, ", err)
+	// 	return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToChangeLeads")}), nil
 
-	}
+	// }
 
 	return ApiResponse(http.StatusOK, customer), nil
 }

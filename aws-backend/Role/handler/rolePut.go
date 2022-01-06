@@ -33,7 +33,7 @@ func UpdateRoleWithID(req events.APIGatewayProxyRequest, table string, dynaClien
 	_, err = dynaClient.PutItem(context.TODO(), &dynamodb.PutItemInput{
 		TableName:           aws.String(os.Getenv("TABLE")),
 		Item:                av,
-		ConditionExpression: aws.String("attribute_existed(role_id)"),
+		ConditionExpression: aws.String("attribute_exists(role_id)"),
 	})
 	if err != nil {
 		fmt.Println("FailedToUpdateItem, RoleID = ", role.RoleID, ", ", err)

@@ -59,6 +59,8 @@ func handleRequest(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyRe
 			return handler.EditUserChannels(req, table, dynaClient)
 		case "/api/user/del-channels":
 			return handler.DeleteUserChannels(req, table, dynaClient)
+		case "/api/user/access-right":
+			return handler.UpdateUserChatAccess(req, table, dynaClient)
 		default:
 			return handler.ApiResponse(http.StatusBadRequest, handler.ErrMsg{aws.String("InvalidPutMethod")}), nil
 

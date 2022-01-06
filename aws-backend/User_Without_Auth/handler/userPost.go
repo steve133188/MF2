@@ -56,6 +56,11 @@ func AddUser(req events.APIGatewayProxyRequest, table string, dynaClient *dynamo
 		user.UserID = user.Phone
 	}
 
+	if user.UserID < 10000000 {
+		fmt.Println("UserIdInValid")
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("UserIdInValid")}), nil
+	}
+
 	user.CreateAt = time.Now().Unix()
 	user.Password, err = utils.HashPassword(user.Password)
 	if err != nil {

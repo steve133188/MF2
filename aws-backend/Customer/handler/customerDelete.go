@@ -4,9 +4,10 @@ import (
 	"aws-lambda-customer/model"
 	"context"
 	"fmt"
-	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"log"
 	"net/http"
+
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -66,12 +67,12 @@ func DeleteCustomerItem(req events.APIGatewayProxyRequest, table string, dynaCli
 
 	log.Println("out.Attributes = ", out2.Attributes)
 
-	err = ChangeAgentLeads('-', 1, customer.AgentsID, dynaClient)
-	if err != nil {
-		fmt.Println("FailedToChangeLeads, ", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToChangeLeads")}), nil
+	// err = ChangeAgentLeads('-', 1, customer.AgentsID, dynaClient)
+	// if err != nil {
+	// 	fmt.Println("FailedToChangeLeads, ", err)
+	// 	return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToChangeLeads")}), nil
 
-	}
+	// }
 
 	return ApiResponse(http.StatusOK, map[string]string{"message": "success"}), nil
 }
@@ -102,12 +103,12 @@ func DeleteCustomers(req events.APIGatewayProxyRequest, table string, dynaClient
 			log.Printf("UnmarshalMapError CustomerID = %v, %s", v, err)
 			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UnmarshalMapError")}), nil
 		}
-		err = ChangeAgentLeads('-', 1, customer.AgentsID, dynaClient)
-		if err != nil {
-			fmt.Println("FailedToChangeLeads, ", err)
-			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToChangeLeads")}), nil
+		// err = ChangeAgentLeads('-', 1, customer.AgentsID, dynaClient)
+		// if err != nil {
+		// 	fmt.Println("FailedToChangeLeads, ", err)
+		// 	return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToChangeLeads")}), nil
 
-		}
+		// }
 
 		//delete
 		_, err = dynaClient.DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
