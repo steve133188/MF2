@@ -518,7 +518,7 @@ func AddTagToCustomer(req events.APIGatewayProxyRequest, table string, dynaClien
 		Key: map[string]types.AttributeValue{
 			"customer_id": &types.AttributeValueMemberN{Value: strconv.Itoa(data.CustomerId)},
 		},
-		UpdateExpression: aws.String("SET tags_id = list_append(tags_id, :t) update_at = :u"),
+		UpdateExpression: aws.String("SET tags_id = list_append(tags_id, :t), update_at = :u"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":t": &types.AttributeValueMemberL{Value: res},
 			":u": &types.AttributeValueMemberN{Value: strconv.FormatInt(updateTime, 10)},

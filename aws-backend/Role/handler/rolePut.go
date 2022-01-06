@@ -8,12 +8,11 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
 func UpdateRoleWithID(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
@@ -25,18 +24,16 @@ func UpdateRoleWithID(req events.APIGatewayProxyRequest, table string, dynaClien
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqBody, " + err.Error())}), nil
 	}
 
-	updateTime := time.Now().Format(os.Getenv("TIMEFORMAT"))
+	av, err := attributevalue.MarshalMap(role)
+	if err != nil {
+		fmt.Println("UpdateRoleWithID ", err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UpdateRoleWithID " + err.Error())}), nil
+	}
 
-	_, err = dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
-		TableName: aws.String(os.Getenv("TABLE")),
-		Key: map[string]types.AttributeValue{
-			"role_id": &types.AttributeValueMemberN{Value: strconv.Itoa(role.RoleID)},
-		},
-		UpdateExpression: aws.String("Set role_name = :n, update_at = :t"),
-		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":n": &types.AttributeValueMemberS{Value: role.RoleName},
-			":t": &types.AttributeValueMemberS{Value: updateTime},
-		},
+	_, err = dynaClient.PutItem(context.TODO(), &dynamodb.PutItemInput{
+		TableName:           aws.String(os.Getenv("TABLE")),
+		Item:                av,
+		ConditionExpression: aws.String("attribute_existed(role_id)"),
 	})
 	if err != nil {
 		fmt.Println("FailedToUpdateItem, RoleID = ", role.RoleID, ", ", err)

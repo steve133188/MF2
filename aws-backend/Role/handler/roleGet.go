@@ -3,9 +3,11 @@ package handler
 import (
 	"aws-lambda-role/model"
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -32,7 +34,28 @@ func GetRoleByID(req events.APIGatewayProxyRequest, table string, dynaClient *dy
 		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("RoleNotExists, RoleID = " + id + ", " + err.Error())}), nil
 	}
 
-	role := new(model.Role)
+	//find total number of users having this role
+	up := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
+		TableName:        aws.String(os.Getenv("USERTABLE")),
+		Limit:            aws.Int32(50),
+		FilterExpression: aws.String("role_id = :id"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":id": &types.AttributeValueMemberN{Value: id},
+		},
+	})
+
+	count := 0
+	for up.HasMorePages() {
+		uout, err := up.NextPage(context.TODO())
+		if err != nil {
+			fmt.Println("GetRoleByID ", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("GetRoleByID " + err.Error())}), nil
+		}
+		count += int(uout.Count)
+	}
+
+	role := new(model.FullRole)
+	role.Total = count
 	err = attributevalue.UnmarshalMap(out.Item, &role)
 	if err != nil {
 		fmt.Println("FailedToUnmarshalMap, RoleID = ", id, ", ", err)
@@ -66,6 +89,42 @@ func GetAllRoles(req events.APIGatewayProxyRequest, table string, dynaClient *dy
 
 		roles = append(roles, pRoles...)
 	}
+	fullRoles := make([]model.FullRole, 0)
+	for _, v := range roles {
+		up := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
+			TableName:        aws.String(os.Getenv("USERTABLE")),
+			Limit:            aws.Int32(50),
+			FilterExpression: aws.String("role_id = :id"),
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":id": &types.AttributeValueMemberN{Value: strconv.Itoa(v.RoleID)},
+			},
+		})
 
-	return ApiResponse(http.StatusOK, roles), nil
+		count := 0
+		for up.HasMorePages() {
+			uout, err := up.NextPage(context.TODO())
+			if err != nil {
+				fmt.Println("GetAllRoles ", err)
+				return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("GetAllRoles " + err.Error())}), nil
+			}
+			count += int(uout.Count)
+		}
+
+		frole := new(model.FullRole)
+		val, err := json.Marshal(v)
+		if err != nil {
+			fmt.Println("GetAllRoles ", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("GetAllRoles " + err.Error())}), nil
+		}
+		err = json.Unmarshal(val, &frole)
+		if err != nil {
+			fmt.Println("GetAllRoles ", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("GetAllRoles " + err.Error())}), nil
+		}
+
+		frole.Total = count
+		fullRoles = append(fullRoles, *frole)
+	}
+
+	return ApiResponse(http.StatusOK, fullRoles), nil
 }

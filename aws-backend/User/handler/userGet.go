@@ -102,6 +102,12 @@ func GetUserByID(req events.APIGatewayProxyRequest, table string, dynaClient *dy
 		fullUser.Authority = role.Auth
 	}
 
+	user.Leads, err = getUserLeads(strconv.Itoa(user.UserID), dynaClient)
+	if err != nil {
+		fmt.Println("GetUserByID ", err)
+		return ApiResponse(http.StatusInternalServerError, aws.String("GetUserByID "+err.Error())), nil
+	}
+
 	return ApiResponse(http.StatusOK, fullUser), nil
 
 }
@@ -196,6 +202,11 @@ func GetUsersByTeamID(req events.APIGatewayProxyRequest, table string, dynaClien
 			fUser.RoleName = role.RoleName
 			fUser.Authority = role.Auth
 		}
+		fUser.Leads, err = getUserLeads(strconv.Itoa(v.UserID), dynaClient)
+		if err != nil {
+			fmt.Println("GetUsersByTeamID ", err)
+			return ApiResponse(http.StatusInternalServerError, aws.String("GetUsersByTeamID "+err.Error())), nil
+		}
 
 		fUser.Team = *team
 
@@ -288,6 +299,12 @@ func GetUsersByRoleID(req events.APIGatewayProxyRequest, table string, dynaClien
 		}
 		fullUser.RoleName = role.RoleName
 		fullUser.Authority = role.Auth
+		fullUser.Leads, err = getUserLeads(strconv.Itoa(v.UserID), dynaClient)
+		if err != nil {
+			fmt.Println("GetUsersByRoleID", err)
+			return ApiResponse(http.StatusInternalServerError, aws.String("GetUsersByRoleID"+err.Error())), nil
+		}
+
 		fullUsers = append(fullUsers, *fullUser)
 	}
 	return ApiResponse(http.StatusOK, fullUsers), nil
@@ -374,7 +391,11 @@ func GetUsers(req events.APIGatewayProxyRequest, table string, dynaClient *dynam
 			fullUser.RoleName = role.RoleName
 			fullUser.Authority = role.Auth
 		}
-
+		fullUser.Leads, err = getUserLeads(strconv.Itoa(v.UserID), dynaClient)
+		if err != nil {
+			fmt.Println("GetUsers", err)
+			return ApiResponse(http.StatusInternalServerError, aws.String("GetUsers"+err.Error())), nil
+		}
 		fullUsers = append(fullUsers, *fullUser)
 	}
 
@@ -448,7 +469,11 @@ func GetUsersWithoutTeam(req events.APIGatewayProxyRequest, table string, dynaCl
 			fullUser.RoleName = role.RoleName
 			fullUser.Authority = role.Auth
 		}
-
+		fullUser.Leads, err = getUserLeads(strconv.Itoa(v.UserID), dynaClient)
+		if err != nil {
+			fmt.Println("GetUsersWithoutTeam", err)
+			return ApiResponse(http.StatusInternalServerError, aws.String("GetUsersWithoutTeam"+err.Error())), nil
+		}
 		fullUsers = append(fullUsers, *fullUser)
 	}
 

@@ -181,6 +181,23 @@ func UpdateUserTeam(req events.APIGatewayProxyRequest, table string, dynaClient 
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqBody")}), nil
 	}
 
+	if user.TeamID != 0 {
+		out, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
+			TableName: aws.String(os.Getenv("ORGTABLE")),
+			Key: map[string]types.AttributeValue{
+				"org_id": &types.AttributeValueMemberN{Value: strconv.Itoa(user.TeamID)},
+			},
+		})
+		if err != nil {
+			fmt.Printf("FailedToGetItem, %s", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToGetItem")}), nil
+		}
+		if out.Item == nil {
+			fmt.Println("OrgNotExists, OrgID = ", user.TeamID)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("OrgNotExists, OrgID = " + strconv.Itoa(user.TeamID))}), nil
+		}
+	}
+
 	_, err = dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
 		TableName: &table,
 		Key: map[string]types.AttributeValue{
@@ -197,25 +214,7 @@ func UpdateUserTeam(req events.APIGatewayProxyRequest, table string, dynaClient 
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUpdateItem")}), nil
 	}
 
-	if user.TeamID != 0 {
-		out, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
-			TableName: &table,
-			Key: map[string]types.AttributeValue{
-				"user_id": &types.AttributeValueMemberN{Value: strconv.Itoa(user.UserID)},
-			},
-		})
-		if err != nil {
-			fmt.Printf("FailedToGetItem, %s", err)
-			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToGetItem")}), nil
-		}
-		err = attributevalue.UnmarshalMap(out.Item, &user)
-		if err != nil {
-			fmt.Printf("FailedToUnmarshalMap, %s", err)
-			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalMap")}), nil
-		}
-	}
-
-	return ApiResponse(http.StatusOK, user), nil
+	return ApiResponse(http.StatusOK, nil), nil
 }
 
 func UpdateUsersTeam(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {

@@ -1,9 +1,10 @@
 package model
 
 type Role struct {
-	RoleID   int    `json:"role_id" dynamodbav:"role_id"`
-	RoleName string `json:"role_name" dynamodbav:"role_name"`
-	Auth     Auth   `json:"authority" dynamodbav:"authority"`
+	RoleID   int      `json:"role_id" dynamodbav:"role_id"`
+	RoleName string   `json:"role_name" dynamodbav:"role_name"`
+	Auth     Auth     `json:"authority" dynamodbav:"authority"`
+	Channel  []string `json:"role_channel" dynamodbav:"role_channel"`
 }
 
 type Auth struct {
@@ -16,4 +17,12 @@ type Auth struct {
 	ProductCatalogue bool `json:"product_catalogue" dynamodbav:"product_catalogue" default:"false"`
 	Organization     bool `json:"organization" dynamodbav:"organization" default:"false"`
 	Admin            bool `json:"admin" dynamodbav:"admin" default:"false"`
+}
+
+type FullRole struct {
+	RoleID   int      `json:"role_id" dynamodbav:"role_id"`
+	RoleName string   `json:"role_name" dynamodbav:"role_name"`
+	Auth     Auth     `json:"authority" dynamodbav:"authority"`
+	Channel  []string `json:"role_channel" dynamodbav:"role_channel"`
+	Total    int      `json:"total"`
 }
