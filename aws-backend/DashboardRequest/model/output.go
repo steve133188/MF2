@@ -17,7 +17,7 @@ type Livechat struct {
 	NewAddedContacts   []int `json:"new_added_contacts" dynamodbav:"new_added_contacts"`
 	CommunicationHours []int `json:"communication_hours" dynamodbav:"communication_hours"`
 
-	Yaxis []int64 `json:"yaxis" dynamodbav:"yaxis"`
+	Yaxis []string `json:"yaxis" dynamodbav:"yaxis"`
 
 	Tags []Tags `json:"tags" dynamodbav:"tags"`
 }
@@ -29,6 +29,7 @@ type ChannelContact struct {
 
 type Agents struct {
 	Agent []Agent
+	Chart AgentChart `json:"chart"`
 
 	AgentsNo         []int `json:"agents_no" dynamodbav:"agents_no"`
 	Connected        []int `json:"connected" dynamodbav:"connected"`
@@ -36,17 +37,17 @@ type Agents struct {
 	AllContacts      []int `json:"all_contacts" dynamodbav:"all_contacts"`
 	NewAddedContacts []int `json:"new_added_contacts" dynamodbav:"new_added_contacts"`
 
-	TotalAssignedContacts  int `json:"total_assigned_contacts" dynamodbav:"total_assigned_contacts"`
-	TotalActiveContacts    int `json:"total_active_contacts" dynamodbav:"total_active_contacts"`
-	TotalDeliveredContacts int ` json:"total_delivered_contacts" dynamodbav:"total_delivered_contacts"`
-	TotalUnhandledContact  int `json:"total_unhandled_contact" dynamodbav:"total_unhandled_contact"`
+	TotalAssignedContacts  []int `json:"total_assigned_contacts" dynamodbav:"total_assigned_contacts"`
+	TotalActiveContacts    []int `json:"total_active_contacts" dynamodbav:"total_active_contacts"`
+	TotalDeliveredContacts []int ` json:"total_delivered_contacts" dynamodbav:"total_delivered_contacts"`
+	TotalUnhandledContact  []int `json:"total_unhandled_contact" dynamodbav:"total_unhandled_contact"`
 
-	TotalMsgSent int `json:"total_msg_sent" dynamodbav:"total_msg_sent"`
-	TotalMsgRev  int `json:"total_msg_rev" dynamodbav:"total_msg_rev"`
+	TotalMsgSent []int `json:"total_msg_sent" dynamodbav:"total_msg_sent"`
+	TotalMsgRev  []int `json:"total_msg_rev" dynamodbav:"total_msg_rev"`
 
-	AvgTotalRespTime      int64 `json:"avg_resp_time" dynamodbav:"avg_resp_time"`
-	AvgTotalFirstRespTime int64 `json:"avg_total_first_resp_time" dynamodbav:"avg_total_first_resp_time"`
-	AvgLongestRespTime    int64 `json:"longest_resp_time" dynamodbav:"longest_resp_time"`
+	AvgTotalRespTime      []int64 `json:"avg_resp_time" dynamodbav:"avg_resp_time"`
+	AvgTotalFirstRespTime []int64 `json:"avg_total_first_resp_time" dynamodbav:"avg_total_first_resp_time"`
+	AvgLongestRespTime    []int64 `json:"longest_resp_time" dynamodbav:"longest_resp_time"`
 
 	DataCollected int `json:"data_collected" dynamodbav:"data_collected"`
 }
@@ -73,4 +74,13 @@ type Agent struct {
 
 	MsgSent int `json:"msg_sent" dynamodbav:"msg_sent"`
 	MsgRev  int `json:"msg_rev" dynamodbav:"msg_rev"`
+}
+
+type AgentChart struct {
+	Unhandled []int    `json:"unhandled" dynamodbav:"unhandled"`
+	Delivered []int    `json:"delivered" dynamodbav:"delivered"`
+	Active    []int    `json:"active" dynamodbav:"active"`
+	UserName  []string `json:"user_name" dynamodbav:"user_name"`
+	UserID    []int    `json:"user_id" dynamodbav:"user_id"`
+	TeamID    []int    `json:"team_id" dynamodbav:"team_id"`
 }

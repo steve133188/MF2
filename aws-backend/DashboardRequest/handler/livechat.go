@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"net/http"
 	"sort"
+	"time"
 )
 
 func GetLivechatDashboard(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
@@ -63,20 +64,38 @@ func GetLivechatDashboard(req events.APIGatewayProxyRequest, table string, dynaC
 	livechat.TotalMsgRev = make([]int, dashLen)
 	livechat.AvgRespTime = make([]int64, dashLen)
 	livechat.NewAddedContacts = make([]int, dashLen)
-	livechat.CommunicationHours = make([]int, dashLen)
+	livechat.CommunicationHours = make([]int, 12)
 	livechat.NewAddedContacts = make([]int, dashLen)
+	livechat.Yaxis = make([]string, dashLen)
 
 	livechat.Tags = dashboard[dashLen-1].Tags
+	livechat.ChannelContact = make([]model.ChannelContact, 4)
+	livechat.ChannelContact[0].ChannelName = "Whatsapp"
+	livechat.ChannelContact[1].ChannelName = "WABA"
+	livechat.ChannelContact[2].ChannelName = "Messager"
+	livechat.ChannelContact[3].ChannelName = "Wechat"
+
 	for _, v := range dashboard[dashLen-1].Channel {
-		newChannel := new(model.ChannelContact)
-		newChannel.ChannelName = v.ChannelName
-		newChannel.ChannelTotalContact = v.AllContacts
-		livechat.ChannelContact = append(livechat.ChannelContact, *newChannel)
+		if v.ChannelName == "Whatsapp" {
+			livechat.ChannelContact[0].ChannelTotalContact = v.AllContacts
+			continue
+		}
+		if v.ChannelName == "WABA" {
+			livechat.ChannelContact[1].ChannelTotalContact = v.AllContacts
+			continue
+		}
+		if v.ChannelName == "Messager" {
+			livechat.ChannelContact[2].ChannelTotalContact = v.AllContacts
+			continue
+		}
+		if v.ChannelName == "Wechat" {
+			livechat.ChannelContact[3].ChannelTotalContact = v.AllContacts
+		}
 	}
 
 	for i, v := range dashboard {
 
-		for len(dashboard) <= 31 {
+		if len(dashboard) <= 31 {
 			livechat.AllContacts[i] = v.AllContacts
 			livechat.ActiveContacts[i] = v.TotalActiveContacts
 
@@ -93,7 +112,7 @@ func GetLivechatDashboard(req events.APIGatewayProxyRequest, table string, dynaC
 				livechat.CommunicationHours[j] = k
 			}
 
-			livechat.Yaxis[i] = v.TimeStamp
+			livechat.Yaxis[i] = time.Unix(v.TimeStamp, 0).Format("02/01")
 		}
 	}
 
@@ -165,8 +184,9 @@ func GetLivechatDashboardByChannel(req events.APIGatewayProxyRequest, table stri
 	channelLivechat.TotalMsgRev = make([]int, dashLen)
 	channelLivechat.AvgRespTime = make([]int64, dashLen)
 	channelLivechat.NewAddedContacts = make([]int, dashLen)
-	channelLivechat.CommunicationHours = make([]int, dashLen)
+	channelLivechat.CommunicationHours = make([]int, 12)
 	channelLivechat.NewAddedContacts = make([]int, dashLen)
+	channelLivechat.Yaxis = make([]string, dashLen)
 
 	channelLivechat.Tags = dashboard[len(dashboard)-1].Tags
 	for _, v := range dashboard[len(dashboard)-1].Channel {
@@ -177,7 +197,7 @@ func GetLivechatDashboardByChannel(req events.APIGatewayProxyRequest, table stri
 	}
 
 	for i, v := range dashboard {
-		for len(dashboard) <= 31 {
+		if len(dashboard) <= 31 {
 			channelLivechat.AllContacts[i] = v.Channel[channelIndex].AllContacts
 			channelLivechat.ActiveContacts[i] = v.Channel[channelIndex].TotalActiveContacts
 
@@ -194,7 +214,7 @@ func GetLivechatDashboardByChannel(req events.APIGatewayProxyRequest, table stri
 				channelLivechat.CommunicationHours[j] = k
 			}
 
-			channelLivechat.Yaxis[i] = v.TimeStamp
+			channelLivechat.Yaxis[i] = time.Unix(v.TimeStamp, 0).Format("02/01")
 		}
 	}
 	channelLivechat.AvgTotalRespTime = channelLivechat.AvgTotalRespTime / int64(dashLen)

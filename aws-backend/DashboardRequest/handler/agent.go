@@ -58,17 +58,41 @@ func GetAgentDashboard(req events.APIGatewayProxyRequest, table string, dynaClie
 	last := len(dashboard) - 1
 	agents.DataCollected = last + 1
 
-	agents.TotalMsgSent = dashboard[last].TotalMsgSent
-	agents.TotalMsgRev = dashboard[last].TotalMsgRev
+	agents.TotalMsgSent = make([]int, 2)
+	agents.TotalMsgRev = make([]int, 2)
 
-	agents.TotalActiveContacts = dashboard[last].TotalActiveContacts
-	agents.TotalAssignedContacts = dashboard[last].TotalAssignedContacts
-	agents.TotalDeliveredContacts = dashboard[last].TotalDeliveredContacts
-	agents.TotalUnhandledContact = dashboard[last].TotalUnhandledContact
+	agents.TotalActiveContacts = make([]int, 2)
+	agents.TotalAssignedContacts = make([]int, 2)
+	agents.TotalDeliveredContacts = make([]int, 2)
+	agents.TotalUnhandledContact = make([]int, 2)
 
-	agents.AvgTotalRespTime = dashboard[last].AvgTotalRespTime
-	agents.AvgTotalFirstRespTime = dashboard[last].AvgTotalFirstRespTime
-	agents.AvgLongestRespTime = dashboard[last].AvgLongestRespTime
+	agents.AvgTotalRespTime = make([]int64, 2)
+	agents.AvgTotalFirstRespTime = make([]int64, 2)
+	agents.AvgLongestRespTime = make([]int64, 2)
+
+	agents.TotalMsgSent[0] = dashboard[last-1].TotalMsgSent
+	agents.TotalMsgRev[0] = dashboard[last-1].TotalMsgRev
+
+	agents.TotalActiveContacts[0] = dashboard[last-1].TotalActiveContacts
+	agents.TotalAssignedContacts[0] = dashboard[last-1].TotalAssignedContacts
+	agents.TotalDeliveredContacts[0] = dashboard[last-1].TotalDeliveredContacts
+	agents.TotalUnhandledContact[0] = dashboard[last-1].TotalUnhandledContact
+
+	agents.AvgTotalRespTime[0] = dashboard[last-1].AvgTotalRespTime
+	agents.AvgTotalFirstRespTime[0] = dashboard[last-1].AvgTotalFirstRespTime
+	agents.AvgLongestRespTime[0] = dashboard[last-1].AvgLongestRespTime
+
+	agents.TotalMsgSent[1] = dashboard[last].TotalMsgSent
+	agents.TotalMsgRev[1] = dashboard[last].TotalMsgRev
+
+	agents.TotalActiveContacts[1] = dashboard[last].TotalActiveContacts
+	agents.TotalAssignedContacts[1] = dashboard[last].TotalAssignedContacts
+	agents.TotalDeliveredContacts[1] = dashboard[last].TotalDeliveredContacts
+	agents.TotalUnhandledContact[1] = dashboard[last].TotalUnhandledContact
+
+	agents.AvgTotalRespTime[1] = dashboard[last].AvgTotalRespTime
+	agents.AvgTotalFirstRespTime[1] = dashboard[last].AvgTotalFirstRespTime
+	agents.AvgLongestRespTime[1] = dashboard[last].AvgLongestRespTime
 
 	agents.Agent = make([]model.Agent, 0)
 	agents.AgentsNo = make([]int, last+1)
@@ -83,8 +107,8 @@ func GetAgentDashboard(req events.APIGatewayProxyRequest, table string, dynaClie
 		agents.AgentsNo[i] = len(dashboard[i].User)
 
 		if last+1 <= 31 {
-			for j, k := range v.User {
-				if i == 0 {
+			for _, k := range v.User {
+				if i == 0 || getAgentIndex(agents.Agent, k.UserID) == -1 {
 					newAgent := new(model.Agent)
 
 					if k.UserStatus == "Connected" {
@@ -93,6 +117,12 @@ func GetAgentDashboard(req events.APIGatewayProxyRequest, table string, dynaClie
 						agents.Disconnected[i]++
 
 					}
+
+					newAgent.UserID = k.UserID
+					newAgent.UserName = k.UserName
+					newAgent.UserRoleName = k.UserRoleName
+					newAgent.TeamID = k.TeamID
+					newAgent.UserStatus = k.UserStatus
 
 					newAgent.AssignedContacts = k.AssignedContacts
 					newAgent.ActiveContacts = k.ActiveContacts
@@ -112,34 +142,51 @@ func GetAgentDashboard(req events.APIGatewayProxyRequest, table string, dynaClie
 					agents.Agent = append(agents.Agent, *newAgent)
 				} else {
 
-					agents.Agent[j].NewAddedContacts += k.NewAddedContacts
-					agents.Agent[j].AllContacts += k.AllContacts
+					targetIndex := getAgentIndex(agents.Agent, k.UserID)
 
-					agents.Agent[i].AssignedContacts += k.AssignedContacts
-					agents.Agent[i].ActiveContacts += k.ActiveContacts
-					agents.Agent[i].DeliveredContacts += k.DeliveredContacts
-					agents.Agent[i].UnhandledContact += k.UnhandledContact
+					agents.Agent[targetIndex].UserName = k.UserName
+					agents.Agent[targetIndex].UserRoleName = k.UserRoleName
+					agents.Agent[targetIndex].TeamID = k.TeamID
+					agents.Agent[targetIndex].UserStatus = k.UserStatus
 
-					agents.Agent[j].AvgRespTime += k.AvgRespTime
-					agents.Agent[j].FirstRespTime += k.FirstRespTime
-					agents.Agent[j].LongestRespTime += k.LongestRespTime
+					agents.Agent[targetIndex].NewAddedContacts += k.NewAddedContacts
+					agents.Agent[targetIndex].AllContacts += k.AllContacts
 
-					agents.Agent[j].MsgSent += k.MsgSent
-					agents.Agent[j].MsgRev += k.MsgRev
+					agents.Agent[targetIndex].AssignedContacts += k.AssignedContacts
+					agents.Agent[targetIndex].ActiveContacts += k.ActiveContacts
+					agents.Agent[targetIndex].DeliveredContacts += k.DeliveredContacts
+					agents.Agent[targetIndex].UnhandledContact += k.UnhandledContact
+
+					agents.Agent[targetIndex].AvgRespTime += k.AvgRespTime
+					agents.Agent[targetIndex].FirstRespTime += k.FirstRespTime
+					agents.Agent[targetIndex].LongestRespTime += k.LongestRespTime
+
+					agents.Agent[targetIndex].MsgSent += k.MsgSent
+					agents.Agent[targetIndex].MsgRev += k.MsgRev
 				}
 			}
 		}
 	}
+	agentLen := len(agents.Agent)
+	agents.Chart.UserName = make([]string, agentLen)
+	agents.Chart.UserID = make([]int, agentLen)
+	agents.Chart.TeamID = make([]int, agentLen)
+	agents.Chart.Active = make([]int, agentLen)
+	agents.Chart.Delivered = make([]int, agentLen)
+	agents.Chart.Unhandled = make([]int, agentLen)
+
 	for i, _ := range agents.Agent {
-		agents.Agent[i].UserID = dashboard[last].User[i].UserID
-		agents.Agent[i].UserName = dashboard[last].User[i].UserName
-		agents.Agent[i].UserRoleName = dashboard[last].User[i].UserRoleName
-		agents.Agent[i].TeamID = dashboard[last].User[i].TeamID
-		agents.Agent[i].UserStatus = dashboard[last].User[i].UserStatus
 
 		agents.Agent[i].AvgRespTime = agents.Agent[i].AvgRespTime / int64(last+1)
 		agents.Agent[i].FirstRespTime = agents.Agent[i].FirstRespTime / int64(last+1)
 		agents.Agent[i].LongestRespTime = agents.Agent[i].LongestRespTime / int64(last+1)
+
+		agents.Chart.UserName[i] = agents.Agent[i].UserName
+		agents.Chart.UserID[i] = agents.Agent[i].UserID
+		agents.Chart.TeamID[i] = agents.Agent[i].TeamID
+		agents.Chart.Active[i] = agents.Agent[i].ActiveContacts
+		agents.Chart.Delivered[i] = agents.Agent[i].DeliveredContacts
+		agents.Chart.Unhandled[i] = agents.Agent[i].UnhandledContact
 	}
 
 	return ApiResponse(http.StatusOK, agents), nil
@@ -203,17 +250,41 @@ func GetAgentDashboardByChannel(req events.APIGatewayProxyRequest, table string,
 	last := len(dashboard) - 1
 	agents.DataCollected = last + 1
 
-	agents.TotalMsgSent = dashboard[last].Channel[channelIndex].TotalMsgSent
-	agents.TotalMsgRev = dashboard[last].Channel[channelIndex].TotalMsgRev
+	agents.TotalMsgSent = make([]int, 2)
+	agents.TotalMsgRev = make([]int, 2)
 
-	agents.TotalActiveContacts = dashboard[last].Channel[channelIndex].TotalActiveContacts
-	agents.TotalAssignedContacts = dashboard[last].Channel[channelIndex].TotalAssignedContacts
-	agents.TotalDeliveredContacts = dashboard[last].Channel[channelIndex].TotalDeliveredContacts
-	agents.TotalUnhandledContact = dashboard[last].Channel[channelIndex].TotalUnhandledContact
+	agents.TotalActiveContacts = make([]int, 2)
+	agents.TotalAssignedContacts = make([]int, 2)
+	agents.TotalDeliveredContacts = make([]int, 2)
+	agents.TotalUnhandledContact = make([]int, 2)
 
-	agents.AvgTotalRespTime = dashboard[last].Channel[channelIndex].AvgTotalRespTime
-	agents.AvgTotalFirstRespTime = dashboard[last].Channel[channelIndex].AvgTotalFirstRespTime
-	agents.AvgLongestRespTime = dashboard[last].Channel[channelIndex].AvgLongestRespTime
+	agents.AvgTotalRespTime = make([]int64, 2)
+	agents.AvgTotalFirstRespTime = make([]int64, 2)
+	agents.AvgLongestRespTime = make([]int64, 2)
+
+	agents.TotalMsgSent[0] = dashboard[last-1].TotalMsgSent
+	agents.TotalMsgRev[0] = dashboard[last-1].TotalMsgRev
+
+	agents.TotalActiveContacts[0] = dashboard[last-1].TotalActiveContacts
+	agents.TotalAssignedContacts[0] = dashboard[last-1].TotalAssignedContacts
+	agents.TotalDeliveredContacts[0] = dashboard[last-1].TotalDeliveredContacts
+	agents.TotalUnhandledContact[0] = dashboard[last-1].TotalUnhandledContact
+
+	agents.AvgTotalRespTime[0] = dashboard[last-1].AvgTotalRespTime
+	agents.AvgTotalFirstRespTime[0] = dashboard[last-1].AvgTotalFirstRespTime
+	agents.AvgLongestRespTime[0] = dashboard[last-1].AvgLongestRespTime
+
+	agents.TotalMsgSent[1] = dashboard[last].TotalMsgSent
+	agents.TotalMsgRev[1] = dashboard[last].TotalMsgRev
+
+	agents.TotalActiveContacts[1] = dashboard[last].TotalActiveContacts
+	agents.TotalAssignedContacts[1] = dashboard[last].TotalAssignedContacts
+	agents.TotalDeliveredContacts[1] = dashboard[last].TotalDeliveredContacts
+	agents.TotalUnhandledContact[1] = dashboard[last].TotalUnhandledContact
+
+	agents.AvgTotalRespTime[1] = dashboard[last].AvgTotalRespTime
+	agents.AvgTotalFirstRespTime[1] = dashboard[last].AvgTotalFirstRespTime
+	agents.AvgLongestRespTime[1] = dashboard[last].AvgLongestRespTime
 
 	agents.Agent = make([]model.Agent, 0)
 	agents.AgentsNo = make([]int, last+1)
@@ -228,8 +299,8 @@ func GetAgentDashboardByChannel(req events.APIGatewayProxyRequest, table string,
 		agents.AgentsNo[i] = len(dashboard[i].User)
 
 		if last+1 <= 31 {
-			for j, k := range v.Channel[channelIndex].User {
-				if i == 0 {
+			for _, k := range v.Channel[channelIndex].User {
+				if i == 0 || getAgentIndex(agents.Agent, k.UserID) == -1 {
 					newAgent := new(model.Agent)
 
 					if k.UserStatus == "Connected" {
@@ -238,6 +309,12 @@ func GetAgentDashboardByChannel(req events.APIGatewayProxyRequest, table string,
 						agents.Disconnected[i]++
 
 					}
+
+					newAgent.UserID = k.UserID
+					newAgent.UserName = k.UserName
+					newAgent.UserRoleName = k.UserRoleName
+					newAgent.TeamID = k.TeamID
+					newAgent.UserStatus = k.UserStatus
 
 					newAgent.AssignedContacts = k.AssignedContacts
 					newAgent.ActiveContacts = k.ActiveContacts
@@ -256,36 +333,62 @@ func GetAgentDashboardByChannel(req events.APIGatewayProxyRequest, table string,
 
 					agents.Agent = append(agents.Agent, *newAgent)
 				} else {
-					agents.Agent[j].AssignedContacts += k.AssignedContacts
-					agents.Agent[j].ActiveContacts += k.ActiveContacts
-					agents.Agent[j].DeliveredContacts += k.DeliveredContacts
-					agents.Agent[j].UnhandledContact += k.UnhandledContact
+					targetIndex := getAgentIndex(agents.Agent, k.UserID)
 
-					agents.Agent[j].NewAddedContacts += k.NewAddedContacts
-					agents.Agent[j].AllContacts += k.AllContacts
+					agents.Agent[targetIndex].UserName = k.UserName
+					agents.Agent[targetIndex].UserRoleName = k.UserRoleName
+					agents.Agent[targetIndex].TeamID = k.TeamID
+					agents.Agent[targetIndex].UserStatus = k.UserStatus
 
-					agents.Agent[j].AvgRespTime += k.AvgRespTime
-					agents.Agent[j].FirstRespTime += k.FirstRespTime
-					agents.Agent[j].LongestRespTime += k.LongestRespTime
+					agents.Agent[targetIndex].AssignedContacts += k.AssignedContacts
+					agents.Agent[targetIndex].ActiveContacts += k.ActiveContacts
+					agents.Agent[targetIndex].DeliveredContacts += k.DeliveredContacts
+					agents.Agent[targetIndex].UnhandledContact += k.UnhandledContact
 
-					agents.Agent[j].MsgSent += k.MsgSent
-					agents.Agent[j].MsgRev += k.MsgRev
+					agents.Agent[targetIndex].NewAddedContacts += k.NewAddedContacts
+					agents.Agent[targetIndex].AllContacts += k.AllContacts
+
+					agents.Agent[targetIndex].AvgRespTime += k.AvgRespTime
+					agents.Agent[targetIndex].FirstRespTime += k.FirstRespTime
+					agents.Agent[targetIndex].LongestRespTime += k.LongestRespTime
+
+					agents.Agent[targetIndex].MsgSent += k.MsgSent
+					agents.Agent[targetIndex].MsgRev += k.MsgRev
 				}
 			}
 		}
 	}
 
+	agentLen := len(agents.Agent)
+	agents.Chart.UserName = make([]string, agentLen)
+	agents.Chart.UserID = make([]int, agentLen)
+	agents.Chart.TeamID = make([]int, agentLen)
+	agents.Chart.Active = make([]int, agentLen)
+	agents.Chart.Delivered = make([]int, agentLen)
+	agents.Chart.Unhandled = make([]int, agentLen)
+
 	for i, _ := range agents.Agent {
-		agents.Agent[i].UserID = dashboard[last].User[i].UserID
-		agents.Agent[i].UserName = dashboard[last].User[i].UserName
-		agents.Agent[i].UserRoleName = dashboard[last].User[i].UserRoleName
-		agents.Agent[i].TeamID = dashboard[last].User[i].TeamID
-		agents.Agent[i].UserStatus = dashboard[last].User[i].UserStatus
 
 		agents.Agent[i].AvgRespTime = agents.Agent[i].AvgRespTime / int64(last+1)
 		agents.Agent[i].FirstRespTime = agents.Agent[i].FirstRespTime / int64(last+1)
 		agents.Agent[i].LongestRespTime = agents.Agent[i].LongestRespTime / int64(last+1)
+
+		agents.Chart.UserName[i] = agents.Agent[i].UserName
+		agents.Chart.UserID[i] = agents.Agent[i].UserID
+		agents.Chart.TeamID[i] = agents.Agent[i].TeamID
+		agents.Chart.Active[i] = agents.Agent[i].ActiveContacts
+		agents.Chart.Delivered[i] = agents.Agent[i].DeliveredContacts
+		agents.Chart.Unhandled[i] = agents.Agent[i].UnhandledContact
 	}
 
 	return ApiResponse(http.StatusOK, agents), nil
+}
+
+func getAgentIndex(agents []model.Agent, target int) int {
+	for i, v := range agents {
+		if v.UserID == target {
+			return i
+		}
+	}
+	return -1
 }

@@ -230,7 +230,7 @@ func UpdateDashBoard() error {
 			channelData.User = append(channelData.User, *userInfo)
 
 			//put item into dashboard user struct
-			if i == 0 {
+			if i == 0 || len(channelMsg[0].ChannelMessage) == 0 {
 				dashboard.User = append(dashboard.User, *userInfo)
 			} else {
 				dashboard.User[j].AvgRespTime += userInfo.AvgRespTime
@@ -270,6 +270,8 @@ func UpdateDashBoard() error {
 
 		dashboard.TotalMsgSent += channelData.TotalMsgSent
 		dashboard.TotalMsgRev += channelData.TotalMsgRev
+
+		dashboard.CommunicationHours = make([]int, 12)
 		for i, c := range channelData.CommunicationHours {
 			dashboard.CommunicationHours[i] += c
 		}
