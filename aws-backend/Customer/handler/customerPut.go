@@ -668,32 +668,64 @@ func DeleteCustomerTag(req events.APIGatewayProxyRequest, table string, dynaClie
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqBody")}), nil
 	}
 
+	cout, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
+		TableName: aws.String(table),
+		Key: map[string]types.AttributeValue{
+			"customer_id": &types.AttributeValueMemberN{Value: strconv.Itoa(data.CustomerId)},
+		},
+	})
+	if err != nil {
+		fmt.Println("FailedToGetCustomer, CustomerID = ", data.CustomerId)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToGetCustomer, CustomerID = " + strconv.Itoa(data.CustomerId))}), nil
+	}
+	if cout.Item == nil {
+		fmt.Println("CustomerNotExisted, CustomerID = ", data.CustomerId)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("CustomerNotExisted, CustomerID = " + strconv.Itoa(data.CustomerId))}), nil
+	}
+
+	customer := new(model.Customer)
+	err = attributevalue.UnmarshalMap(cout.Item, &customer)
+	if err != nil {
+		fmt.Println("FailedToUnmarshalMap, CustomerID = ", data.CustomerId)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalMap, CustomerID = " + strconv.Itoa(data.CustomerId))}), nil
+	}
+
 	var tagStr string
+	fmt.Println("data.tags = ", data.Tags)
+	fmt.Println("customer.TagsID = ", customer.TagsID)
+	for k, v := range customer.TagsID {
+		for _, j := range data.Tags {
+			fmt.Println("customer.TagsID = ", k)
+			fmt.Println("data.tags = ", j)
 
-	for k, v := range data.Tags {
-		gout, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
-			TableName: aws.String(os.Getenv("TAGTABLE")),
-			Key: map[string]types.AttributeValue{
-				"tag_id": &types.AttributeValueMemberN{Value: strconv.Itoa(v)},
-			},
-		})
-		if err != nil {
-			fmt.Println("FailedToGetTag, Tag_id = ", v, err)
-			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToGetTag, tagID = " + strconv.Itoa(v))}), nil
-		}
-		if gout.Item == nil {
-			fmt.Println("TagNotExist, tag_id = ", v)
-			return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("TagNotExist, tagID = " + strconv.Itoa(v))}), nil
-		}
+			if v == j {
+				gout, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
+					TableName: aws.String(os.Getenv("TAGTABLE")),
+					Key: map[string]types.AttributeValue{
+						"tag_id": &types.AttributeValueMemberN{Value: strconv.Itoa(v)},
+					},
+				})
+				if err != nil {
+					fmt.Println("FailedToGetTag, Tag_id = ", v, err)
+					return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToGetTag, tagID = " + strconv.Itoa(v))}), nil
+				}
+				if gout.Item == nil {
+					fmt.Println("TagNotExist, tag_id = ", v)
+					return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("TagNotExist, tagID = " + strconv.Itoa(v))}), nil
+				}
 
-		if k == 0 {
-			tagStr = "REMOVE tags_id[" + strconv.Itoa(k) + "]"
-		} else {
-			tagStr += ", tags_id[" + strconv.Itoa(k) + "]"
+				if k == 0 {
+					tagStr = "REMOVE tags_id[" + strconv.Itoa(k) + "]"
+				} else {
+					tagStr += ", tags_id[" + strconv.Itoa(k) + "]"
+				}
+				break
+			}
 		}
 
 	}
 
+	fmt.Println("tagStr = ", tagStr)
 	updateTime := time.Now().Unix()
 
 	_, err = dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
@@ -717,21 +749,23 @@ func DeleteCustomerTag(req events.APIGatewayProxyRequest, table string, dynaClie
 }
 
 func DeleteCustomersTag(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
-	var data struct {
-		DeleteTag string `json:"delete_tag"`
-	}
+	// var data struct {
+	// 	DeleteTag string `json:"delete_tag"`
+	// }
 
-	err := json.Unmarshal([]byte(req.Body), &data)
-	if err != nil {
-		fmt.Println("FailedToUnmarshalReqData, ", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqData")}), nil
-	}
+	id := req.PathParameters["id"]
+
+	// err := json.Unmarshal([]byte(req.Body), &data)
+	// if err != nil {
+	// 	fmt.Println("FailedToUnmarshalReqData, ", err)
+	// 	return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqData")}), nil
+	// }
 
 	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
 		TableName:        &table,
 		FilterExpression: aws.String("contains(tags_id, :g)"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":g": &types.AttributeValueMemberN{Value: data.DeleteTag},
+			":g": &types.AttributeValueMemberN{Value: id},
 		},
 		Limit: aws.Int32(50),
 	})
@@ -756,7 +790,7 @@ func DeleteCustomersTag(req events.APIGatewayProxyRequest, table string, dynaCli
 	}
 
 	// change old tag to int
-	deleteTagInt, _ := strconv.Atoi(data.DeleteTag)
+	deleteTagInt, _ := strconv.Atoi(id)
 
 	for _, v := range customers {
 
@@ -772,7 +806,7 @@ func DeleteCustomersTag(req events.APIGatewayProxyRequest, table string, dynaCli
 		updateTime := time.Now().Unix()
 
 		removeStr := "remove tags_id[" + tagIndex + "]"
-		_, err = dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
+		_, err := dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
 			TableName: aws.String(table),
 			Key: map[string]types.AttributeValue{
 				"customer_id": &types.AttributeValueMemberN{Value: strconv.Itoa(v.CustomerID)},

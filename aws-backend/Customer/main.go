@@ -62,7 +62,7 @@ func handleRequest(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyRe
 			return handler.AddTagToCustomers(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
 		case "/customers/edit-tags":
 			return handler.EditCustomersTag(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
-		case "/customers/del-tags":
+		case "/customers/del-tags/{id}":
 			return handler.DeleteCustomersTag(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
 			//group ************************************************************************************************************************
 		case "/customer/group":

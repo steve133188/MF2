@@ -61,6 +61,10 @@ func AddUser(req events.APIGatewayProxyRequest, table string, dynaClient *dynamo
 		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("UserIdInValid")}), nil
 	}
 
+	if len(user.Channels) == 0 {
+		user.Channels = make([]model.Chan, 0)
+	}
+
 	user.CreateAt = time.Now().Unix()
 	user.Password, err = utils.HashPassword(user.Password)
 	if err != nil {
