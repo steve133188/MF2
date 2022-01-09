@@ -109,15 +109,24 @@ func GetAssignedContacts(userId int, customers []model.Customer) (int, []model.C
 }
 
 func GetDeliveredContacts(userId int, customers []model.Customer, messages []model.Message) int {
+	var contact []int
 	count := 0
 	for i, v := range messages {
 		for _, k := range customers {
 			sender, err := strconv.Atoi(messages[i].Sender)
+			reciever, err := strconv.Atoi(messages[i].Recipient)
 			if err != nil {
 				return count
 			}
-			if k.CustomerID == sender && strings.Contains(v.Sender, strconv.Itoa(userId)) {
-				count++
+			if k.CustomerID == reciever && strings.Contains(v.Sender, strconv.Itoa(userId)) {
+				if !intInSlice(sender, contact) {
+					contact = append(contact, sender)
+					count++
+				}
+				if !intInSlice(k.CustomerID, contact) {
+					contact = append(contact, k.CustomerID)
+					count++
+				}
 				break
 			}
 		}
@@ -127,25 +136,49 @@ func GetDeliveredContacts(userId int, customers []model.Customer, messages []mod
 
 //Message Info ************************************************************************************************
 
-func GetRespTime(userID int, messages []model.Message) (model.RespTime, int, error) {
+func GetRespTime(userID int, messages []model.Message) (model.RespTime, int, int, error) {
 	var respTime model.RespTime
 	var respTimeArr []int64
+	var activeContactName []string
+	var activeContactCount int
+	var unhandledContactName []string
+	var unhandledContactCount int
 
 	//get All response time
 	i := 0
 	for i < len(messages) {
-		if strings.Contains(messages[i].Receiver, strconv.Itoa(userID)) {
+		if strings.Contains(messages[i].Recipient, strconv.Itoa(userID)) {
 			for j := i; j < len(messages); j++ {
-				if messages[j].Sender == messages[i].Receiver {
+				if messages[j].Sender == messages[i].Recipient {
 					jtime, err := strconv.ParseInt(messages[j].TimeStamp, 10, 64)
 					if err != nil {
-						return model.RespTime{}, len(respTimeArr), err
+						return model.RespTime{}, activeContactCount, unhandledContactCount, err
 					}
 					itime, err := strconv.ParseInt(messages[i].TimeStamp, 10, 64)
 					if err != nil {
-						return model.RespTime{}, len(respTimeArr), err
+						return model.RespTime{}, activeContactCount, unhandledContactCount, err
 					}
 					respTimeArr = append(respTimeArr, jtime-itime)
+
+					if !strInSlice(messages[j].Sender, activeContactName) {
+						activeContactName = append(activeContactName, messages[j].Sender)
+						activeContactCount++
+					}
+					if !strInSlice(messages[i].Recipient, activeContactName) {
+						activeContactName = append(activeContactName, messages[j].Sender)
+						activeContactCount++
+					}
+					break
+				}
+				if j+1 == len(messages) {
+					if !strInSlice(messages[j].Sender, unhandledContactName) {
+						activeContactName = append(unhandledContactName, messages[j].Sender)
+						unhandledContactCount++
+					}
+					if !strInSlice(messages[i].Recipient, unhandledContactName) {
+						activeContactName = append(unhandledContactName, messages[j].Sender)
+						unhandledContactCount++
+					}
 				}
 			}
 		}
@@ -153,7 +186,7 @@ func GetRespTime(userID int, messages []model.Message) (model.RespTime, int, err
 	}
 
 	if len(respTimeArr) == 0 {
-		return respTime, 0, nil
+		return respTime, 0, 0, nil
 	}
 
 	//calculate the sum and maximum
@@ -169,7 +202,7 @@ func GetRespTime(userID int, messages []model.Message) (model.RespTime, int, err
 	respTime.First = respTimeArr[0]
 	respTime.Longest = max
 	respTime.Average = sum / int64(len(respTimeArr))
-	return respTime, len(respTimeArr), nil
+	return respTime, activeContactCount, unhandledContactCount, nil
 }
 
 func GetMsgSent(userID int, messages []model.Message) int {
@@ -185,7 +218,7 @@ func GetMsgSent(userID int, messages []model.Message) int {
 func GetMsgRev(userID int, messages []model.Message) int {
 	var count int
 	for _, v := range messages {
-		if strings.Contains(v.Receiver, strconv.Itoa(userID)) {
+		if strings.Contains(v.Recipient, strconv.Itoa(userID)) {
 			count++
 		}
 	}
@@ -243,8 +276,25 @@ func GetCommunicationHour(start int64, end int64, noOfInterval int, message []mo
 //Tool functions ************************************************************************************************
 
 func intInSlice(a int, list []int) bool {
+	if len(list) == 0 {
+		return false
+	}
+
 	for _, b := range list {
 		if b == a {
+			return true
+		}
+	}
+	return false
+}
+
+func strInSlice(a string, list []string) bool {
+	if len(list) == 0 {
+		return false
+	}
+
+	for _, b := range list {
+		if strings.Contains(b, a) {
 			return true
 		}
 	}

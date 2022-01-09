@@ -190,7 +190,7 @@ func UpdateDashBoard() error {
 			userInfo.LastLogin = k.LastLogin
 
 			//user dashboard info
-			respTime, activeCount, err := GetRespTime(k.UserID, v.ChannelMessage)
+			respTime, activeCount, unhandledCount, err := GetRespTime(k.UserID, v.ChannelMessage)
 			if err != nil {
 				return err
 			}
@@ -204,10 +204,10 @@ func UpdateDashBoard() error {
 
 			//contact info
 
-			count, assignedCustomers := GetAssignedContacts(k.UserID, customers)
+			count, _ := GetAssignedContacts(k.UserID, customers)
 			userInfo.AssignedContacts = count
 			userInfo.ActiveContacts = activeCount
-			userInfo.DeliveredContacts = GetDeliveredContacts(k.UserID, assignedCustomers, v.ChannelMessage)
+			userInfo.DeliveredContacts = unhandledCount
 			userInfo.UnhandledContact = userInfo.AssignedContacts - userInfo.ActiveContacts - userInfo.DeliveredContacts
 
 			userInfo.NewAddedContacts = 0 //later use
