@@ -70,17 +70,19 @@ func GetAgentDashboard(req events.APIGatewayProxyRequest, table string, dynaClie
 	agents.AvgTotalFirstRespTime = make([]int64, 2)
 	agents.AvgLongestRespTime = make([]int64, 2)
 
-	agents.TotalMsgSent[0] = dashboard[last-1].TotalMsgSent
-	agents.TotalMsgRev[0] = dashboard[last-1].TotalMsgRev
+	if last > 0 {
+		agents.TotalMsgSent[0] = dashboard[last].TotalMsgSent
+		agents.TotalMsgRev[0] = dashboard[last].TotalMsgRev
 
-	agents.TotalActiveContacts[0] = dashboard[last-1].TotalActiveContacts
-	agents.TotalAssignedContacts[0] = dashboard[last-1].TotalAssignedContacts
-	agents.TotalDeliveredContacts[0] = dashboard[last-1].TotalDeliveredContacts
-	agents.TotalUnhandledContact[0] = dashboard[last-1].TotalUnhandledContact
+		agents.TotalActiveContacts[0] = dashboard[last-1].TotalActiveContacts
+		agents.TotalAssignedContacts[0] = dashboard[last-1].TotalAssignedContacts
+		agents.TotalDeliveredContacts[0] = dashboard[last-1].TotalDeliveredContacts
+		agents.TotalUnhandledContact[0] = dashboard[last-1].TotalUnhandledContact
 
-	agents.AvgTotalRespTime[0] = dashboard[last-1].AvgTotalRespTime
-	agents.AvgTotalFirstRespTime[0] = dashboard[last-1].AvgTotalFirstRespTime
-	agents.AvgLongestRespTime[0] = dashboard[last-1].AvgLongestRespTime
+		agents.AvgTotalRespTime[0] = dashboard[last-1].AvgTotalRespTime
+		agents.AvgTotalFirstRespTime[0] = dashboard[last-1].AvgTotalFirstRespTime
+		agents.AvgLongestRespTime[0] = dashboard[last-1].AvgLongestRespTime
+	}
 
 	agents.TotalMsgSent[1] = dashboard[last].TotalMsgSent
 	agents.TotalMsgRev[1] = dashboard[last].TotalMsgRev
@@ -262,17 +264,19 @@ func GetAgentDashboardByChannel(req events.APIGatewayProxyRequest, table string,
 	agents.AvgTotalFirstRespTime = make([]int64, 2)
 	agents.AvgLongestRespTime = make([]int64, 2)
 
-	agents.TotalMsgSent[0] = dashboard[last-1].TotalMsgSent
-	agents.TotalMsgRev[0] = dashboard[last-1].TotalMsgRev
+	if last > 0 {
+		agents.TotalMsgSent[0] = dashboard[last-1].TotalMsgSent
+		agents.TotalMsgRev[0] = dashboard[last-1].TotalMsgRev
 
-	agents.TotalActiveContacts[0] = dashboard[last-1].TotalActiveContacts
-	agents.TotalAssignedContacts[0] = dashboard[last-1].TotalAssignedContacts
-	agents.TotalDeliveredContacts[0] = dashboard[last-1].TotalDeliveredContacts
-	agents.TotalUnhandledContact[0] = dashboard[last-1].TotalUnhandledContact
+		agents.TotalActiveContacts[0] = dashboard[last-1].TotalActiveContacts
+		agents.TotalAssignedContacts[0] = dashboard[last-1].TotalAssignedContacts
+		agents.TotalDeliveredContacts[0] = dashboard[last-1].TotalDeliveredContacts
+		agents.TotalUnhandledContact[0] = dashboard[last-1].TotalUnhandledContact
 
-	agents.AvgTotalRespTime[0] = dashboard[last-1].AvgTotalRespTime
-	agents.AvgTotalFirstRespTime[0] = dashboard[last-1].AvgTotalFirstRespTime
-	agents.AvgLongestRespTime[0] = dashboard[last-1].AvgLongestRespTime
+		agents.AvgTotalRespTime[0] = dashboard[last-1].AvgTotalRespTime
+		agents.AvgTotalFirstRespTime[0] = dashboard[last-1].AvgTotalFirstRespTime
+		agents.AvgLongestRespTime[0] = dashboard[last-1].AvgLongestRespTime
+	}
 
 	agents.TotalMsgSent[1] = dashboard[last].TotalMsgSent
 	agents.TotalMsgRev[1] = dashboard[last].TotalMsgRev
