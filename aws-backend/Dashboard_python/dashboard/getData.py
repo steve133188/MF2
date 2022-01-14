@@ -10,7 +10,12 @@ class GetData:
 
     # Dynamodb
     def __init__(self):
-        dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-1')
+        keyID1 = 'AKIATRVR34'
+        keyID2 = 'WXY767NBFP'
+        accessKey1 = 'E/X8SfmdBx0SNRO4q4W'
+        accessKey2 = 'fTLb0CrNrd+2UL5fO/z1r'
+
+        dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-1', aws_access_key_id = keyID1 + keyID2, aws_secret_access_key = accessKey1 + accessKey2)
         self.user_table = dynamodb.Table('MF2_TCO_USER')
         self.role_table = dynamodb.Table('MF2_TCO_ROLE')
         self.customer_table = dynamodb.Table('MF2_TCO_CUSTOMER')
