@@ -40,7 +40,7 @@ class GetData:
         msgs_data = msgs['Items']
 
         while msgs.get('LastEvaluatedKey'):
-            msgs = self.msg_table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+            msgs = self.msg_table.scan(ExclusiveStartKey=msgs['LastEvaluatedKey'])
             msgs_data.extend(msgs['Items'])
 
         all_msgs_counts = msgs['Count']
@@ -54,7 +54,7 @@ class GetData:
         users_data = users['Items']
 
         while users.get('LastEvaluatedKey'):
-            users = self.user_table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+            users = self.user_table.scan(ExclusiveStartKey=users['LastEvaluatedKey'])
             users_data.extend(users['Items'])
 
         all_users_counts = users['Count']
@@ -68,7 +68,7 @@ class GetData:
         roles_data = roles['Items']
 
         while roles.get('LastEvaluatedKey'):
-            roles = self.role_table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+            roles = self.role_table.scan(ExclusiveStartKey=roles['LastEvaluatedKey'])
             roles_data.extend(roles['Items'])
 
         all_roles_counts = roles['Count']
@@ -82,7 +82,7 @@ class GetData:
         customers_data = customers['Items']
 
         while customers.get('LastEvaluatedKey'):
-            customers = self.customer_table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+            customers = self.customer_table.scan(ExclusiveStartKey=customers['LastEvaluatedKey'])
             customers_data.extend(customers['Items'])
 
         all_customers_counts = customers['Count']
@@ -90,12 +90,13 @@ class GetData:
 
         return customers_data
 
+    #################################################################################
     def get_tag(self):
         tags = self.tag_table.scan()
         tags_data = tags['Items']
 
         while tags.get('LastEvaluatedKey'):
-            tags = self.tag_table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+            tags = self.tag_table.scan(ExclusiveStartKey=tags['LastEvaluatedKey'])
             tags_data.extend(tags['Items'])
 
         all_tags_counts = tags['Count']
@@ -122,10 +123,12 @@ class GetData:
         logs_data = logs['Items']
 
         while logs.get('LastEvaluatedKey'):
-            logs = self.log_table.scab(ExclusiveStartKey=response['LastEvaluatedKey'])
+            logs = self.log_table.scab(ExclusiveStartKey=logs['LastEvaluatedKey'])
             logs_data.extend(logs['Items'])
 
         newly_added_customers = logs['Count']
         print('logs_count ', newly_added_customers)
 
         return logs_data
+
+    #################################################################################
