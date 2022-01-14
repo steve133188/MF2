@@ -1,11 +1,7 @@
 from flask import Flask
 from dashboard import output
 
-import schedule
-
 app = Flask(__name__)
-
-schedule.every().day.at().do(output.Output().insert_data())
 
 
 @app.route('/')
