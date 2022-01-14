@@ -1,6 +1,10 @@
 from getData import GetData
 from dataHandler import DataHandler
 
+import time
+
+import boto3
+from boto3.dynamodb.conditions import Key
 
 class Output:
 
@@ -13,7 +17,10 @@ class Output:
         waba_data = self.get_from_logic.get_waba_contact()
         waba_com, wts_com = self.get_from_logic.get_communication_hour()
         waba_new_contact, wts_new_contact = self.get_from_logic.get_new_contact()
-        data_dash = {'communication_hours': {'WABA': waba_com,
+        data_dash = {'PK': 'PK',
+                     'timestamp': str(round(time.time())),
+
+                     'communication_hours': {'WABA': waba_com,
                                              'Whatsapp': wts_com},
 
                      'new_added_contacts': {'WABA': waba_new_contact,
@@ -40,3 +47,14 @@ class Output:
                      'agents': agent
                      }
         return data_dash
+
+    def insert_data(self):
+        dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000")
+
+        table = dynamodb.Table('Movies')
+        response = table.put_item(
+            Item= self.construct_data()
+        )
+        return response
+
+
