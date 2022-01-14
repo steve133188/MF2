@@ -26,9 +26,7 @@ func AddRole(req events.APIGatewayProxyRequest, table string, dynaClient *dynamo
 	}
 
 	role.RoleID = utils.IdGenerator()
-	if len(role.Channel) == 0 {
-		role.Channel = make([]string, 0)
-	}
+
 	av, err := attributevalue.MarshalMap(&role)
 	if err != nil {
 		fmt.Println("FailedToMarshalMap, ", err)

@@ -15,3 +15,8 @@ type OrgStruct struct {
 	Name     string      `json:"name" dynamodbav:"name"`
 	Children []OrgStruct `json:"children"`
 }
+
+type User struct {
+	UserID int `json:"user_id" dynamodbav:"user_id"`
+	TeamID int `json:"team_id" dynamodbav:"team_id"`
+}

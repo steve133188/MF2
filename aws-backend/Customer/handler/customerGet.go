@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -55,6 +56,30 @@ func GetCustomerItemByID(req events.APIGatewayProxyRequest, table string, dynaCl
 	if err != nil {
 		log.Printf("UnmarshalMapError CustomerID = %v, %s", customerId, err)
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UnmarshalMapError")}), nil
+	}
+
+	sout, err := dynaClient.Scan(context.TODO(), &dynamodb.ScanInput{
+		TableName:        aws.String(os.Getenv("CHATROOM")),
+		FilterExpression: aws.String("room_id = :id"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":id": &types.AttributeValueMemberN{Value: customerId},
+		},
+	})
+	if err != nil {
+		fmt.Println(err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String(err.Error())}), nil
+	}
+
+	chatroom := make([]model.ChatRoom, 0)
+
+	err = attributevalue.UnmarshalListOfMaps(sout.Items, &chatroom)
+	if err != nil {
+		log.Printf("UnmarshalListOfMaps CustomerID = %v, %s", customerId, err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UnmarshalListOfMaps")}), nil
+	}
+
+	for _, v := range chatroom {
+		fullCustomer.Channels = append(fullCustomer.Channels, v.Channel)
 	}
 
 	fullCustomer.Agents = users
@@ -117,6 +142,30 @@ func GetCustomerItems(req events.APIGatewayProxyRequest, table string, dynaClien
 		fullCustomer.Team = team
 		fullCustomer.Tags = tags
 
+		// sout, err := dynaClient.Scan(context.TODO(), &dynamodb.ScanInput{
+		// 	TableName:        aws.String(os.Getenv("CHATROOM")),
+		// 	FilterExpression: aws.String("room_id = :id"),
+		// 	ExpressionAttributeValues: map[string]types.AttributeValue{
+		// 		":id": &types.AttributeValueMemberN{Value: strconv.Itoa(v.CustomerID)},
+		// 	},
+		// })
+		// if err != nil {
+		// 	fmt.Println(err)
+		// 	return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String(err.Error())}), nil
+		// }
+
+		// chatroom := make([]model.ChatRoom, 0)
+
+		// err = attributevalue.UnmarshalListOfMaps(sout.Items, &chatroom)
+		// if err != nil {
+		// 	log.Printf("UnmarshalListOfMaps CustomerID = %v, %s", strconv.Itoa(v.CustomerID), err)
+		// 	return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UnmarshalListOfMaps")}), nil
+		// }
+
+		// for _, v := range chatroom {
+		// 	fullCustomer.Channels = append(fullCustomer.Channels, v.Channel)
+		// }
+
 		fullCustomers = append(fullCustomers, *fullCustomer)
 	}
 
@@ -167,6 +216,30 @@ func GetCustomersByTeamID(req events.APIGatewayProxyRequest, table string, dynaC
 		fullCustomer.Team = team
 		fullCustomer.Tags = tags
 
+		sout, err := dynaClient.Scan(context.TODO(), &dynamodb.ScanInput{
+			TableName:        aws.String(os.Getenv("CHATROOM")),
+			FilterExpression: aws.String("room_id = :id"),
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":id": &types.AttributeValueMemberN{Value: strconv.Itoa(v.CustomerID)},
+			},
+		})
+		if err != nil {
+			fmt.Println(err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String(err.Error())}), nil
+		}
+
+		chatroom := make([]model.ChatRoom, 0)
+
+		err = attributevalue.UnmarshalListOfMaps(sout.Items, &chatroom)
+		if err != nil {
+			log.Printf("UnmarshalListOfMaps CustomerID = %v, %s", strconv.Itoa(v.CustomerID), err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UnmarshalListOfMaps")}), nil
+		}
+
+		for _, v := range chatroom {
+			fullCustomer.Channels = append(fullCustomer.Channels, v.Channel)
+		}
+
 		fullCustomers = append(fullCustomers, *fullCustomer)
 	}
 
@@ -216,6 +289,30 @@ func GetCustomersByGroup(req events.APIGatewayProxyRequest, table string, dynaCl
 		fullCustomer.Agents = users
 		fullCustomer.Team = team
 		fullCustomer.Tags = tags
+
+		sout, err := dynaClient.Scan(context.TODO(), &dynamodb.ScanInput{
+			TableName:        aws.String(os.Getenv("CHATROOM")),
+			FilterExpression: aws.String("room_id = :id"),
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":id": &types.AttributeValueMemberN{Value: strconv.Itoa(v.CustomerID)},
+			},
+		})
+		if err != nil {
+			fmt.Println(err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String(err.Error())}), nil
+		}
+
+		chatroom := make([]model.ChatRoom, 0)
+
+		err = attributevalue.UnmarshalListOfMaps(sout.Items, &chatroom)
+		if err != nil {
+			log.Printf("UnmarshalListOfMaps CustomerID = %v, %s", strconv.Itoa(v.CustomerID), err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UnmarshalListOfMaps")}), nil
+		}
+
+		for _, v := range chatroom {
+			fullCustomer.Channels = append(fullCustomer.Channels, v.Channel)
+		}
 
 		fullCustomers = append(fullCustomers, *fullCustomer)
 	}
@@ -290,6 +387,29 @@ func GetCustomersByTag(req events.APIGatewayProxyRequest, table string, dynaClie
 		fullCustomer.Team = team
 		fullCustomer.Tags = tags
 
+		sout, err := dynaClient.Scan(context.TODO(), &dynamodb.ScanInput{
+			TableName:        aws.String(os.Getenv("CHATROOM")),
+			FilterExpression: aws.String("room_id = :id"),
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":id": &types.AttributeValueMemberN{Value: strconv.Itoa(v.CustomerID)},
+			},
+		})
+		if err != nil {
+			fmt.Println(err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String(err.Error())}), nil
+		}
+
+		chatroom := make([]model.ChatRoom, 0)
+
+		err = attributevalue.UnmarshalListOfMaps(sout.Items, &chatroom)
+		if err != nil {
+			log.Printf("UnmarshalListOfMaps CustomerID = %v, %s", strconv.Itoa(v.CustomerID), err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UnmarshalListOfMaps")}), nil
+		}
+
+		for _, v := range chatroom {
+			fullCustomer.Channels = append(fullCustomer.Channels, v.Channel)
+		}
 		fullCustomers = append(fullCustomers, *fullCustomer)
 	}
 
@@ -361,6 +481,30 @@ func GetCustomersByAgentsID(req events.APIGatewayProxyRequest, table string, dyn
 		fullCustomer.Agents = users
 		fullCustomer.Team = team
 		fullCustomer.Tags = tags
+
+		sout, err := dynaClient.Scan(context.TODO(), &dynamodb.ScanInput{
+			TableName:        aws.String(os.Getenv("CHATROOM")),
+			FilterExpression: aws.String("room_id = :id"),
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":id": &types.AttributeValueMemberN{Value: strconv.Itoa(v.CustomerID)},
+			},
+		})
+		if err != nil {
+			fmt.Println(err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String(err.Error())}), nil
+		}
+
+		chatroom := make([]model.ChatRoom, 0)
+
+		err = attributevalue.UnmarshalListOfMaps(sout.Items, &chatroom)
+		if err != nil {
+			log.Printf("UnmarshalListOfMaps CustomerID = %v, %s", strconv.Itoa(v.CustomerID), err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UnmarshalListOfMaps")}), nil
+		}
+
+		for _, v := range chatroom {
+			fullCustomer.Channels = append(fullCustomer.Channels, v.Channel)
+		}
 
 		fullCustomers = append(fullCustomers, *fullCustomer)
 	}

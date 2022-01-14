@@ -35,6 +35,18 @@ func AddCustomerItem(req events.APIGatewayProxyRequest, table string, dynaClient
 	customer.CreatedAt = time.Now().Unix()
 	customer.UpdateAt = time.Now().Unix()
 
+	if len(customer.AgentsID) == 0 {
+		customer.AgentsID = make([]int, 0)
+	}
+
+	if len(customer.Channels) == 0 {
+		customer.Channels = make([]string, 0)
+	}
+
+	if len(customer.TagsID) == 0 {
+		customer.TagsID = make([]int, 0)
+	}
+
 	av, err := attributevalue.MarshalMap(&customer)
 	if err != nil {
 		log.Printf("FailedToMarshalMap: %s", err)

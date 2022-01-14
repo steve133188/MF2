@@ -24,6 +24,12 @@ func UpdateUser(req events.APIGatewayProxyRequest, table string, dynaClient *dyn
 		fmt.Printf("FailedToUnmarshalReqBody, %s", err)
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqBody")}), nil
 	}
+
+	if user.UserID == 1 {
+		fmt.Println("SystemAccountCannotModified")
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("SystemAccountCannotModified")}), nil
+	}
+
 	av, err := attributevalue.MarshalMap(&user)
 	if err != nil {
 		fmt.Printf("FailedToMarshalMapReqBody, %s", err)
@@ -67,6 +73,11 @@ func UpdateUserStatus(req events.APIGatewayProxyRequest, table string, dynaClien
 	if err != nil {
 		fmt.Printf("FailedToUnmarshalReqBody, %s", err)
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqBody")}), nil
+	}
+
+	if user.UserID == 1 {
+		fmt.Println("SystemAccountCannotModified")
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("SystemAccountCannotModified")}), nil
 	}
 
 	_, err = dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
@@ -118,6 +129,11 @@ func UpdateUserPassword(req events.APIGatewayProxyRequest, table string, dynaCli
 	if err != nil {
 		fmt.Printf("FailedToUnmarshalReqBody, %s", err)
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqBody")}), nil
+	}
+
+	if data.ID == 1 {
+		fmt.Println("SystemAccountCannotModified")
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("SystemAccountCannotModified")}), nil
 	}
 
 	out, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
@@ -179,6 +195,11 @@ func UpdateUserTeam(req events.APIGatewayProxyRequest, table string, dynaClient 
 	if err != nil {
 		fmt.Printf("FailedToUnmarshalReqBody, %s", err)
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqBody")}), nil
+	}
+
+	if user.UserID == 1 {
+		fmt.Println("SystemAccountCannotModified")
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("SystemAccountCannotModified")}), nil
 	}
 
 	if user.TeamID != 0 {
@@ -293,6 +314,11 @@ func UpdateUsersTeam(req events.APIGatewayProxyRequest, table string, dynaClient
 func UpdateUserRole(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
 	user := new(model.User)
 
+	if user.UserID == 1 {
+		fmt.Println("SystemAccountCannotModified")
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("SystemAccountCannotModified")}), nil
+	}
+
 	err := json.Unmarshal([]byte(req.Body), &user)
 	if err != nil {
 		fmt.Printf("FailedToUnmarshalReqBody, %s", err)
@@ -401,6 +427,11 @@ func AddUserChannels(req events.APIGatewayProxyRequest, table string, dynaClient
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UserID = " + strconv.Itoa(data.UserID) + err.Error())}), nil
 	}
 
+	if data.UserID == 1 {
+		fmt.Println("SystemAccountCannotModified")
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("SystemAccountCannotModified")}), nil
+	}
+
 	gout, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
 		TableName: aws.String(table),
 		Key: map[string]types.AttributeValue{
@@ -469,6 +500,11 @@ func EditUserChannels(req events.APIGatewayProxyRequest, table string, dynaClien
 	if err != nil {
 		fmt.Println("UserID = ", data.UserID, err)
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UserID = " + strconv.Itoa(data.UserID) + err.Error())}), nil
+	}
+
+	if data.UserID == 1 {
+		fmt.Println("SystemAccountCannotModified")
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("SystemAccountCannotModified")}), nil
 	}
 
 	gout, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
@@ -541,6 +577,11 @@ func DeleteUserChannels(req events.APIGatewayProxyRequest, table string, dynaCli
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UserID = " + strconv.Itoa(data.UserID) + err.Error())}), nil
 	}
 
+	if data.UserID == 1 {
+		fmt.Println("SystemAccountCannotModified")
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("SystemAccountCannotModified")}), nil
+	}
+
 	gout, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
 		TableName: aws.String(table),
 		Key: map[string]types.AttributeValue{
@@ -595,19 +636,13 @@ func DeleteUserChannels(req events.APIGatewayProxyRequest, table string, dynaCli
 	return ApiResponse(http.StatusOK, out.Attributes), nil
 }
 
-func UpdateUserChatAccess(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
+func UpdateUserIsBot(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
 	user := new(model.User)
 
 	err := json.Unmarshal([]byte(req.Body), &user)
 	if err != nil {
-		fmt.Println("UpdateUserChatAccess ", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UpdateUserChatAccess " + err.Error())}), nil
-	}
-
-	avl, err := attributevalue.MarshalMap(user.ChatAccess)
-	if err != nil {
-		fmt.Println("UpdateUserChatAccess ", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UpdateUserChatAccess " + err.Error())}), nil
+		fmt.Println("FailedToUnmarshal, UserID = ", user.UserID)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshal, UserID = " + strconv.Itoa(user.UserID))}), nil
 	}
 
 	_, err = dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
@@ -615,16 +650,50 @@ func UpdateUserChatAccess(req events.APIGatewayProxyRequest, table string, dynaC
 		Key: map[string]types.AttributeValue{
 			"user_id": &types.AttributeValueMemberN{Value: strconv.Itoa(user.UserID)},
 		},
-		ConditionExpression: aws.String("attribute_exists(user_id)"),
-		UpdateExpression:    aws.String("SET chat_access = :val"),
+		UpdateExpression: aws.String("SET is_bot = :bot"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":val": &types.AttributeValueMemberM{Value: avl},
+			":bot": &types.AttributeValueMemberBOOL{Value: user.IsBot},
 		},
+		ConditionExpression: aws.String("attribute_exists(user_id)"),
 	})
 	if err != nil {
-		fmt.Println("UpdateUserChatAccess ", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UpdateUserChatAccess " + err.Error())}), nil
+		fmt.Println("FailedToUpdateIsBot, UserID = ", user.UserID)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUpdateIsBot, UserID = " + strconv.Itoa(user.UserID))}), nil
 	}
 
 	return ApiResponse(http.StatusOK, nil), nil
 }
+
+// func UpdateUserChatAccess(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
+// 	user := new(model.User)
+
+// 	err := json.Unmarshal([]byte(req.Body), &user)
+// 	if err != nil {
+// 		fmt.Println("UpdateUserChatAccess ", err)
+// 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UpdateUserChatAccess " + err.Error())}), nil
+// 	}
+
+// 	avl, err := attributevalue.MarshalMap(user.ChatAccess)
+// 	if err != nil {
+// 		fmt.Println("UpdateUserChatAccess ", err)
+// 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UpdateUserChatAccess " + err.Error())}), nil
+// 	}
+
+// 	_, err = dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
+// 		TableName: aws.String(table),
+// 		Key: map[string]types.AttributeValue{
+// 			"user_id": &types.AttributeValueMemberN{Value: strconv.Itoa(user.UserID)},
+// 		},
+// 		ConditionExpression: aws.String("attribute_exists(user_id)"),
+// 		UpdateExpression:    aws.String("SET chat_access = :val"),
+// 		ExpressionAttributeValues: map[string]types.AttributeValue{
+// 			":val": &types.AttributeValueMemberM{Value: avl},
+// 		},
+// 	})
+// 	if err != nil {
+// 		fmt.Println("UpdateUserChatAccess ", err)
+// 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UpdateUserChatAccess " + err.Error())}), nil
+// 	}
+
+// 	return ApiResponse(http.StatusOK, nil), nil
+// }

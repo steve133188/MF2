@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
@@ -13,6 +14,11 @@ import (
 
 func DeleteUserByID(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
 	userId := req.PathParameters["id"]
+	if userId == strconv.Itoa(1) {
+		fmt.Println("SystemAccoundCannotDeleted")
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("SystemAccoundCannotDeleted")}), nil
+	}
+
 	_, err := dynaClient.DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
 		TableName: &table,
 		Key: map[string]types.AttributeValue{
@@ -32,6 +38,10 @@ func DeleteUsers(req events.APIGatewayProxyRequest, table string, dynaClient *dy
 	userIDs := req.MultiValueQueryStringParameters["id"]
 
 	for _, v := range userIDs {
+		if v == strconv.Itoa(1) {
+			fmt.Println("SystemAccoundCannotDeleted")
+			return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("SystemAccoundCannotDeleted")}), nil
+		}
 		_, err := dynaClient.DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
 			TableName: aws.String(table),
 			Key: map[string]types.AttributeValue{
