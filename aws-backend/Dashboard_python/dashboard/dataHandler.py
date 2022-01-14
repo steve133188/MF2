@@ -40,7 +40,163 @@ class DataHandler:
         waba_newly_customers = len(self.logs.loc[self.customer['payload'] == 'WABA'])
         print('WABA newly added customer ', waba_newly_customers)
 
-        waba_msg = self.messages.loc[self.messages['channel'] == 'WABA']
+        # avg response time and avg 1st response time
+        waba_total_resp_time = 0
+        waba_total_resp_time_count = 0
+
+        waba_total_active_contacts_count = 0
+
+        waba_active_list = []
+        # get most communication hours list
+        waba_communication_list = []
+        global z
+        for x in range(24):
+            start_time = str(now - (24 - x) * 3600)
+            end_time = str(now - (24 - x - 1) * 3600)
+            msg_filter = {
+                'FilterExpression': '#ts between :s and :e',
+                'ExpressionAttributeValues': {
+                    ':s': start_time,
+                    ':e': end_time
+                },
+                'ExpressionAttributeNames': {
+                    '#ts': 'timestamp'
+                }
+            }
+
+            comm_msgs = msg_table.scan(**msg_filter)
+            comm_msgs_data = comm_msgs['Items']
+
+            while comm_msgs.get('LastEvaluatedKey'):
+                comm_msgs = msg_table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+                comm_msgs_data.extend(comm_msgs['Items'])
+
+            if comm_msgs['Count'] == 0:
+                waba_communication_list.append(0)
+            else:
+                comm_time = 0
+                for y in range(comm_msgs['Count']):
+                    if comm_msgs_data[y]['channel'] == 'WABA':
+                        if comm_msgs_data[y]['from_me']:
+                            # z = y + 1
+                            for z in range(y + 1, comm_msgs['Count']):
+                                if (not comm_msgs_data[z]['from_me']) & (
+                                        comm_msgs_data[z]['room_id'] == comm_msgs_data[y]['room_id']):
+                                    time = int(comm_msgs_data[z]['timestamp']) - int(comm_msgs_data[y]['timestamp'])
+                                    if time > comm_time:
+                                        comm_time = time
+                                        break
+                        elif not comm_msgs_data[y]['from_me']:
+                            # z = y + 1
+                            for z in range(y + 1, comm_msgs['Count']):
+                                if (comm_msgs_data[z]['from_me']) & (
+                                        comm_msgs_data[z]['room_id'] == comm_msgs_data[y]['room_id']):
+                                    time = int(comm_msgs_data[z]['timestamp']) - int(comm_msgs_data[y]['timestamp'])
+                                    if time > comm_time:
+                                        comm_time = time
+                                        break
+                waba_communication_list.append(comm_time)
+
+        global j
+        for i in range(all_msgs_counts):
+            if msgs_data[i]['channel'] == 'WABA':
+                # if not msgs_data[i]['room_id'] in waba_roomlist:
+                #   waba_roomlist.append(msgs_data[i]['room_id'])
+
+                if msgs_data[i]['from_me']:
+                    waba_total_msg_sent += 1
+                    # j = i + 1
+                    for j in range(i + 1, all_msgs_counts):
+                        # find the next msg with same room id
+                        if msgs_data[j]['room_id'] == msgs_data[i]['room_id']:
+                            if not msgs_data[j]['from_me']:
+                                # bi-direction communication checking for active contacts
+                                if not msgs_data[j]['room_id'] in waba_active_list:
+                                    waba_total_active_contacts_count += 1
+                                    waba_active_list.append(msgs_data[j]['room_id'])
+
+                                # time = int(msgs_data[j]['timestamp']) - int(msgs_data[i]['timestamp'])
+
+                                # if time > waba_most_communication_time:
+                                #     waba_most_communication_time = time
+
+                else:
+                    waba_total_msg_rec += 1
+                    # j = i + 1
+                    for j in range(i + 1, all_msgs_counts):
+                        if msgs_data[j]['room_id'] == msgs_data[i]['room_id']:
+                            if msgs_data[j]['from_me']:
+                                # bi-direction communication checking for active contacts
+                                if not msgs_data[j]['room_id'] in waba_active_list:
+                                    waba_total_active_contacts_count += 1
+                                    waba_active_list.append(msgs_data[j]['room_id'])
+
+                                # first resp checking
+                                # if not msgs_data[j]['room_id'] in waba_first_resp_list:
+                                #     time = int(msgs_data[j]['timestamp']) - int(msgs_data[i]['timestamp'])
+
+                                time = int(msgs_data[j]['timestamp']) - int(msgs_data[i]['timestamp'])
+                                waba_total_resp_time += time
+                                waba_total_resp_time_count += 1
+
+        # obtain tag data
+        tag_result_data = {}
+        for i in range(all_tags_counts):
+            tag_id = tags_data[i]['tag_id']
+            tag_name = tags_data[i]['tag_name']
+
+            cust_filter = {
+                'FilterExpression': 'contains(tags_id, :tagid)',
+                'ExpressionAttributeValues': {
+
+                    ':tagid': tag_id
+                }
+            }
+
+            custs = customer_table.scan(**cust_filter)
+            custs_data = custs['Items']
+
+            while custs.get('LastEvaluatedKey'):
+                custs = custs_data.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+                custs_data.extend(custs['Items'])
+
+            tag_result_data[tag_name] = custs['Count']
+            # print(tag_result_data[tag_name])
+
+        tag_json_data = json.dumps(tag_result_data)
+
+        # total number of customer with channel waba
+        cust_filter = {
+            'FilterExpression': 'contains(#ch, :chName)',
+            'ExpressionAttributeValues': {
+                ':chName': 'WABA'
+            },
+            'ExpressionAttributeNames': {
+                '#ch': 'channels'
+            }
+        }
+        custs = customer_table.scan(**cust_filter)
+        custs_data = custs['Items']
+
+        while custs.get('LastEvaluatedKey'):
+            custs = customer_table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+            custs_data.extend(custs['Items'])
+
+        all_custs_counts_channel = custs['Count']
+
+        print('---------------------------------------------')
+        print('channel customer number ', all_custs_counts_channel)
+        print('all contacts ', all_customers_counts)
+        print('active contacts ', waba_total_active_contacts_count)
+        print('total message sent ', waba_total_msg_sent)
+        print('total message receive ', waba_total_msg_rec)
+        print('waba_total_resp_time', waba_total_resp_time)
+        print('waba_total_resp_time_count ', waba_total_resp_time_count)
+        print('average response time ', round(waba_total_resp_time / waba_total_resp_time_count) / 60)  # mins
+        print('most communication hours ', waba_communication_list)  # second
+        print('newly added customers ', newly_added_customers)
+        print('all tags ', all_tags_counts)
+        print('tag result ', tag_json_data)
 
     def get_agent_dashboard(self):
 
