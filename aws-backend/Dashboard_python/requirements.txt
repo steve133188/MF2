@@ -1,3 +1,6 @@
 Flask==2.0.2 
 boto3==1.20.34
 pandas==1.2.2
+numpy==1.22.1
+pytz==2021.3
+wheel==0.37.0
