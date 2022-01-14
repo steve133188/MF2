@@ -19,6 +19,10 @@ import (
 func GetUserByID(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
 	userId := req.PathParameters["id"]
 
+	if userId == strconv.Itoa(1) {
+		fmt.Println("SystemAccountCannotGet")
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("SystemAccountCannotGet")}), nil
+	}
 	user := new(model.User)
 
 	out, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
@@ -102,7 +106,7 @@ func GetUserByID(req events.APIGatewayProxyRequest, table string, dynaClient *dy
 		fullUser.Authority = role.Auth
 	}
 
-	user.Leads, err = getUserLeads(strconv.Itoa(user.UserID), dynaClient)
+	fullUser.Leads, err = getUserLeads(strconv.Itoa(user.UserID), dynaClient)
 	if err != nil {
 		fmt.Println("GetUserByID ", err)
 		return ApiResponse(http.StatusInternalServerError, aws.String("GetUserByID "+err.Error())), nil
@@ -119,9 +123,10 @@ func GetUsersByTeamID(req events.APIGatewayProxyRequest, table string, dynaClien
 	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
 		TableName:        &table,
 		Limit:            aws.Int32(50),
-		FilterExpression: aws.String("team_id = :t"),
+		FilterExpression: aws.String("team_id = :t AND user_id <> :id"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":t": &types.AttributeValueMemberN{Value: teamId},
+			":t":  &types.AttributeValueMemberN{Value: teamId},
+			":id": &types.AttributeValueMemberN{Value: strconv.Itoa(1)},
 		},
 	})
 
@@ -222,9 +227,10 @@ func GetUsersByRoleID(req events.APIGatewayProxyRequest, table string, dynaClien
 	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
 		TableName:        &table,
 		Limit:            aws.Int32(50),
-		FilterExpression: aws.String("role_id = :r"),
+		FilterExpression: aws.String("role_id = :r AND user_id <> :id"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":r": &types.AttributeValueMemberN{Value: roleId},
+			":r":  &types.AttributeValueMemberN{Value: roleId},
+			":id": &types.AttributeValueMemberN{Value: strconv.Itoa(1)},
 		},
 	})
 
@@ -315,8 +321,12 @@ func GetUsers(req events.APIGatewayProxyRequest, table string, dynaClient *dynam
 	var users []model.User = make([]model.User, 0)
 
 	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
-		TableName: aws.String(table),
-		Limit:     aws.Int32(50),
+		TableName:        aws.String(table),
+		Limit:            aws.Int32(50),
+		FilterExpression: aws.String("user_id <> :id"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":id": &types.AttributeValueMemberN{Value: strconv.Itoa(1)},
+		},
 	})
 
 	for p.HasMorePages() {
@@ -408,9 +418,10 @@ func GetUsersWithoutTeam(req events.APIGatewayProxyRequest, table string, dynaCl
 	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
 		TableName:        aws.String(table),
 		Limit:            aws.Int32(50),
-		FilterExpression: aws.String(" team_id = :val"),
+		FilterExpression: aws.String(" team_id = :val, user_id <> :id"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":val": &types.AttributeValueMemberN{Value: strconv.Itoa(0)},
+			":id":  &types.AttributeValueMemberN{Value: strconv.Itoa(1)},
 		},
 	})
 

@@ -29,7 +29,7 @@ type FullCustomer struct {
 	LastName    string   `json:"last_name" dynamodbav:"last_name"`
 	Phone       int      `json:"phone" dynamodbav:"phone"`
 	CountryCode int      `json:"country_code" dynamodbav:"country_code"`
-	Channels    []string `json:"channels" dynamodbav:"channels"`
+	Channels    []string `json:"channels" `
 	Team        Team     `json:"team"`
 	Agents      []User   `json:"agents"`
 	Tags        []Tag    `json:"tags"`
@@ -43,22 +43,20 @@ type FullCustomer struct {
 }
 
 type User struct {
-	UserID        int        `json:"user_id" dynamodbav:"user_id"`
-	Username      string     `json:"username" dynamodbav:"username"`
-	Email         string     `json:"email" dynamodbav:"email"`
-	Password      string     `json:"password" dynamodbav:"password"`
-	Phone         int        `json:"phone" dynamodbav:"phone"`
-	CountryCode   int        `json:"country_code" dynamodbav:"country_code"`
-	RoleID        int        `json:"role_id" dynamodbav:"role_id"`
-	Leads         int        `json:"leads" dynamodbav:"leads"`
-	Status        string     `json:"user_status" dynamodbav:"user_status"`
-	TeamID        int        `json:"team_id" dynamodbav:"team_id"`
-	Channels      []Chan     `json:"channels" dynamodbav:"channels"`
-	ChatAccess    ChatAccess `json:"chat_access" dynamodbav:"chat_access"`
-	Subscriptions []int      `json:"subscriptions" dynamodbav:"subscriptions"`
-	CheckAuth     bool       `json:"check_auth" dynamodbav:"check_auth" default:"false"`
-	CreateAt      int64      `json:"create_at" dynamodbav:"create_at"`
-	LastLogin     int64      `json:"last_login" dynamodbav:"last_login"`
+	UserID      int    `json:"user_id" dynamodbav:"user_id"`
+	Username    string `json:"username" dynamodbav:"username"`
+	Email       string `json:"email" dynamodbav:"email"`
+	Password    string `json:"password" dynamodbav:"password"`
+	Phone       int    `json:"phone" dynamodbav:"phone"`
+	CountryCode int    `json:"country_code" dynamodbav:"country_code"`
+	RoleID      int    `json:"role_id" dynamodbav:"role_id"`
+	Status      string `json:"user_status" dynamodbav:"user_status"`
+	TeamID      int    `json:"team_id" dynamodbav:"team_id"`
+	Channels    []Chan `json:"channels" dynamodbav:"channels"`
+	CheckAuth   bool   `json:"check_auth" dynamodbav:"check_auth" default:"false"`
+	CreateAt    int64  `json:"create_at" dynamodbav:"create_at"`
+	LastLogin   int64  `json:"last_login" dynamodbav:"last_login"`
+	ActivityLog int    `json:"activity_log" dynamodbav:"activity_log"`
 }
 
 type Auth struct {
@@ -71,6 +69,10 @@ type Auth struct {
 	ProductCatalogue bool `json:"product_catalogue" dynamodbav:"product_catalogue" default:"false"`
 	Organization     bool `json:"organization" dynamodbav:"organization" default:"false"`
 	Admin            bool `json:"admin" dynamodbav:"admin" default:"false"`
+	Whatsapp         bool `json:"whatsapp" dynamodbav:"whatsapp"`
+	WABA             bool `json:"waba" dynamodbav:"waba"`
+	Messager         bool `json:"messager" dynamodbav:"messager"`
+	WeChat           bool `json:"wechat" dynamodbav:"wechat"`
 }
 
 type Tag struct {
@@ -94,9 +96,13 @@ type Chan struct {
 	ChannelUrl  string `json:"channel_url" dynamodbav:"channel_url"`
 }
 
-type ChatAccess struct {
-	Whatsapp string `json:"whatsapp" dynamodbav:"whatsapp"`
-	WABA     string `json:"waba" dynamodbav:"waba"`
-	Messager string `json:"messager" dynamodbav:"messager"`
-	WeChat   string `json:"wechat" dynamodbav:"wechat"`
+type ChatRoom struct {
+	RoomID     int    `json:"room_id" dynamodbav:"room_id"`
+	UserID     int    `json:"user_id" dynamodbav:"user_id"`
+	Channel    string `json:"channel" dynamodbav:"channel"`
+	CustomerID string `json:"customer_id" dynamodbav:"customer_id"`
+	IsPin      bool   `json:"is_pin" dynamodbav:"is_pin"`
+	Name       string `json:"name" dynamodbav:"name"`
+	Phone      string `json:"phone" dynamodbav:"phone"`
+	Unread     int    `json:"unread" dynamodbav:"unread"`
 }

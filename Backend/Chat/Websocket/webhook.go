@@ -3,6 +3,7 @@ package Websocket
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"mf-chat-services/Model"
@@ -13,7 +14,6 @@ import (
 
 func HandleWhatsapp(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-
 		reqBody, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			log.Println("webhook read req body      ", err)
@@ -61,7 +61,8 @@ func (c *Client) HandleCliWhatsappMsg(msg *Model.ClientMsg) (*Model.ClientMsg, e
 	}
 	log.Println("handler result msg      ", bytes.NewBuffer(result))
 	msg.Url = msg.Url + "/send-message"
-	req, err := http.NewRequest("POST", msg.Url, bytes.NewBuffer(result))
+	// req, err := http.NewRequest("POST", msg.Url, bytes.NewBuffer(result))
+	req, err := http.NewRequest("POST", "http://localhost:9911/webhook-test", bytes.NewBuffer(result))
 	if err != nil {
 		log.Println("HandleCliWhatsappMsg_2     ", err)
 		return nil, err
@@ -75,6 +76,8 @@ func (c *Client) HandleCliWhatsappMsg(msg *Model.ClientMsg) (*Model.ClientMsg, e
 
 	}
 
+	// res.Write(http.StatusOK)
+
 	resBody, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		log.Println("HandleCliWhatsappMsg_4     ", err)
@@ -85,12 +88,20 @@ func (c *Client) HandleCliWhatsappMsg(msg *Model.ClientMsg) (*Model.ClientMsg, e
 	log.Println("resp body       ", bytes.NewBuffer(resBody))
 
 	data := new(Model.ClientMsg)
-	err = json.Unmarshal(resBody, &data)
+	whMsg := new(Model.WebhookMsg)
+	err = json.Unmarshal(resBody, &whMsg)
 	if err != nil {
 		log.Println("HandleCliWhatsappMsg_5     ", err)
 		return nil, err
 
 	}
+
+	data = &whMsg.Resp
+
+	fmt.Println(data.ChatID)
+	fmt.Println(data.Phone)
+	fmt.Println(data.UserID)
+
 	return data, nil
 
 }

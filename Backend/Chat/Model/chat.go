@@ -34,3 +34,8 @@ type ClientMsg struct {
 	Token       string      `json:"token"`
 	Msg         interface{} `json:"message"`
 }
+
+type WebhookMsg struct {
+	Status bool      `json:"status"`
+	Resp   ClientMsg `json:"response"`
+}
