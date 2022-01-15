@@ -1,5 +1,4 @@
 from flask import Flask
-from dashboard import output
 
 app = Flask(__name__)
 
