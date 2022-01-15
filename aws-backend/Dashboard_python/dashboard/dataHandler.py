@@ -1,4 +1,4 @@
-from getData import GetData
+from dashboard.getData import GetData
 import pandas as pd
 
 
@@ -133,19 +133,26 @@ class DataHandler:
     #################################################################################
     def get_wts_agent_dashboard(self):
 
-        assigned_list = self.customers.loc[(len(self.customers['agents_id']) != 0)]
+        assigned_list = self.customers.loc[(self.customers['agents_id'].str.len() != 0)]
+        print(assigned_list['agents_id'])
         wts_assigned_contacts = len(assigned_list)
         print('Whatsapp assigned customer ', wts_assigned_contacts)
 
         agent_dashboard = []
-        for user in self.users:
+        print([self.users])
+        for user in self.users.index:
 
-            user_dash = {'Name': user['username'],
-                         'Role': self.roles.loc[self.roles['role_id'] == user['role_id']]['role_name'],
+            print(self.users['username'][user])
+            print(self.users['role_id'][user])
+            print(self.roles.loc[self.roles['role_id'] == self.users['role_id'][user]])
+            print('===================================================================')
+            user_dash = {'Name': self.users['username'][user],
+                         'Role': self.roles.loc[self.roles['role_id'] == self.users['role_id'][user]]['role_name'],
                          'Status': "",
                          'assigned_contact':
-                             len(assigned_list.loc[assigned_list['agents_id'].isin(user['user_id'])])
+                             len(assigned_list.loc[assigned_list['agents_id'].isin([self.users['user_id'][user]])])
                          }
+            print(user_dash)
 
             user_msg = self.messages.loc[
                 self.messages['sender'] == user['user_id'] &

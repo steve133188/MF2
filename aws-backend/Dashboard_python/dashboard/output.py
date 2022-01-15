@@ -1,13 +1,13 @@
-from getData import GetData
-from dataHandler import DataHandler
+from dashboard.getData import GetData
+from dashboard.dataHandler import DataHandler
 
 import time
 
 import boto3
 from boto3.dynamodb.conditions import Key
 
-class Output:
 
+class Output:
     def __init__(self):
         self.get_from_logic = DataHandler()
         self.get_from_db = GetData()
@@ -41,7 +41,7 @@ class Output:
                                        'Whatsapp': wts_data['avg_response_time']},
                      'avg_first_time': {'WABA': waba_data['first_time'],
                                         'Whatsapp': wts_data['avg_first_response_time']},
-                     
+
                      'tags': self.get_from_db.get_all_tags(),
 
                      'agents': agent
@@ -53,8 +53,6 @@ class Output:
 
         table = dynamodb.Table('Movies')
         response = table.put_item(
-            Item= self.construct_data()
+            Item=self.construct_data()
         )
         return response
-
-
