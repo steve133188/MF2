@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+import flask
 import pandas as pd
 from flask import Flask, request
 from dashboard import output, getData
@@ -8,18 +9,17 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import time
 
 app = Flask(__name__)
-obj = output.Output()
+obj = output.Output(0, 0, 0)
 default_data = dict()
 
 
-@lru_cache(maxsize=256)
-def cache_data(start, end, default_index):
-    table = getData.GetData().dynamodb.Table('Mf2_TCO_DASHBOARD')
+def get_data(start, end, default_index):
+    table = getData.GetData(0, 0, 0).dynamodb.Table('Mf2_TCO_DASHBOARD')
     dashboard_filter = {
         'FilterExpression': '#ts between :s and :e',
         'ExpressionAttributeValues': {
-            ':s': start,
-            ':e': end
+            ':s': int(start),
+            ':e': int(end)
         },
         'ExpressionAttributeNames': {
             '#ts': 'timestamp'
@@ -82,7 +82,7 @@ scheduler.add_job(
     hour=16,
 )
 scheduler.add_job(
-    cache_data,
+    get_data,
     trigger='cron',
     hour=16,
     args=(round(time.time()) - 3600 * 24 * 7 - 3600, round(time.time()), 1)
@@ -92,7 +92,7 @@ scheduler.add_job(
 @app.route('/')
 def default():  # put application's code here
     if len(default_data) == 0:
-        cache_data(round(time.time()) - 3600 * 24 * 7 - 3600, round(time.time()), 1)
+        get_data(round(time.time()) - 3600 * 24 * 7 - 3600, round(time.time()), 1)
 
     return default_data[0]
 
@@ -102,7 +102,22 @@ def dashboard():  # put application's code here
     start = request.args.get('start')
     end = request.args.get('end')
 
-    return cache_data(start, end, 0)
+    return get_data(start, end, 0)
+
+
+@app.route('/migration')
+def migration():  # put application's code here
+    start = request.args.get('start')
+    end = request.args.get('end')
+
+    i = int(end)
+    while i >= int(start):
+        migrate = output.Output(1, i - 24 * 7 * 3600, i)
+        err = migrate.insert_data()
+
+        i = i - 24 * 3600
+
+    return flask.Response(status=200)
 
 
 if __name__ == '__main__':

@@ -10,7 +10,7 @@ import pandas as pd
 class GetData:
 
     # Dynamodb
-    def __init__(self):
+    def __init__(self, index, start, end):
         key_id1 = 'AKIATRVR34'
         key_id2 = 'WXY767NBFP'
         access_key1 = 'E/X8SfmdBx0SNRO4q4W'
@@ -25,11 +25,15 @@ class GetData:
         self.tag_table = self.dynamodb.Table('MF2_TCO_TAG')
         self.msg_table = self.dynamodb.Table('MessageTable')
         self.log_table = self.dynamodb.Table('Activity')
-
         self.now = round(time.time())
         self.end = str(self.now)
         self.start = str(self.now - 3600 * 24 * 1)
-        print(self.start, self.end)
+
+        if index == 1:
+            self.start = start
+            self.end = end
+
+        print('Get Data ', self.start, self.end)
 
     #################################################################################
     def get_message(self):
@@ -145,8 +149,8 @@ class GetData:
         wts_communication_list = []
         global z
         for x in range(24):
-            start_time = str(self.now - (24 - x) * 3600)
-            end_time = str(self.now - (24 - x - 1) * 3600)
+            start_time = str(self.end - (24 - x) * 3600)
+            end_time = str(self.end - (24 - x - 1) * 3600)
             msg_filter = {
                 'FilterExpression': '#ts between :s and :e',
                 'ExpressionAttributeValues': {

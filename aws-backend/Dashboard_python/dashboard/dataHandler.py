@@ -6,8 +6,8 @@ import pandas as pd
 
 class DataHandler:
 
-    def __init__(self):
-        self.data = GetData()
+    def __init__(self, index, start, end):
+        self.data = GetData(index, start, end)
         self.messages = self.data.get_message()
         self.users = self.data.get_user()
         self.customers = self.data.get_customer()
@@ -81,6 +81,15 @@ class DataHandler:
         waba_total_active_contacts_count = 0
         waba_active_list = []
 
+        if len(self.messages) == 0:
+            return  {'active_contacts': waba_total_active_contacts_count,
+                     'msg_sent': waba_total_msg_sent,
+                     'msg_recv': waba_total_msg_rec,
+                     'resp_time': waba_total_resp_time,
+                     'first_time': waba_first_time,
+                     'longest_time': waba_longest_time
+                     }
+
         waba_msg = self.messages.loc[self.messages['channel'] == 'WABA']
         print('===================================================================')
         print(waba_msg)
@@ -141,6 +150,17 @@ class DataHandler:
         wts_assigned_contacts = len(assigned_list)
         print('Whatsapp assigned customer ', wts_assigned_contacts)
 
+        if len(self.messages) == 0:
+            return {}, {'assigned_contacts': wts_assigned_contacts,
+                        'active_contacts': 0,
+                        'delivered_contacts': 0,
+                        'unhandled_contacts': 0,
+                        'msg_sent': 0,
+                        'msg_recv': 0,
+                        'avg_response_time': 0,
+                        'avg_first_response_time': 0
+                        }
+
         agent_dashboard = []
         print([self.users])
         for user in self.users.index:
@@ -162,6 +182,8 @@ class DataHandler:
 
             print(str(self.users['user_id'][user]))
             wts_msg = self.messages.loc[self.messages['channel'] == 'Whatsapp']
+            if len(wts_msg == 0):
+                break
             user_msg = wts_msg.loc[
                 (wts_msg['sender'] == str(self.users['user_id'][user])) |
                 (wts_msg['recipient'] == str(self.users['user_id'][user]))
