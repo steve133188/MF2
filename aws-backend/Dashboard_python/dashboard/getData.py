@@ -1,9 +1,10 @@
 import boto3
 import time
-import math
+# import math
 import pandas as pd
 
-from boto3.dynamodb.conditions import Key
+
+# from boto3.dynamodb.conditions import Key
 
 
 class GetData:
@@ -15,17 +16,19 @@ class GetData:
         access_key1 = 'E/X8SfmdBx0SNRO4q4W'
         access_key2 = 'fTLb0CrNrd+2UL5fO/z1r'
 
-        dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-1', aws_access_key_id=key_id1 + key_id2, aws_secret_access_key=access_key1 + access_key2)
-        self.user_table = dynamodb.Table('MF2_TCO_USER')
-        self.role_table = dynamodb.Table('MF2_TCO_ROLE')
-        self.customer_table = dynamodb.Table('MF2_TCO_CUSTOMER')
-        self.tag_table = dynamodb.Table('MF2_TCO_TAG')
-        self.msg_table = dynamodb.Table('MessageTable')
-        self.log_table = dynamodb.Table('Activity')
+        self.dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-1', aws_access_key_id=key_id1 + key_id2,
+                                       aws_secret_access_key=access_key1 + access_key2)
+        self.user_table = self.dynamodb.Table('MF2_TCO_USER')
+        self.role_table = self.dynamodb.Table('MF2_TCO_ROLE')
+        self.customer_table = self.dynamodb.Table('MF2_TCO_CUSTOMER')
+        self.org_table = self.dynamodb.Table('MF2_TCO_ORG')
+        self.tag_table = self.dynamodb.Table('MF2_TCO_TAG')
+        self.msg_table = self.dynamodb.Table('MessageTable')
+        self.log_table = self.dynamodb.Table('Activity')
 
-        now = round(time.time())
-        self.end = str(now)
-        self.start = str(now - 3600 * 24 * 1)
+        self.now = round(time.time())
+        self.end = str(self.now)
+        self.start = str(self.now - 3600 * 24 * 1)
         print(self.start, self.end)
 
     #################################################################################
@@ -82,6 +85,20 @@ class GetData:
         return pd.DataFrame(roles_data)
 
     #################################################################################
+    def get_org(self):
+        orgs = self.org_table.scan()
+        orgs_data = orgs['Items']
+
+        while orgs.get('LastEvaluatedKey'):
+            orgs = self.role_table.scan(ExclusiveStartKey=orgs['LastEvaluatedKey'])
+            orgs_data.extend(orgs['Items'])
+
+        all_roles_counts = orgs['Count']
+        print('role_count ', all_roles_counts)
+
+        return pd.DataFrame(orgs_data)
+
+    #################################################################################
     def get_customer(self):
         customers = self.customer_table.scan()
         customers_data = customers['Items']
@@ -90,7 +107,7 @@ class GetData:
             customers = self.customer_table.scan(ExclusiveStartKey=customers['LastEvaluatedKey'])
             customers_data.extend(customers['Items'])
 
-        all_customers_counts = customers['Count']
+        all_customers_counts = int(customers['Count'])
         print('customers count ', all_customers_counts)
 
         return pd.DataFrame(customers_data)
@@ -160,31 +177,31 @@ class GetData:
                     len(com_msg.loc[com_msg['channel'] == 'Whatsapp'])
                 )
 
-            return waba_communication_list, wts_communication_list
+        return waba_communication_list, wts_communication_list
 
     #################################################################################
     def get_all_tags(self):
         # obtain tag data
         tag_result_data = {}
         tags = self.get_tag()
-        for tag in tags:
+        for tag in tags.index:
 
             customer_filter = {
                 'FilterExpression': 'contains(tags_id, :tagid)',
                 'ExpressionAttributeValues': {
 
-                    ':tagid': tag['tag_id']
+                    ':tagid': tags['tag_id'][tag]
                 }
             }
 
             customers = self.customer_table.scan(**customer_filter)
-            customer_data = custs['Items']
+            customer_data = customers['Items']
 
-            while custs.get('LastEvaluatedKey'):
-                custs = customer_data.scan(ExclusiveStartKey=customers['LastEvaluatedKey'])
-                customer_data.extend(custs['Items'])
+            while customers.get('LastEvaluatedKey'):
+                customers = customer_data.scan(ExclusiveStartKey=customers['LastEvaluatedKey'])
+                customer_data.extend(customers['Items'])
 
-            tag_result_data[tag['tag_name']] = custs['Count']
+            tag_result_data[tags['tag_name'][tag]] = customers['Count']
             # print(tag_result_data[tag_name])
 
         print('tag result ', tag_result_data)

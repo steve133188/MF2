@@ -1,10 +1,6 @@
 from dashboard.getData import GetData
 from dashboard.dataHandler import DataHandler
-
 import time
-
-import boto3
-from boto3.dynamodb.conditions import Key
 
 
 class Output:
@@ -18,29 +14,29 @@ class Output:
         waba_com, wts_com = self.get_from_logic.get_communication_hour()
         waba_new_contact, wts_new_contact = self.get_from_logic.get_new_contact()
         data_dash = {'PK': 'PK',
-                     'timestamp': str(round(time.time())),
+                     'timestamp': int(round(time.time())),
 
                      'communication_hours': {'WABA': waba_com,
                                              'Whatsapp': wts_com},
 
-                     'new_added_contacts': {'WABA': waba_new_contact,
-                                            'Whatsapp': wts_new_contact},
-                     'all_contacts': {'WABA': self.get_from_logic.get_all_contact(),
-                                      'Whatsapp': wts_data['assigned_contacts'] + wts_new_contact},
-                     'active_contacts': {'WABA': waba_data['active_contacts'],
-                                         'Whatsapp': wts_data['active_contacts']},
-                     'delivered_contacts': {'Whatsapp': wts_data['delivered_contacts']},
-                     'unhandled_contacts': {'Whatsapp': wts_data['unhandled_contacts']},
+                     'new_added_contacts': {'WABA': int(waba_new_contact),
+                                            'Whatsapp': int(wts_new_contact)},
+                     'all_contacts': {'WABA': int(self.get_from_logic.get_all_contact()),
+                                      'Whatsapp': int(wts_data['assigned_contacts'] + wts_new_contact)},
+                     'active_contacts': {'WABA': int(waba_data['active_contacts']),
+                                         'Whatsapp': int(wts_data['active_contacts'])},
+                     'delivered_contacts': {'Whatsapp': int(wts_data['delivered_contacts'])},
+                     'unhandled_contacts': {'Whatsapp': int(wts_data['unhandled_contacts'])},
 
-                     'total_msg_sent': {'WABA': waba_data['message_sent'],
-                                        'Whatsapp': wts_data['msg_sent']},
-                     'total_msg_recv': {'WABA': waba_data['message_sent'],
-                                        'Whatsapp': wts_data['msg_sent']},
+                     'total_msg_sent': {'WABA': int(waba_data['msg_sent']),
+                                        'Whatsapp': int(wts_data['msg_sent'])},
+                     'total_msg_recv': {'WABA': int(waba_data['msg_recv']),
+                                        'Whatsapp': int(wts_data['msg_recv'])},
 
-                     'avg_resp_time': {'WABA': waba_data['resp_time'],
-                                       'Whatsapp': wts_data['avg_response_time']},
-                     'avg_first_time': {'WABA': waba_data['first_time'],
-                                        'Whatsapp': wts_data['avg_first_response_time']},
+                     'avg_resp_time': {'WABA': int(waba_data['resp_time']),
+                                       'Whatsapp': int(wts_data['avg_response_time'])},
+                     'avg_first_time': {'WABA': int(waba_data['first_time']),
+                                        'Whatsapp': int(wts_data['avg_first_response_time'])},
 
                      'tags': self.get_from_db.get_all_tags(),
 
@@ -49,10 +45,11 @@ class Output:
         return data_dash
 
     def insert_data(self):
-        dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000")
+        # dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000")
 
-        table = dynamodb.Table('Movies')
+        table = self.get_from_db.dynamodb.Table('Mf2_TCO_DASHBOARD')
+        items = self.construct_data()
         response = table.put_item(
-            Item=self.construct_data()
+            Item=items
         )
         return response

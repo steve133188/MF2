@@ -14,6 +14,7 @@ class DataHandler:
         self.tags = self.data.get_tag()
         self.logs = self.data.get_log()
         self.roles = self.data.get_role()
+        self.teams = self.data.get_org()
 
     #################################################################################
     def get_msg_number(self):
@@ -48,17 +49,19 @@ class DataHandler:
 
     #################################################################################
     def get_new_contact(self):
-        waba_newly_contacts = len(self.logs.loc[self.customer['payload'] == 'WABA'])
+        if len(self.logs) == 0:
+            return 0, 0
+        waba_newly_contacts = len(self.logs.loc[self.logs['payload'] == 'WABA'])
         print('WABA newly added customer ', waba_newly_contacts)
 
-        wts_newly_contacts = len(self.logs.loc[self.customer['payload'] == 'Whatsapp'])
+        wts_newly_contacts = len(self.logs.loc[self.logs['payload'] == 'Whatsapp'])
         print('Whatsapp newly added customer ', wts_newly_contacts)
 
         return waba_newly_contacts, wts_newly_contacts
 
     #################################################################################
     def get_all_contact(self):
-        waba_all_contact = len(self.customers.loc[self.customers['channel'].isin('WABA')])
+        waba_all_contact = len(self.customers['channels'].isin(['WABA']))
         print('WABA all contact ', waba_all_contact)
 
         return waba_all_contact
@@ -79,30 +82,33 @@ class DataHandler:
         waba_active_list = []
 
         waba_msg = self.messages.loc[self.messages['channel'] == 'WABA']
-        for i in range(waba_msg):
-            if waba_msg[i]['from_me']:
+        print('===================================================================')
+        print(waba_msg)
+
+        for i in waba_msg.index:
+            if waba_msg['from_me'][i]:
                 waba_total_msg_sent += 1
                 # j = i + 1
-                for j in range(i + 1, waba_msg):
+                for j in range(i + 1, len(waba_msg)):
                     # find the next msg with same room id
-                    if waba_msg[j]['room_id'] == waba_msg[i]['room_id']:
-                        if not waba_msg[j]['from_me']:
+                    if waba_msg['room_id'][j] == waba_msg['room_id'][i]:
+                        if not waba_msg['from_me'][j]:
                             # bi-direction communication checking for active contacts
-                            if not waba_msg[j]['room_id'] in waba_active_list:
+                            if not waba_msg['room_id'][j] in waba_active_list:
                                 waba_total_active_contacts_count += 1
-                                waba_active_list.append(waba_msg[j]['room_id'])
+                                waba_active_list.append(waba_msg['room_id'][j])
             else:
                 waba_total_msg_rec += 1
                 # j = i + 1
-                for j in range(i + 1, waba_msg):
-                    if waba_msg[j]['room_id'] == waba_msg[i]['room_id']:
-                        if waba_msg[j]['from_me']:
+                for j in range(i + 1, len(waba_msg)):
+                    if waba_msg['room_id'][j] == waba_msg['room_id'][i]:
+                        if waba_msg['from_me'][j]:
                             # bi-direction communication checking for active contacts
-                            if not waba_msg[j]['room_id'] in waba_active_list:
+                            if not waba_msg['room_id'][j] in waba_active_list:
                                 waba_total_active_contacts_count += 1
-                                waba_active_list.append(waba_msg[j]['room_id'])
+                                waba_active_list.append(waba_msg['room_id'][j])
 
-                            time = int(waba_msg[j]['timestamp']) - int(waba_msg[i]['timestamp'])
+                            time = int(waba_msg['timestamp'][j]) - int(waba_msg['timestamp'][i])
                             waba_total_resp_time += time
                             waba_total_resp_time_count += 1
 
@@ -123,10 +129,7 @@ class DataHandler:
                      }
 
         print('---------------------------------------------')
-        print('active contacts ', waba_total_active_contacts_count)
-        print('total message sent ', waba_total_msg_sent)
-        print('total message receive ', waba_total_msg_rec)
-        print('average response time ', waba_total_resp_time)  # mins
+        print(waba_data)
 
         return waba_data
 
@@ -147,40 +150,50 @@ class DataHandler:
             print(self.roles.loc[self.roles['role_id'] == self.users['role_id'][user]])
             print('===================================================================')
             user_dash = {'Name': self.users['username'][user],
-                         'Role': self.roles.loc[self.roles['role_id'] == self.users['role_id'][user]]['role_name'],
+                         'Team': self.teams.loc[self.teams['org_id'] == self.users['team_id'][user]]['name']
+                             .to_string(index=False),
+                         'Role': self.roles.loc[self.roles['role_id'] == self.users['role_id'][user]]['role_name']
+                             .to_string(index=False),
                          'Status': "",
                          'assigned_contact':
                              len(assigned_list.loc[assigned_list['agents_id'].isin([self.users['user_id'][user]])])
                          }
             print(user_dash)
 
-            user_msg = self.messages.loc[
-                self.messages['sender'] == user['user_id'] &
-                self.messages['recipient'] == user['user_id'] &
-                self.messages['channel'] == 'Whatsapp'
+            print(str(self.users['user_id'][user]))
+            wts_msg = self.messages.loc[self.messages['channel'] == 'Whatsapp']
+            user_msg = wts_msg.loc[
+                (wts_msg['sender'] == str(self.users['user_id'][user])) |
+                (wts_msg['recipient'] == str(self.users['user_id'][user]))
                 ]
+            print('===================================================================')
+            print('User msg\n', user_msg)
 
             if len(user_msg) == 0:
-                break
+                continue
 
             # user contact
-            for msg in user_msg:
+            for msg in user_msg.index:
                 contact_list = []
-                if (contact_list == 0) or (msg['room_id'] in contact_list):
-                    room_msg = user_msg.loc[user_msg['room_id'] == msg['room_id']]
-                    contact_list.append(msg['room_id'])
-                    if room_msg[0]['from_me']:
-                        for j in range(1, room_msg):
-                            if not room_msg[j]['from_me']:
+                user_dash['active_contact'] = 0
+                user_dash['delivered_contact'] = 0
+                user_dash['unhandled_contact'] = 0
+
+                if (contact_list == 0) or (user_msg['room_id'][msg] in contact_list):
+                    room_msg = user_msg.loc[user_msg['room_id'] == user_msg['room_id'][msg]]
+                    contact_list.append(user_msg['room_id'][msg])
+                    if room_msg['from_me'][0]:
+                        for j in range(1, len(room_msg)):
+                            if not room_msg['from_me'][j]:
                                 user_dash['active_contact'] += 1
                                 break
 
                             if j >= len(room_msg):
                                 user_dash['delivered_contact'] += 1
 
-                    if not room_msg[0]['from_me']:
-                        for j in range(1, room_msg):
-                            if room_msg[j]['from_me']:
+                    if not room_msg['from_me'][0]:
+                        for j in range(1, len(room_msg)):
+                            if room_msg['from_me'][j]:
                                 user_dash['active_contact'] += 1
                                 break
 
@@ -190,12 +203,19 @@ class DataHandler:
             user_dash['message_sent'] = len(user_msg.loc[user_msg['from_me']])
             user_dash['message_recv'] = len(user_msg) - user_dash['message_sent']
 
+            print('===================================================================')
+            print('active_contact', user_dash['active_contact'],
+                  '\n delivered_contact', user_dash['delivered_contact'],
+                  '\n unhandled_contact', user_dash['unhandled_contact'],
+                  '\n message_sent', user_dash['message_sent'],
+                  '\n message_recv', user_dash['message_recv'])
+
             resp_time = []
-            for i in range(user_msg):
-                if not user_msg[i]['from_me']:
-                    for j in range(i, user_msg):
-                        if (user_msg[j]['from_me']) & (user_msg[j]['room_id'] == user_msg[i]['room_id']):
-                            resp_time.append(int(user[j]['timestamp']) - int(user[i]['timestamp']))
+            for i in user_msg.index:
+                if not user_msg['from_me'][i]:
+                    for j in range(i, len(user_msg)):
+                        if (user_msg['from_me'][j]) & (user_msg['room_id'][j] == user_msg['room_id'][i]):
+                            resp_time.append(int(user['timestamp'][j]) - int(user['timestamp'][i]))
                             break
 
             if len(resp_time) == 0:
@@ -210,14 +230,27 @@ class DataHandler:
             agent_dashboard.append(user_dash)
 
         agent = pd.DataFrame(agent_dashboard)
+        print('Agent', agent)
+        if len(agent) == 0:
+            return agent_dashboard, {'assigned_contacts': wts_assigned_contacts,
+                                     'active_contacts': 0,
+                                     'delivered_contacts': 0,
+                                     'unhandled_contacts': 0,
+                                     'msg_sent': 0,
+                                     'msg_recv': 0,
+                                     'avg_response_time': 0,
+                                     'avg_first_response_time': 0
+                                     }
+
         wts_dashboard = {'assigned_contacts': wts_assigned_contacts,
                          'active_contacts': agent['active_contact'].sum(),
                          'delivered_contacts': agent['delivered_contact'].sum(),
                          'unhandled_contacts': agent['unhandled_contact'].sum(),
-                         'message_sent': agent['message_sent'].sum(),
-                         'message_recv': agent['message_recv'].sum(),
+                         'msg_sent': agent['message_sent'].sum(),
+                         'msg_recv': agent['message_recv'].sum(),
                          'avg_response_time': agent['avg_response_time'].mean(),
                          'avg_first_response_time': agent['first_response_time'].mean()
                          }
 
         print(agent_dashboard, wts_dashboard)
+        return agent_dashboard, wts_dashboard
