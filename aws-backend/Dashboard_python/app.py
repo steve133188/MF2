@@ -79,12 +79,12 @@ scheduler.start()
 scheduler.add_job(
     obj.insert_data,
     trigger='cron',
-    hour=16,
+    hour=8,
 )
 scheduler.add_job(
     get_data,
     trigger='cron',
-    hour=16,
+    hour=8,
     args=(round(time.time()) - 3600 * 24 * 7 - 3600, round(time.time()), 1)
 )
 
@@ -95,7 +95,11 @@ def default():  # put application's code here
         get_data(round(time.time()) - 3600 * 24 * 7 - 3600, round(time.time()), 1)
 
     return default_data[0]
-
+    # now = round(time.time())
+    # end = str(now)
+    # start = str(now - 3600 * 24 * 1)
+    # test = output.Output(0, start, end)
+    # return test.construct_data()
 
 @app.route('/dashboard')
 def dashboard():  # put application's code here

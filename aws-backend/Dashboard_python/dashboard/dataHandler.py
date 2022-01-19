@@ -82,13 +82,13 @@ class DataHandler:
         waba_active_list = []
 
         if len(self.messages) == 0:
-            return  {'active_contacts': waba_total_active_contacts_count,
-                     'msg_sent': waba_total_msg_sent,
-                     'msg_recv': waba_total_msg_rec,
-                     'resp_time': waba_total_resp_time,
-                     'first_time': waba_first_time,
-                     'longest_time': waba_longest_time
-                     }
+            return {'active_contacts': waba_total_active_contacts_count,
+                    'msg_sent': waba_total_msg_sent,
+                    'msg_recv': waba_total_msg_rec,
+                    'resp_time': waba_total_resp_time,
+                    'first_time': waba_first_time,
+                    'longest_time': waba_longest_time
+                    }
 
         waba_msg = self.messages.loc[self.messages['channel'] == 'WABA']
         print('===================================================================')

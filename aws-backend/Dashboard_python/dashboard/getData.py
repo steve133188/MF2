@@ -135,7 +135,7 @@ class GetData:
         logs_data = logs['Items']
 
         while logs.get('LastEvaluatedKey'):
-            logs = self.log_table.scab(ExclusiveStartKey=logs['LastEvaluatedKey'])
+            logs = self.log_table.scan(ExclusiveStartKey=logs['LastEvaluatedKey'])
             logs_data.extend(logs['Items'])
 
         newly_added_customers = logs['Count']
@@ -149,8 +149,8 @@ class GetData:
         wts_communication_list = []
         global z
         for x in range(24):
-            start_time = str(self.end - (24 - x) * 3600)
-            end_time = str(self.end - (24 - x - 1) * 3600)
+            start_time = str(int(self.end) - (24 - x) * 3600)
+            end_time = str(int(self.end) - (24 - x - 1) * 3600)
             msg_filter = {
                 'FilterExpression': '#ts between :s and :e',
                 'ExpressionAttributeValues': {
