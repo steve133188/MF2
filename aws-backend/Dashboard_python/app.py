@@ -79,34 +79,47 @@ scheduler.start()
 scheduler.add_job(
     obj.insert_data,
     trigger='cron',
-    hour=8,
+    hour=16,
 )
 scheduler.add_job(
     get_data,
     trigger='cron',
-    hour=8,
+    hour=16,
     args=(round(time.time()) - 3600 * 24 * 7 - 3600, round(time.time()), 1)
 )
 
 
+@app.route('/test')
+def test():
+    now = round(time.time())
+    end = str(now)
+    start = str(now - 3600 * 24)
+    print('===================================================================')
+    test_obj = output.Output(0, start, end)
+    print('|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||')
+    print(test_obj.get_from_logic.get_all_contact())
+    return 'testing'
+
 @app.route('/')
 def default():  # put application's code here
-    if len(default_data) == 0:
-        get_data(round(time.time()) - 3600 * 24 * 7 - 3600, round(time.time()), 1)
+    # if len(default_data) == 0:
+    #     get_data(round(time.time()) - 3600 * 24 * 7 - 3600, round(time.time()), 1)
+    #
+    # return default_data[0]
+    now = round(time.time())
+    print(now)
+    end = str(now)
+    start = str(now - 3600 * 24 * 1)
+    return output.Output(0, start, end)
+    # return 'dashboard api is running'
 
-    return default_data[0]
-    # now = round(time.time())
-    # end = str(now)
-    # start = str(now - 3600 * 24 * 1)
-    # test = output.Output(0, start, end)
-    # return test.construct_data()
 
-@app.route('/dashboard')
-def dashboard():  # put application's code here
-    start = request.args.get('start')
-    end = request.args.get('end')
-
-    return get_data(start, end, 0)
+# @app.route('/dashboard')
+# def dashboard():  # put application's code here
+#     start = request.args.get('start')
+#     end = request.args.get('end')
+#
+#     return get_data(start, end, 0)
 
 
 @app.route('/migration')

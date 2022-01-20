@@ -2,7 +2,7 @@ import boto3
 import time
 # import math
 import pandas as pd
-
+from boto3.dynamodb.conditions import Key, Attr
 
 # from boto3.dynamodb.conditions import Key
 
@@ -52,7 +52,7 @@ class GetData:
         msgs_data = msgs['Items']
 
         while msgs.get('LastEvaluatedKey'):
-            msgs = self.msg_table.scan(ExclusiveStartKey=msgs['LastEvaluatedKey'])
+            msgs = self.msg_table.scan(ExclusiveStartKey=msgs['LastEvaluatedKey'], **msg_filter)
             msgs_data.extend(msgs['Items'])
 
         all_msgs_counts = msgs['Count']
@@ -98,7 +98,7 @@ class GetData:
             orgs_data.extend(orgs['Items'])
 
         all_roles_counts = orgs['Count']
-        print('role_count ', all_roles_counts)
+        print('org_count ', all_roles_counts)
 
         return pd.DataFrame(orgs_data)
 
@@ -135,7 +135,7 @@ class GetData:
         logs_data = logs['Items']
 
         while logs.get('LastEvaluatedKey'):
-            logs = self.log_table.scan(ExclusiveStartKey=logs['LastEvaluatedKey'])
+            logs = self.log_table.scan(ExclusiveStartKey=logs['LastEvaluatedKey'], **log_filter)
             logs_data.extend(logs['Items'])
 
         newly_added_customers = logs['Count']
@@ -151,22 +151,23 @@ class GetData:
         for x in range(24):
             start_time = str(int(self.end) - (24 - x) * 3600)
             end_time = str(int(self.end) - (24 - x - 1) * 3600)
+
             msg_filter = {
-                'FilterExpression': '#ts between :s and :e',
                 'ExpressionAttributeValues': {
                     ':s': start_time,
                     ':e': end_time
                 },
                 'ExpressionAttributeNames': {
                     '#ts': 'timestamp'
-                }
+                },
+                'FilterExpression': '#ts between :s and :e'
             }
 
             comm_msgs = self.msg_table.scan(**msg_filter)
             comm_msgs_data = comm_msgs['Items']
 
             while comm_msgs.get('LastEvaluatedKey'):
-                comm_msgs = self.msg_table.scan(ExclusiveStartKey=comm_msgs['LastEvaluatedKey'])
+                comm_msgs = self.msg_table.scan(ExclusiveStartKey=comm_msgs['LastEvaluatedKey'], **msg_filter)
                 comm_msgs_data.extend(comm_msgs['Items'])
 
             if comm_msgs['Count'] == 0:
@@ -193,7 +194,6 @@ class GetData:
             customer_filter = {
                 'FilterExpression': 'contains(tags_id, :tagid)',
                 'ExpressionAttributeValues': {
-
                     ':tagid': tags['tag_id'][tag]
                 }
             }
@@ -202,7 +202,7 @@ class GetData:
             customer_data = customers['Items']
 
             while customers.get('LastEvaluatedKey'):
-                customers = customer_data.scan(ExclusiveStartKey=customers['LastEvaluatedKey'])
+                customers = customer_data.scan(ExclusiveStartKey=customers['LastEvaluatedKey'], **customer_filter)
                 customer_data.extend(customers['Items'])
 
             tag_result_data[tags['tag_name'][tag]] = customers['Count']

@@ -6,7 +6,9 @@ import time
 class Output:
     def __init__(self, index, start, end):
         self.get_from_logic = DataHandler(0, start, end)
+        print('test1')
         self.get_from_db = GetData(0, start, end)
+        print('test2')
         self.end = 0
         if index == 1:
             self.get_from_logic = DataHandler(1, start, end)
@@ -22,6 +24,7 @@ class Output:
             return {'PK': 'PK',
                     'timestamp': int(round(time.time())) if self.end == 0 else int(self.end)}
         waba_com, wts_com = self.get_from_logic.get_communication_hour()
+        waba_all_contacts, wts_all_contacts = self.get_from_logic.get_all_contact()
         waba_new_contact, wts_new_contact = self.get_from_logic.get_new_contact()
         data_dash = {'PK': 'PK',
                      'timestamp': int(round(time.time())) if self.end != 0 else int(self.end),
@@ -31,10 +34,11 @@ class Output:
 
                      'new_added_contacts': {'WABA': int(waba_new_contact),
                                             'Whatsapp': int(wts_new_contact)},
-                     'all_contacts': {'WABA': int(self.get_from_logic.get_all_contact()),
-                                      'Whatsapp': int(wts_data['assigned_contacts'] + wts_new_contact)},
+                     'all_contacts': {'WABA': int(waba_all_contacts),
+                                      'Whatsapp': int(wts_all_contacts)},
                      'active_contacts': {'WABA': int(waba_data['active_contacts']),
                                          'Whatsapp': int(wts_data['active_contacts'])},
+                     'assigned_contacts': {'Whatsapp': int(wts_data['assigned_contacts'])},
                      'delivered_contacts': {'Whatsapp': int(wts_data['delivered_contacts'])},
                      'unhandled_contacts': {'Whatsapp': int(wts_data['unhandled_contacts'])},
 

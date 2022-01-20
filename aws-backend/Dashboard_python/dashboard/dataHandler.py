@@ -61,10 +61,18 @@ class DataHandler:
 
     #################################################################################
     def get_all_contact(self):
-        waba_all_contact = len(self.customers['channels'].isin(['WABA']))
-        print('WABA all contact ', waba_all_contact)
+        customer_list = self.customers['channels']
+        wts_all_contact = 0
+        waba_all_contact = 0
+        for i in range(len(customer_list)):
+            if 'WABA' in customer_list[i]:
+                waba_all_contact += 1
+            if 'Whatsapp' in customer_list[i]:
+                wts_all_contact += 1
 
-        return waba_all_contact
+        # print('Whatsapp all contact ', wts_all_contact)
+
+        return waba_all_contact, wts_all_contact
 
     #################################################################################
     def get_waba_contact(self):
@@ -145,7 +153,7 @@ class DataHandler:
     #################################################################################
     def get_wts_agent_dashboard(self):
 
-        assigned_list = self.customers.loc[(self.customers['agents_id'].str.len() != 0)]
+        assigned_list = self.customers.loc[(self.customers['agents_id'].str.len() == 0)]
         print(assigned_list['agents_id'])
         wts_assigned_contacts = len(assigned_list)
         print('Whatsapp assigned customer ', wts_assigned_contacts)
