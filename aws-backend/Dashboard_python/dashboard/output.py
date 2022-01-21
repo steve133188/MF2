@@ -1,6 +1,8 @@
 from dashboard.getData import GetData
 from dashboard.dataHandler import DataHandler
 import time
+import json
+from decimal import Decimal
 
 
 class Output:
@@ -23,7 +25,7 @@ class Output:
         if len(wts_data) == 0 & len(waba_data) == 0:
             return {'PK': 'PK',
                     'timestamp': int(round(time.time())) if self.end == 0 else int(self.end)}
-        #waba_com, wts_com = self.get_from_logic.get_communication_hour()
+        # waba_com, wts_com = self.get_from_logic.get_communication_hour()
         waba_all_contacts, wts_all_contacts = self.get_from_logic.get_all_contact()
         waba_new_contact, wts_new_contact = self.get_from_logic.get_new_contact()
         data_dash = {'PK': 'PK',
@@ -47,12 +49,12 @@ class Output:
                      'total_msg_recv': {'WABA': int(waba_data['msg_recv']),
                                         'Whatsapp': int(wts_data['msg_recv'])},
 
-                     'avg_resp_time': {'WABA': float(waba_data['resp_time']),
-                                       'Whatsapp': float(wts_data['avg_response_time'])},
-                     'avg_first_time': {'WABA': float(waba_data['first_time']),
-                                        'Whatsapp': float(wts_data['avg_first_response_time'])},
+                     'avg_resp_time': {'WABA': (waba_data['resp_time']),
+                                       'Whatsapp': (wts_data['avg_response_time'])},
+                     'avg_first_time': {'WABA': (waba_data['first_time']),
+                                        'Whatsapp': (wts_data['avg_first_response_time'])},
 
-                     #'tags': self.get_from_db.get_all_tags(),
+                     # 'tags': self.get_from_db.get_all_tags(),
 
                      'agents': agent
                      }
@@ -62,7 +64,7 @@ class Output:
         # dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000")
 
         table = self.get_from_db.dynamodb.Table('Mf2_TCO_DASHBOARD')
-        items = self.construct_data()
+        items = json.loads(json.dumps(self.construct_data()), parse_float=Decimal)
         response = table.put_item(
             Item=items
         )

@@ -140,9 +140,9 @@ class DataHandler:
         waba_data = {'active_contacts': waba_total_active_contacts_count,
                      'msg_sent': waba_total_msg_sent,
                      'msg_recv': waba_total_msg_rec,
-                     'resp_time': round(waba_total_resp_time/60, 2),
-                     'first_time': round(waba_first_time/60, 2),
-                     'longest_time': round(waba_longest_time/60, 2)
+                     'resp_time': round(waba_total_resp_time / 60, 2),
+                     'first_time': round(waba_first_time / 60, 2),
+                     'longest_time': round(waba_longest_time / 60, 2)
                      }
 
         print('---------------------------------------------')
@@ -168,29 +168,54 @@ class DataHandler:
                         'avg_first_response_time': 0
                         }
 
-        agent_dashboard = []
+        agent_dashboard = {'username': [],
+                           'role': [],
+                           'team': [],
+                           'status': [],
+                           'assigned_contact': [],
+                           'active_contact': [],
+                           'delivered_contact': [],
+                           'unhandled_contact': [],
+                           'message_sent': [],
+                           'message_recv': [],
+                           'avg_response_time': [],
+                           'first_response_time': [],
+                           'longest_response_time': []
+                           }
+
+        wts_dashboard = {'assigned_contacts': wts_assigned_contacts,
+                         'active_contacts': 0,
+                         'delivered_contacts': 0,
+                         'unhandled_contacts': 0,
+                         'msg_sent': 0,
+                         'msg_recv': 0,
+                         'avg_response_time': 0,
+                         'avg_first_response_time': 0
+                         }
+
         print('User length: ', len(self.users))
         wts_msg = self.messages.loc[self.messages['channel'] == 'Whatsapp']
         print('Whatsapp Messages length: ', len(wts_msg))
 
         for user in self.users.index:
+            if self.users['user_id'][user] == 1:
+                continue
 
-            print(self.users['username'][user])
-            print(self.users['role_id'][user])
             team = 'None'
             if self.users['team_id'][user] != 0:
-                team = self.teams.loc[self.teams['org_id'] == self.users['team_id'][user]]['name'].to_string(index=False)
+                team = self.teams.loc[self.teams['org_id'] == self.users['team_id'][user]]['name'].to_string(
+                    index=False)
             print('===================================================================')
-            user_dash = {'user_id' : self.users['user_id'][user],
-                         'name': self.users['username'][user],
-                         'team': team,
-                         'role': self.roles.loc[self.roles['role_id'] == self.users['role_id'][user]]['role_name']
-                             .to_string(index=False),
-                         'status': "",
-                         'assigned_contact':
-                             len(assigned_list.loc[assigned_list['agents_id'].isin([self.users['user_id'][user]])])
-                         }
-            print('User Default Data: ', user_dash)
+            user_id = str(self.users['user_id'][user])
+            agent_dashboard['username'].append({user_id: self.users['username'][user]})
+            agent_dashboard['team'].append({user_id: team})
+            agent_dashboard['role'].append({user_id: self.roles.loc[self.roles['role_id'] ==
+                                                                    self.users['role_id'][user]]['role_name'].to_string(
+                index=False)})
+            agent_dashboard['status'].append({user_id: ''})
+            agent_dashboard['assigned_contact'].append({user_id: len(assigned_list.loc[
+                                                                         assigned_list['agents_id'].isin(
+                                                                             [self.users['user_id'][user]])])})
 
             user_msg = wts_msg.loc[
                 (wts_msg['sender'] == str(self.users['user_id'][user])) |
@@ -200,23 +225,21 @@ class DataHandler:
             print('===================================================================')
 
             if len(user_msg) == 0:
-                user_dash['active_contact'] = 0
-                user_dash['delivered_contact'] = 0
-                user_dash['unhandled_contact'] = 0
-                user_dash['message_sent'] = 0
-                user_dash['message_recv'] = 0
-                user_dash['avg_response_time'] = 0
-                user_dash['first_response_time'] = 0
-                user_dash['longest_response_time'] = 0
-                print('User Dashboard: ', user_dash)
-                agent_dashboard.append(user_dash)
+                agent_dashboard['active_contact'].append({user_id: 0})
+                agent_dashboard['delivered_contact'].append({user_id: 0})
+                agent_dashboard['unhandled_contact'].append({user_id: 0})
+                agent_dashboard['message_sent'].append({user_id: 0})
+                agent_dashboard['message_recv'].append({user_id: 0})
+                agent_dashboard['avg_response_time'].append({user_id: 0})
+                agent_dashboard['first_response_time'].append({user_id: 0})
+                agent_dashboard['longest_response_time'].append({user_id: 0})
                 continue
 
             # user contact
             contact_list = []
-            user_dash['active_contact'] = 0
-            user_dash['delivered_contact'] = 0
-            user_dash['unhandled_contact'] = 0
+            active_contact = 0
+            delivered_contact = 0
+            unhandled_contact = 0
             for msg in user_msg.index:
 
                 if (len(contact_list) == 0) or not (user_msg['room_id'][msg] in contact_list):
@@ -224,37 +247,50 @@ class DataHandler:
                     contact_list.append(user_msg['room_id'][msg])
                     if room_msg['from_me'][0]:
                         if len(room_msg) == 1:
-                            user_dash['delivered_contact'] += 1
+                            delivered_contact += 1
+                            wts_dashboard['delivered_contacts'] += 1
                         else:
                             for j in range(1, len(room_msg)):
                                 if not room_msg['from_me'][j]:
-                                    user_dash['active_contact'] += 1
+                                    active_contact += 1
+                                    wts_dashboard['active_contacts'] += 1
                                     break
 
                                 elif j == len(room_msg) - 1:
-                                    user_dash['delivered_contact'] += 1
+                                    delivered_contact += 1
+                                    wts_dashboard['delivered_contacts'] += 1
 
                     if not room_msg['from_me'][0]:
                         if len(room_msg) == 1:
-                            user_dash['unhandled_contact'] += 1
+                            unhandled_contact += 1
+                            wts_dashboard['unhandled_contacts'] += 1
                         else:
                             for j in range(1, len(room_msg)):
                                 if room_msg['from_me'][j]:
-                                    user_dash['active_contact'] += 1
+                                    active_contact += 1
+                                    wts_dashboard['active_contacts'] += 1
                                     break
 
                                 elif j == len(room_msg) - 1:
-                                    user_dash['unhandled_contact'] += 1
+                                    unhandled_contact += 1
+                                    wts_dashboard['unhandled_contacts'] += 1
 
-            user_dash['message_sent'] = len(user_msg.loc[user_msg['from_me']])
-            user_dash['message_recv'] = len(user_msg) - user_dash['message_sent']
+            agent_dashboard['active_contact'].append({user_id: active_contact})
+            agent_dashboard['delivered_contact'].append({user_id: delivered_contact})
+            agent_dashboard['unhandled_contact'].append({user_id: unhandled_contact})
+
+            msg_sent = len(user_msg.loc[user_msg['from_me']])
+            agent_dashboard['message_sent'].append({user_id: msg_sent})
+            agent_dashboard['message_recv'].append({user_id: len(user_msg) - msg_sent})
+            wts_dashboard['msg_sent'] += msg_sent
+            wts_dashboard['msg_recv'] += len(user_msg) - msg_sent
 
             print('===================================================================')
-            print('active_contact', user_dash['active_contact'],
-                  '\n delivered_contact', user_dash['delivered_contact'],
-                  '\n unhandled_contact', user_dash['unhandled_contact'],
-                  '\n message_sent', user_dash['message_sent'],
-                  '\n message_recv', user_dash['message_recv'])
+            print('active_contact', agent_dashboard['active_contact'],
+                  '\n delivered_contact', agent_dashboard['delivered_contact'],
+                  '\n unhandled_contact', agent_dashboard['unhandled_contact'],
+                  '\n message_sent', agent_dashboard['message_sent'],
+                  '\n message_recv', agent_dashboard['message_recv'])
 
             resp_time = []
             for i in user_msg.index:
@@ -265,39 +301,24 @@ class DataHandler:
                             break
 
             if len(resp_time) == 0:
-                user_dash['avg_response_time'] = 0
-                user_dash['first_response_time'] = 0
-                user_dash['longest_response_time'] = 0
+                agent_dashboard['avg_response_time'].append({user_id: 0})
+                agent_dashboard['first_response_time'].append({user_id: 0})
+                agent_dashboard['longest_response_time'].append({user_id: 0})
             else:
-                user_dash['avg_response_time'] = round(sum(resp_time) / len(resp_time)/60, 2)
-                user_dash['first_response_time'] = round(resp_time[0]/60, 2)
-                user_dash['longest_response_time'] = round(max(resp_time)/60, 2)
+                avg_time = round(sum(resp_time) / len(resp_time) / 60, 2)
+                first_time = round(resp_time[0] / 60, 2)
+                long_time = round(max(resp_time) / 60, 2)
 
-            print('User Dashboard: ', user_dash)
-            agent_dashboard.append(user_dash)
+                agent_dashboard['avg_response_time'].append({user_id: avg_time})
+                agent_dashboard['first_response_time'].append({user_id: first_time})
+                agent_dashboard['longest_response_time'].append({user_id: long_time})
 
-        agent = pd.DataFrame(agent_dashboard).set_index('user_id')
-        print('Agent: \n', agent)
-        if len(agent) == 0:
-            return agent_dashboard, {'assigned_contacts': wts_assigned_contacts,
-                                     'active_contacts': 0,
-                                     'delivered_contacts': 0,
-                                     'unhandled_contacts': 0,
-                                     'msg_sent': 0,
-                                     'msg_recv': 0,
-                                     'avg_response_time': 0,
-                                     'avg_first_response_time': 0
-                                     }
+                wts_dashboard['avg_response_time'] += avg_time
+                wts_dashboard['avg_first_response_time'] += first_time
 
-        wts_dashboard = {'assigned_contacts': wts_assigned_contacts,
-                         'active_contacts': agent['active_contact'].sum(),
-                         'delivered_contacts': agent['delivered_contact'].sum(),
-                         'unhandled_contacts': agent['unhandled_contact'].sum(),
-                         'msg_sent': agent['message_sent'].sum(),
-                         'msg_recv': agent['message_recv'].sum(),
-                         'avg_response_time': round(agent['avg_response_time'].mean()/60, 2),
-                         'avg_first_response_time': round(agent['first_response_time'].mean()/60, 2)
-                         }
+        wts_dashboard['avg_response_time'] = round(wts_dashboard['avg_response_time']/len(agent_dashboard['username']), 2)
+        wts_dashboard['avg_first_response_time'] = round(wts_dashboard['avg_first_response_time']/len(agent_dashboard['username']), 2)
 
+        print('Agent: \n', agent_dashboard)
         print('Whatsapp Dashboard: \n', wts_dashboard)
-        return agent, wts_dashboard
+        return agent_dashboard, wts_dashboard
