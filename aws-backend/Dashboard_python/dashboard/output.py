@@ -5,16 +5,16 @@ import time
 
 class Output:
     def __init__(self, index, start, end):
-        self.get_from_logic = DataHandler(0, start, end)
-        print('test1')
-        self.get_from_db = GetData(0, start, end)
-        print('test2')
-        self.end = 0
         if index == 1:
             self.get_from_logic = DataHandler(1, start, end)
             self.get_from_db = GetData(1, start, end)
             self.end = end
             print('Output ', start, end)
+        else:
+            self.get_from_logic = DataHandler(0, start, end)
+            self.get_from_db = GetData(0, start, end)
+            self.end = 0
+            print('Default Time ', start, end)
 
     def construct_data(self):
 
@@ -23,14 +23,14 @@ class Output:
         if len(wts_data) == 0 & len(waba_data) == 0:
             return {'PK': 'PK',
                     'timestamp': int(round(time.time())) if self.end == 0 else int(self.end)}
-        waba_com, wts_com = self.get_from_logic.get_communication_hour()
+        #waba_com, wts_com = self.get_from_logic.get_communication_hour()
         waba_all_contacts, wts_all_contacts = self.get_from_logic.get_all_contact()
         waba_new_contact, wts_new_contact = self.get_from_logic.get_new_contact()
         data_dash = {'PK': 'PK',
                      'timestamp': int(round(time.time())) if self.end != 0 else int(self.end),
 
-                     'communication_hours': {'WABA': waba_com,
-                                             'Whatsapp': wts_com},
+                     # 'communication_hours': {'WABA': waba_com,
+                     #                         'Whatsapp': wts_com},
 
                      'new_added_contacts': {'WABA': int(waba_new_contact),
                                             'Whatsapp': int(wts_new_contact)},
@@ -52,7 +52,7 @@ class Output:
                      'avg_first_time': {'WABA': int(waba_data['first_time']),
                                         'Whatsapp': int(wts_data['avg_first_response_time'])},
 
-                     'tags': self.get_from_db.get_all_tags(),
+                     #'tags': self.get_from_db.get_all_tags(),
 
                      'agents': agent
                      }

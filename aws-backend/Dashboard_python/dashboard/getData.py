@@ -25,13 +25,14 @@ class GetData:
         self.tag_table = self.dynamodb.Table('MF2_TCO_TAG')
         self.msg_table = self.dynamodb.Table('MessageTable')
         self.log_table = self.dynamodb.Table('Activity')
-        self.now = round(time.time())
-        self.end = str(self.now)
-        self.start = str(self.now - 3600 * 24 * 1)
 
         if index == 1:
             self.start = start
             self.end = end
+        else:
+            self.now = round(time.time())
+            self.end = str(self.now)
+            self.start = str(self.now - 3600 * 24 * 1)
 
         print('Get Data ', self.start, self.end)
 
@@ -55,7 +56,7 @@ class GetData:
             msgs = self.msg_table.scan(ExclusiveStartKey=msgs['LastEvaluatedKey'], **msg_filter)
             msgs_data.extend(msgs['Items'])
 
-        all_msgs_counts = msgs['Count']
+        all_msgs_counts = len(msgs_data)
         print('msg_count ', all_msgs_counts)
 
         return pd.DataFrame(msgs_data)
