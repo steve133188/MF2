@@ -148,10 +148,12 @@ class GetData:
         waba_communication_list = []
         wts_communication_list = []
         global z
+        now_time = int(self.end)
         for x in range(24):
-            start_time = str(int(self.end) - (24 - x) * 3600)
-            end_time = str(int(self.end) - (24 - x - 1) * 3600)
-
+            start_time = str(now_time - (24 - x) * 3600)
+            end_time = str(now_time - (24 - x - 1) * 3600)
+            print('start_time ', start_time)
+            print('end_time ', end_time)
             msg_filter = {
                 'ExpressionAttributeValues': {
                     ':s': start_time,
@@ -166,11 +168,13 @@ class GetData:
             comm_msgs = self.msg_table.scan(**msg_filter)
             comm_msgs_data = comm_msgs['Items']
 
-            while comm_msgs.get('LastEvaluatedKey'):
+            while 'LastEvaluatedKey' in comm_msgs:
+                print('LastEvaluatedKey ', comm_msgs.get('LastEvaluatedKey'))
                 comm_msgs = self.msg_table.scan(ExclusiveStartKey=comm_msgs['LastEvaluatedKey'], **msg_filter)
                 comm_msgs_data.extend(comm_msgs['Items'])
 
-            if comm_msgs['Count'] == 0:
+            count = len(comm_msgs_data)
+            if count == 0:
                 waba_communication_list.append(0)
                 wts_communication_list.append(0)
             else:
