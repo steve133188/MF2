@@ -47,10 +47,10 @@ class Output:
                      'total_msg_recv': {'WABA': int(waba_data['msg_recv']),
                                         'Whatsapp': int(wts_data['msg_recv'])},
 
-                     'avg_resp_time': {'WABA': int(waba_data['resp_time']),
-                                       'Whatsapp': int(wts_data['avg_response_time'])},
-                     'avg_first_time': {'WABA': int(waba_data['first_time']),
-                                        'Whatsapp': int(wts_data['avg_first_response_time'])},
+                     'avg_resp_time': {'WABA': float(waba_data['resp_time']),
+                                       'Whatsapp': float(wts_data['avg_response_time'])},
+                     'avg_first_time': {'WABA': float(waba_data['first_time']),
+                                        'Whatsapp': float(wts_data['avg_first_response_time'])},
 
                      #'tags': self.get_from_db.get_all_tags(),
 
