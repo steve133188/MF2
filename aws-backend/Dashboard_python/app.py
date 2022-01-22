@@ -142,6 +142,33 @@ def dashboard():  # put application's code here
     return get_data(start, end, 0)
 
 
+@app.route('/dashboard/livechat')
+def livechat():  # put application's code here
+    start = request.args.get('start')
+    end = request.args.get('end')
+
+    original_data = get_data(start, end, 0)
+    selected_data = {'active_contacts': original_data['active_contacts'],
+                     'all_contacts': original_data['all_contacts'],
+                     'total_msg_sent': original_data['total_msg_sent'],
+                     'total_msg_recv': original_data['total_msg_recv'],
+                     'new_added_contacts': original_data['new_added_contacts'],
+                     'avg_resp_time': original_data['avg_resp_time'],
+                     'communication_hours': original_data['communication_hours'],
+                     'tags': original_data['tags']
+                     }
+
+    return selected_data
+
+
+@app.route('/dashboard/agent')
+def agent():  # put application's code here
+    start = request.args.get('start')
+    end = request.args.get('end')
+
+    return get_data(start, end, 0)
+
+
 @app.route('/migration')
 def migration():  # put application's code here
     start = request.args.get('start')
