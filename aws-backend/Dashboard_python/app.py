@@ -9,7 +9,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import time
 
 app = Flask(__name__)
-# obj = output.Output(0, 0, 0)
+obj = output.Output(0, 0, 0)
 default_data = dict()
 
 
@@ -33,19 +33,30 @@ def get_data(start, end, default_index):
         dashboard_data.extend(dashboard['Items'])
 
     df_dashboard = pd.DataFrame(dashboard_data)
+    print(df_dashboard)
     output_data = {}
     for (name, data) in df_dashboard.iteritems():
         if name == 'agents':
-            agent_temp = []
-            for i in range(len(data.values)):
-                temp = data.values[i]
-                for j in range(len(temp)):
-                    agent_temp.append(temp[j])
+            agent_temp = pd.DataFrame(data.values.tolist())
+            agent_output = {}
+            print(agent_temp)
+            for (agent_column, agent_data) in agent_temp.iteritems():
+                if agent_column == 'role' or agent_column == 'status' or agent_column == 'team' or \
+                        agent_column == 'username':
+                    agent_output[agent_column] = agent_temp[agent_column][len(agent_temp) - 1]
+                    continue
 
-            agent_df = pd.DataFrame(agent_temp)
-            agent_df = agent_df.groupby(['Name', 'Role', 'Status', 'Team']).agg('sum').reset_index()
+                column_temp = agent_temp[agent_column][0]
+                for i in range(1, len(agent_temp[agent_column])):
+                    column_temp += agent_temp[agent_column][i]
 
-            output_data[name] = agent_df.T.to_dict(orient='dict')
+                sum_df = pd.DataFrame.from_dict(column_temp).mean().astype(int)
+                temp_put = []
+                for (column, column_data) in sum_df.iteritems():
+                    temp_put.append({column: column_data})
+                agent_output[agent_column] = temp_put
+
+            output_data[name] = agent_output
 
         elif name == 'communication_hours':
             temp = pd.DataFrame(data.values.tolist())
@@ -57,7 +68,7 @@ def get_data(start, end, default_index):
         elif name == 'PK' or name == 'timestamp' or name == 'tags':
             print(name)
 
-        elif name == 'unhandled_contacts' or name == 'delivered_contacts':
+        elif name == 'unhandled_contacts' or name == 'delivered_contacts' or name == 'assigned_contacts':
             temp = pd.DataFrame(data.values.tolist())
             output_data[name] = {'Whatsapp': list(map(int, temp['Whatsapp'].to_list()))}
 
@@ -74,52 +85,54 @@ def get_data(start, end, default_index):
     return output_data
 
 
-# scheduler = BackgroundScheduler()
-# scheduler.start()
-# scheduler.add_job(
-#     obj.insert_data,
-#     trigger='cron',
-#     hour=16,
-# )
-# scheduler.add_job(
-#     get_data,
-#     trigger='cron',
-#     hour=16,
-#     args=(round(time.time()) - 3600 * 24 * 7 - 3600, round(time.time()), 1)
-# )
+scheduler = BackgroundScheduler()
+scheduler.start()
+scheduler.add_job(
+    obj.insert_data,
+    trigger='cron',
+    hour=16,
+)
+scheduler.add_job(
+    get_data,
+    trigger='cron',
+    hour=16,
+    args=(round(time.time()) - 3600 * 24 * 7 - 3600, round(time.time()), 1)
+)
 
 
 @app.route('/test')
 def test():
     now = round(time.time())
     end = str(now)
-    start = str(now - 3600 * 24)
+    start = str(1642200846)
     print('===================================================================')
-    test_obj = output.Output(0, start, end)
+    test_obj = output.Output(1, start, end)
     print('|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||')
-    print(test_obj.get_from_logic.get_communication_hour())
-    return 'testing'
+    return test_obj.insert_data()
 
-@app.route('/')
+
+@app.route('/default')
 def default():  # put application's code here
-    # if len(default_data) == 0:
-    #     get_data(round(time.time()) - 3600 * 24 * 7 - 3600, round(time.time()), 1)
-    #
-    # return default_data[0]
-    now = round(time.time())
-    print(now)
-    end = str(now)
-    start = str(now - 3600 * 24 * 1)
-    return output.Output(0, start, end)
-    # return 'dashboard api is running'
+    if len(default_data) == 0:
+        get_data(round(time.time()) - 3600 * 24 * 7 - 3600, round(time.time()), 1)
+
+    return default_data[0]
 
 
-# @app.route('/dashboard')
-# def dashboard():  # put application's code here
-#     start = request.args.get('start')
-#     end = request.args.get('end')
-#
-#     return get_data(start, end, 0)
+# now = round(time.time())
+# print(now)
+# end = str(now)
+# start = str(now - 3600 * 24 * 1)
+# return output.Output(0, start, end)
+# return 'dashboard api is running'
+
+
+@app.route('/dashboard')
+def dashboard():  # put application's code here
+    start = request.args.get('start')
+    end = request.args.get('end')
+
+    return get_data(start, end, 0)
 
 
 @app.route('/migration')
