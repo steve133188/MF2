@@ -111,6 +111,13 @@ def test():
     return test_obj.insert_data()
 
 
+@app.route('/insert')
+def insert():
+    test_obj = output.Output(0, 0, 0)
+    print('|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||')
+    return test_obj.insert_data()
+
+
 @app.route('/default')
 def default():  # put application's code here
     if len(default_data) == 0:
