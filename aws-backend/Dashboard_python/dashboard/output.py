@@ -19,17 +19,20 @@ class Output:
             print('Default Time ', start, end)
 
     def construct_data(self):
-
+        if self.end == 0:
+            table_timestamp = int(round(time.time()))
+        else:
+            table_timestamp = int(self.end)
         agent, wts_data = self.get_from_logic.get_wts_agent_dashboard()
         waba_data = self.get_from_logic.get_waba_contact()
         if len(wts_data) == 0 & len(waba_data) == 0:
             return {'PK': 'PK',
-                    'timestamp': int(round(time.time())) if self.end == 0 else int(self.end)}
+                    'timestamp': table_timestamp}
         waba_com, wts_com = self.get_from_logic.get_communication_hour()
         waba_all_contacts, wts_all_contacts = self.get_from_logic.get_all_contact()
         waba_new_contact, wts_new_contact = self.get_from_logic.get_new_contact()
         data_dash = {'PK': 'PK',
-                     'timestamp': int(round(time.time())) if self.end != 0 else int(self.end),
+                     'timestamp': table_timestamp,
 
                      'communication_hours': {'WABA': waba_com,
                                              'Whatsapp': wts_com},

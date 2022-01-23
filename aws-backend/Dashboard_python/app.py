@@ -102,13 +102,7 @@ scheduler.add_job(
 
 @app.route('/test')
 def test():
-    now = round(time.time())
-    end = str(now)
-    start = str(1642200846)
-    print('===================================================================')
-    test_obj = output.Output(1, start, end)
-    print('|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||')
-    return test_obj.insert_data()
+    return 'testing'
 
 
 @app.route('/insert')
