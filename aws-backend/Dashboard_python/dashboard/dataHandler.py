@@ -212,10 +212,13 @@ class DataHandler:
             agent_dashboard['role'].append({user_id: self.roles.loc[self.roles['role_id'] ==
                                                                     self.users['role_id'][user]]['role_name'].to_string(
                 index=False)})
+
             agent_dashboard['status'].append({user_id: ''})
-            agent_dashboard['assigned_contact'].append({user_id: len(assigned_list.loc[
-                                                                         assigned_list['agents_id'].isin(
-                                                                             [self.users['user_id'][user]])])})
+            assignee_count = 0
+            for assignee in assigned_list['agents_id']:
+                if self.users['user_id'][user] in assignee:
+                    assignee_count += 1
+            agent_dashboard['assigned_contact'].append({user_id: assignee_count})
 
             user_msg = wts_msg.loc[
                 (wts_msg['sender'] == str(self.users['user_id'][user])) |
@@ -316,8 +319,10 @@ class DataHandler:
                 wts_dashboard['avg_response_time'] += avg_time
                 wts_dashboard['avg_first_response_time'] += first_time
 
-        wts_dashboard['avg_response_time'] = round(wts_dashboard['avg_response_time']/len(agent_dashboard['username']), 2)
-        wts_dashboard['avg_first_response_time'] = round(wts_dashboard['avg_first_response_time']/len(agent_dashboard['username']), 2)
+        wts_dashboard['avg_response_time'] = round(
+            wts_dashboard['avg_response_time'] / len(agent_dashboard['username']), 2)
+        wts_dashboard['avg_first_response_time'] = round(
+            wts_dashboard['avg_first_response_time'] / len(agent_dashboard['username']), 2)
 
         print('Agent: \n', agent_dashboard)
         print('Whatsapp Dashboard: \n', wts_dashboard)

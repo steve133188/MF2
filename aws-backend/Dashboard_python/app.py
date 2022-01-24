@@ -100,6 +100,10 @@ scheduler.add_job(
 )
 
 
+@app.route('/')
+def start():
+    return 'MF2 dashboard server is running'
+
 @app.route('/test')
 def test():
     end = 0
