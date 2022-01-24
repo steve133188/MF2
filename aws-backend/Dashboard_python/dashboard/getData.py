@@ -38,11 +38,13 @@ class GetData:
 
     #################################################################################
     def get_message(self):
+        start_time = str(self.start)
+        end_time = str(self.end)
         msg_filter = {
             'FilterExpression': '#ts between :s and :e',
             'ExpressionAttributeValues': {
-                ':s': self.start,
-                ':e': self.end
+                ':s': start_time,
+                ':e': end_time
             },
             'ExpressionAttributeNames': {
                 '#ts': 'timestamp'
@@ -119,11 +121,13 @@ class GetData:
 
     #################################################################################
     def get_log(self):
+        start_time = str(self.start)
+        end_time = str(self.end)
         log_filter = {
             'FilterExpression': '#ts between :s and :e AND #ac = :cc',
             'ExpressionAttributeValues': {
-                ':s': self.start,
-                ':e': self.end,
+                ':s': start_time,
+                ':e': end_time,
                 ':cc': 'CREATED_CUSTOMER'
             },
             'ExpressionAttributeNames': {

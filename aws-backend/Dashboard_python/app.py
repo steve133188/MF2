@@ -96,12 +96,15 @@ scheduler.add_job(
     get_data,
     trigger='cron',
     hour=16,
-    args=(round(time.time()) - 3600 * 24 * 7 - 3600, round(time.time()), 1)
+    args=(round(time.time()) - 3600 * 24, round(time.time()), 1)
 )
 
 
 @app.route('/test')
 def test():
+    end = 0
+    start = 0
+    get_data(start, end, 1)
     return 'testing'
 
 
@@ -169,8 +172,8 @@ def migration():  # put application's code here
     end = request.args.get('end')
 
     i = int(end)
-    while i >= int(start):
-        migrate = output.Output(1, i - 24 * 7 * 3600, i)
+    while i > int(start):
+        migrate = output.Output(1, i - 24 * 3600, i)
         err = migrate.insert_data()
 
         i = i - 24 * 3600
