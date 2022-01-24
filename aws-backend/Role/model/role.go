@@ -20,6 +20,7 @@ type Auth struct {
 	WABA             bool `json:"waba" dynamodbav:"waba"`
 	Messager         bool `json:"messager" dynamodbav:"messager"`
 	WeChat           bool `json:"wechat" dynamodbav:"wechat"`
+	All              bool `json:"all" dynamodbav:"all" default:"false"`
 }
 
 type FullRole struct {

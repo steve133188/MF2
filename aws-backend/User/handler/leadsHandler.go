@@ -14,7 +14,7 @@ import (
 func getUserLeads(userId string, dynaClient *dynamodb.Client) (int, error) {
 	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
 		TableName:        aws.String(os.Getenv("CUSTOMERTABLE")),
-		Limit:            aws.Int32(80),
+		Limit:            aws.Int32(8000),
 		FilterExpression: aws.String("contains(agents_id, :id)"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":id": &types.AttributeValueMemberN{Value: userId},
@@ -24,7 +24,7 @@ func getUserLeads(userId string, dynaClient *dynamodb.Client) (int, error) {
 	for p.HasMorePages() {
 		out, err := p.NextPage(context.TODO())
 		if err != nil {
-			fmt.Println("FailedToGetLeads, UserID = ", userId)
+			fmt.Println("FailedToGetLeads, UserID = ", userId, err)
 			return 0, errors.New("FailedToGetLeads, UserID = " + userId)
 		}
 

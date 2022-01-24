@@ -27,7 +27,8 @@ func AddCustomerItem(req events.APIGatewayProxyRequest, table string, dynaClient
 	if customer.CustomerID == 0 {
 		customer.CustomerID = customer.Phone
 	}
-	if customer.CustomerID < 10000000 {
+	fmt.Println(customer.CustomerID)
+	if customer.CustomerID > 100000000 && customer.CustomerID < 9999999 {
 		fmt.Println("UserIdInValid")
 		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("UserIdInValid")}), nil
 	}
