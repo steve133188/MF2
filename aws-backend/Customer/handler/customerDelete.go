@@ -3,9 +3,11 @@ package handler
 import (
 	"aws-lambda-customer/model"
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 
@@ -37,7 +39,7 @@ func DeleteCustomerItem(req events.APIGatewayProxyRequest, table string, dynaCli
 
 	if out.Item == nil {
 		log.Printf("ItemNotExist CustomerID = %v, %s", customerId, err)
-		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("ItemNotExist")}), nil
+		return ApiResponse(http.StatusNotFound, ErrMsg{aws.String("ItemNotExist")}), nil
 	}
 	customer := new(model.Customer)
 	err = attributevalue.UnmarshalMap(out.Item, &customer)
@@ -59,7 +61,7 @@ func DeleteCustomerItem(req events.APIGatewayProxyRequest, table string, dynaCli
 
 		if err.Error() == "ConditionalCheckFailedException" {
 			log.Printf("ItemNotExisted: %s", err)
-			return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("ItemNotExisted")}), nil
+			return ApiResponse(http.StatusGone, ErrMsg{aws.String("ItemNotExisted")}), nil
 		}
 		log.Printf("FailedToDeleteItem: %s", err)
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToDeleteItem")}), nil
@@ -78,14 +80,23 @@ func DeleteCustomerItem(req events.APIGatewayProxyRequest, table string, dynaCli
 }
 
 func DeleteCustomers(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
-	customerIDs := req.MultiValueQueryStringParameters["id"]
 
-	for _, v := range customerIDs {
+	var data struct {
+		CustomerID []int `json:"customer_id"`
+	}
+
+	err := json.Unmarshal([]byte(req.Body), &data)
+	if err != nil {
+		fmt.Println("FailedToUnmarshalReqBody, ", err)
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("FailedToUnmarshalReqBody")}), nil
+	}
+
+	for _, v := range data.CustomerID {
 		//find agent id
 		out, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
 			TableName: aws.String(table),
 			Key: map[string]types.AttributeValue{
-				"customer_id": &types.AttributeValueMemberN{Value: v},
+				"customer_id": &types.AttributeValueMemberN{Value: strconv.Itoa(v)},
 			},
 		})
 		if err != nil {
@@ -95,7 +106,7 @@ func DeleteCustomers(req events.APIGatewayProxyRequest, table string, dynaClient
 
 		if out.Item == nil {
 			log.Printf("ItemNotExist CustomerID = %v, %s", v, err)
-			return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("ItemNotExist")}), nil
+			return ApiResponse(http.StatusNotFound, ErrMsg{aws.String("ItemNotExist")}), nil
 		}
 		customer := new(model.Customer)
 		err = attributevalue.UnmarshalMap(out.Item, &customer)
@@ -114,13 +125,13 @@ func DeleteCustomers(req events.APIGatewayProxyRequest, table string, dynaClient
 		_, err = dynaClient.DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
 			TableName: aws.String(table),
 			Key: map[string]types.AttributeValue{
-				"customer_id": &types.AttributeValueMemberN{Value: v},
+				"customer_id": &types.AttributeValueMemberN{Value: strconv.Itoa(v)},
 			},
 		})
 		if err != nil {
 			// fmt.Println("FailedToDeleteItem, UserID = ", v, ", ", err)
 			fmt.Println(err)
-			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToDeleteItem, CustomerID = " + v + err.Error())}), nil
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToDeleteItem, CustomerID = " + strconv.Itoa(v) + err.Error())}), nil
 		}
 	}
 

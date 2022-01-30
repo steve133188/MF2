@@ -22,7 +22,7 @@ func AddRole(req events.APIGatewayProxyRequest, table string, dynaClient *dynamo
 	err := json.Unmarshal([]byte(req.Body), &role)
 	if err != nil {
 		fmt.Println("FailedToUnmarsialReqBody, ", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarsialReqBody, " + err.Error())}), nil
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("FailedToUnmarsialReqBody, " + err.Error())}), nil
 	}
 
 	role.RoleID = utils.IdGenerator()
@@ -50,5 +50,5 @@ func AddRole(req events.APIGatewayProxyRequest, table string, dynaClient *dynamo
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalMap, " + err.Error())}), nil
 	}
 
-	return ApiResponse(http.StatusOK, role), nil
+	return ApiResponse(http.StatusCreated, role), nil
 }

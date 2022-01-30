@@ -20,7 +20,7 @@ func PutOrgItem(req events.APIGatewayProxyRequest, table string, dynaClient *dyn
 	err := json.Unmarshal([]byte(req.Body), &org)
 	if err != nil {
 		log.Printf("FailedToUnmarshalInputData: %s", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalInputData")}), nil
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("FailedToUnmarshalInputData")}), nil
 	}
 
 	_, err = dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{

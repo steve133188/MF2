@@ -36,7 +36,7 @@ func DeleteOrgItem(req events.APIGatewayProxyRequest, table string, dynaClient *
 	}
 	if out.Item == nil {
 		fmt.Println("OrgUnitNotexists, OrgID = ", orgId, ", ", err)
-		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("OrgUnitNotexists, OrgID = " + orgId + ", " + err.Error())}), nil
+		return ApiResponse(http.StatusNotFound, ErrMsg{aws.String("OrgUnitNotexists, OrgID = " + orgId + ", " + err.Error())}), nil
 	}
 
 	org := new(model.Organization)
@@ -65,7 +65,7 @@ func DeleteOrgItem(req events.APIGatewayProxyRequest, table string, dynaClient *
 		}
 		if out.Item == nil {
 			fmt.Println("ParentItemNotExist, ParentID = ", org.ParentID, ", ", err)
-			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("ParentItemNotExist, ParentID = " + strconv.Itoa(org.ParentID) + orgId + ", " + err.Error())}), nil
+			return ApiResponse(http.StatusNotFound, ErrMsg{aws.String("ParentItemNotExist, ParentID = " + strconv.Itoa(org.ParentID) + orgId + ", " + err.Error())}), nil
 		}
 		parent := new(model.Organization)
 		err = attributevalue.UnmarshalMap(out.Item, &parent)

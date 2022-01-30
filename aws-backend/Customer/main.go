@@ -17,7 +17,7 @@ func handleRequest(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyRe
 	dynaClient, err := handler.DynamodbConfig()
 	if err != nil {
 		log.Printf("ErrorToLoadDefaultConfig, %s", err)
-		return handler.ApiResponse(http.StatusInternalServerError, handler.ErrMsg{aws.String("ErrorToLoadDefaultConfig")}), nil
+		return handler.ApiResponse(http.StatusNotImplemented, handler.ErrMsg{aws.String("ErrorToLoadDefaultConfig")}), nil
 	}
 	log.Println("req.Resource = ", req.Resource)
 	switch req.HTTPMethod {
@@ -45,6 +45,8 @@ func handleRequest(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyRe
 		switch req.Resource {
 		case "/customer":
 			return handler.AddCustomerItem(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
+		case "/customers/delete":
+			return handler.DeleteCustomers(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
 		default:
 			log.Println("InvalidRoute")
 			return handler.ApiResponse(http.StatusMethodNotAllowed, handler.ErrMsg{aws.String("InvalidRoute")}), nil
@@ -101,8 +103,7 @@ func handleRequest(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyRe
 		switch req.Resource {
 		case "/customer/{id}":
 			return handler.DeleteCustomerItem(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
-		case "/customers":
-			return handler.DeleteCustomers(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
+
 		default:
 			log.Println("InvalidRoute")
 			return handler.ApiResponse(http.StatusMethodNotAllowed, handler.ErrMsg{aws.String("InvalidRoute")}), nil

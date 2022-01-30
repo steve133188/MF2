@@ -37,6 +37,8 @@ func handleRequest(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyRe
 		switch req.Resource {
 		case "/api/admin/role":
 			return handler.AddRole(req, os.Getenv("TABLE"), dynaClient)
+		case "/api/admin/roles/delete":
+			return handler.DeleteRoles(req, os.Getenv("TABLE"), dynaClient)
 		default:
 			return handler.ApiResponse(http.StatusBadRequest, handler.ErrMsg{aws.String("InvalidRoute")}), nil
 		}
@@ -51,8 +53,7 @@ func handleRequest(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyRe
 		switch req.Resource {
 		case "/api/admin/role/id/{id}":
 			return handler.DeleteRoleByID(req, os.Getenv("TABLE"), dynaClient)
-		case "/api/admin/roles":
-			return handler.DeleteRoles(req, os.Getenv("TABLE"), dynaClient)
+
 		default:
 			return handler.ApiResponse(http.StatusBadRequest, handler.ErrMsg{aws.String("InvalidRoute")}), nil
 		}

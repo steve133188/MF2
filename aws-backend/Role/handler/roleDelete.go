@@ -3,6 +3,7 @@ package handler
 import (
 	"aws-lambda-role/model"
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -39,20 +40,28 @@ func DeleteRoleByID(req events.APIGatewayProxyRequest, table string, dynaClient 
 }
 
 func DeleteRoles(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
-	idList := req.MultiValueQueryStringParameters["id"]
+	var data struct {
+		RoleID []int `json:"role_id"`
+	}
 
-	for _, v := range idList {
+	err := json.Unmarshal([]byte(req.Body), &data)
+	if err != nil {
+		fmt.Println("FailedToUnmarshalReqBody, ", err)
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("FailedToUnmarshalReqBody")}), nil
+	}
+
+	for _, v := range data.RoleID {
 		_, err := dynaClient.DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
 			TableName: aws.String(os.Getenv("TABLE")),
 			Key: map[string]types.AttributeValue{
-				"role_id": &types.AttributeValueMemberN{Value: v},
+				"role_id": &types.AttributeValueMemberN{Value: strconv.Itoa(v)},
 			},
 		})
 		if err != nil {
 			fmt.Println("FailedToDeleteRole, RoleID = ", v, ", ", err)
-			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToDeleteRole, RoleID = " + v + ", " + err.Error())}), nil
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToDeleteRole, RoleID = " + strconv.Itoa(v) + ", " + err.Error())}), nil
 		}
-		err = deleteUserRole(dynaClient, v)
+		err = deleteUserRole(dynaClient, strconv.Itoa(v))
 		if err != nil {
 			fmt.Println(err)
 			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String(err.Error())}), nil
