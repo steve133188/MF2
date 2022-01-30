@@ -48,6 +48,8 @@ def get_data(start, end, default_index):
 
                 column_temp = agent_temp[agent_column][0]
                 for i in range(1, len(agent_temp[agent_column])):
+                    if len(agent_temp[agent_column][i]) == 0:
+                        continue
                     column_temp += agent_temp[agent_column][i]
 
                 sum_df = pd.DataFrame.from_dict(column_temp).mean().astype(int)
