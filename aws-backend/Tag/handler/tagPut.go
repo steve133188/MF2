@@ -22,7 +22,7 @@ func UpdateTag(req events.APIGatewayProxyRequest, table string, dynaClient *dyna
 	err := json.Unmarshal([]byte(req.Body), &tag)
 	if err != nil {
 		fmt.Println("FailedToUnmarshalReqBody, ", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqBody, " + err.Error())}), nil
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("FailedToUnmarshalReqBody, " + err.Error())}), nil
 	}
 
 	updateTime := time.Now().Unix()

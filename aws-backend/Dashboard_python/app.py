@@ -29,7 +29,7 @@ def get_data(start, end, default_index):
     dashboard_data = dashboard['Items']
 
     while dashboard.get('LastEvaluatedKey'):
-        dashboard = table.scan(ExclusiveStartKey=dashboard['LastEvaluatedKey'])
+        dashboard = table.scan(ExclusiveStartKey=dashboard['LastEvaluatedKey'], **dashboard_filter)
         dashboard_data.extend(dashboard['Items'])
 
     df_dashboard = pd.DataFrame(dashboard_data)
