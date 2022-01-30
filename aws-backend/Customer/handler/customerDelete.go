@@ -5,11 +5,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"log"
 	"net/http"
-	"strconv"
-
-	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -82,7 +80,7 @@ func DeleteCustomerItem(req events.APIGatewayProxyRequest, table string, dynaCli
 func DeleteCustomers(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
 
 	var data struct {
-		CustomerID []int `json:"customer_id"`
+		CustomerID []string `json:"customer_id"`
 	}
 
 	err := json.Unmarshal([]byte(req.Body), &data)
@@ -96,7 +94,7 @@ func DeleteCustomers(req events.APIGatewayProxyRequest, table string, dynaClient
 		out, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
 			TableName: aws.String(table),
 			Key: map[string]types.AttributeValue{
-				"customer_id": &types.AttributeValueMemberN{Value: strconv.Itoa(v)},
+				"customer_id": &types.AttributeValueMemberN{Value: v},
 			},
 		})
 		if err != nil {
@@ -125,13 +123,13 @@ func DeleteCustomers(req events.APIGatewayProxyRequest, table string, dynaClient
 		_, err = dynaClient.DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
 			TableName: aws.String(table),
 			Key: map[string]types.AttributeValue{
-				"customer_id": &types.AttributeValueMemberN{Value: strconv.Itoa(v)},
+				"customer_id": &types.AttributeValueMemberN{Value: v},
 			},
 		})
 		if err != nil {
 			// fmt.Println("FailedToDeleteItem, UserID = ", v, ", ", err)
 			fmt.Println(err)
-			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToDeleteItem, CustomerID = " + strconv.Itoa(v) + err.Error())}), nil
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToDeleteItem, CustomerID = " + v + err.Error())}), nil
 		}
 	}
 
