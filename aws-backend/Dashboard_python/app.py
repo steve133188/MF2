@@ -9,7 +9,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import time
 
 app = Flask(__name__)
-# obj = output.Output(0, 0, 0)
+obj = output.Output(0, 0, 0)
 default_data = dict()
 
 
@@ -87,19 +87,19 @@ def get_data(start, end, default_index):
     return output_data
 
 
-# scheduler = BackgroundScheduler()
-# scheduler.start()
-# scheduler.add_job(
-#     obj.insert_data,
-#     trigger='cron',
-#     hour=16,
-# )
-# scheduler.add_job(
-#     get_data,
-#     trigger='cron',
-#     hour=16,
-#     args=(round(time.time()) - 3600 * 24, round(time.time()), 1)
-# )
+scheduler = BackgroundScheduler()
+scheduler.start()
+scheduler.add_job(
+    obj.insert_data,
+    trigger='cron',
+    hour=16,
+)
+scheduler.add_job(
+    get_data,
+    trigger='cron',
+    hour=16,
+    args=(round(time.time()) - 3600 * 24, round(time.time()), 1)
+)
 
 
 @app.route('/')
