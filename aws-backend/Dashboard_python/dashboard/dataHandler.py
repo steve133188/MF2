@@ -157,16 +157,11 @@ class DataHandler:
         wts_assigned_contacts = len(assigned_list)
         print('Whatsapp assigned customer ', wts_assigned_contacts)
 
-        # if len(self.messages) == 0 or len(self.messages.loc[self.messages['channel'] == 'Whatsapp']) == 0:
-        #     return {}, {'assigned_contacts': wts_assigned_contacts,
-        #                 'active_contacts': 0,
-        #                 'delivered_contacts': 0,
-        #                 'unhandled_contacts': 0,
-        #                 'msg_sent': 0,
-        #                 'msg_recv': 0,
-        #                 'avg_response_time': 0,
-        #                 'avg_first_response_time': 0
-        #                 }
+        if len(self.messages) == 0 or len(self.messages.loc[self.messages['channel'] == 'Whatsapp']) == 0:
+            wts_msg = 0
+        else:
+            wts_msg = self.messages.loc[self.messages['channel'] == 'Whatsapp']
+            print('Whatsapp Messages length: ', len(wts_msg))
 
         agent_dashboard = {'username': [],
                            'role': [],
@@ -194,8 +189,6 @@ class DataHandler:
                          }
 
         print('User length: ', len(self.users))
-        wts_msg = self.messages.loc[self.messages['channel'] == 'Whatsapp']
-        print('Whatsapp Messages length: ', len(wts_msg))
 
         for user in self.users.index:
             if self.users['user_id'][user] == 1:
@@ -219,6 +212,17 @@ class DataHandler:
                 if self.users['user_id'][user] in assignee:
                     assignee_count += 1
             agent_dashboard['assigned_contact'].append({user_id: assignee_count})
+
+            if wts_msg == 0:
+                agent_dashboard['active_contact'].append({user_id: 0})
+                agent_dashboard['delivered_contact'].append({user_id: 0})
+                agent_dashboard['unhandled_contact'].append({user_id: 0})
+                agent_dashboard['message_sent'].append({user_id: 0})
+                agent_dashboard['message_recv'].append({user_id: 0})
+                agent_dashboard['avg_response_time'].append({user_id: 0})
+                agent_dashboard['first_response_time'].append({user_id: 0})
+                agent_dashboard['longest_response_time'].append({user_id: 0})
+                continue
 
             user_msg = wts_msg.loc[
                 (wts_msg['sender'] == str(self.users['user_id'][user])) |
