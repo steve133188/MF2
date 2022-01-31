@@ -157,12 +157,6 @@ class DataHandler:
         wts_assigned_contacts = len(assigned_list)
         print('Whatsapp assigned customer ', wts_assigned_contacts)
 
-        if len(self.messages) == 0 or len(self.messages.loc[self.messages['channel'] == 'Whatsapp']) == 0:
-            wts_msg = 0
-        else:
-            wts_msg = self.messages.loc[self.messages['channel'] == 'Whatsapp']
-            print('Whatsapp Messages length: ', len(wts_msg))
-
         agent_dashboard = {'username': [],
                            'role': [],
                            'team': [],
@@ -213,7 +207,7 @@ class DataHandler:
                     assignee_count += 1
             agent_dashboard['assigned_contact'].append({user_id: assignee_count})
 
-            if wts_msg == 0:
+            if len(self.messages) == 0 or len(self.messages.loc[self.messages['channel'] == 'Whatsapp']) == 0:
                 agent_dashboard['active_contact'].append({user_id: 0})
                 agent_dashboard['delivered_contact'].append({user_id: 0})
                 agent_dashboard['unhandled_contact'].append({user_id: 0})
@@ -223,6 +217,9 @@ class DataHandler:
                 agent_dashboard['first_response_time'].append({user_id: 0})
                 agent_dashboard['longest_response_time'].append({user_id: 0})
                 continue
+            else:
+                wts_msg = self.messages.loc[self.messages['channel'] == 'Whatsapp']
+                print('Whatsapp Messages length: ', len(wts_msg))
 
             user_msg = wts_msg.loc[
                 (wts_msg['sender'] == str(self.users['user_id'][user])) |
