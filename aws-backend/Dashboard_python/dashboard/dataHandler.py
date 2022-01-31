@@ -152,21 +152,21 @@ class DataHandler:
 
     #################################################################################
     def get_wts_agent_dashboard(self):
-
+        # print(self.customers['agents_id'].map(len) > 0)
         assigned_list = self.customers[self.customers['agents_id'].map(len) > 0]
         wts_assigned_contacts = len(assigned_list)
         print('Whatsapp assigned customer ', wts_assigned_contacts)
 
-        if len(self.messages) == 0 or len(self.messages.loc[self.messages['channel'] == 'Whatsapp']) == 0:
-            return {}, {'assigned_contacts': wts_assigned_contacts,
-                        'active_contacts': 0,
-                        'delivered_contacts': 0,
-                        'unhandled_contacts': 0,
-                        'msg_sent': 0,
-                        'msg_recv': 0,
-                        'avg_response_time': 0,
-                        'avg_first_response_time': 0
-                        }
+        # if len(self.messages) == 0 or len(self.messages.loc[self.messages['channel'] == 'Whatsapp']) == 0:
+        #     return {}, {'assigned_contacts': wts_assigned_contacts,
+        #                 'active_contacts': 0,
+        #                 'delivered_contacts': 0,
+        #                 'unhandled_contacts': 0,
+        #                 'msg_sent': 0,
+        #                 'msg_recv': 0,
+        #                 'avg_response_time': 0,
+        #                 'avg_first_response_time': 0
+        #                 }
 
         agent_dashboard = {'username': [],
                            'role': [],

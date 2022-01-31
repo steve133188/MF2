@@ -9,7 +9,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import time
 
 app = Flask(__name__)
-obj = output.Output(0, 0, 0)
+# obj = output.Output(0, 0, 0)
 default_data = dict()
 
 
@@ -85,30 +85,29 @@ def get_data(start, end, default_index):
     return output_data
 
 
-scheduler = BackgroundScheduler()
-scheduler.start()
-scheduler.add_job(
-    obj.insert_data,
-    trigger='cron',
-    hour=16,
-)
-scheduler.add_job(
-    get_data,
-    trigger='cron',
-    hour=16,
-    args=(round(time.time()) - 3600 * 24, round(time.time()), 1)
-)
+# scheduler = BackgroundScheduler()
+# scheduler.start()
+# scheduler.add_job(
+#     obj.insert_data,
+#     trigger='cron',
+#     hour=16,
+# )
+# scheduler.add_job(
+#     get_data,
+#     trigger='cron',
+#     hour=16,
+#     args=(round(time.time()) - 3600 * 24, round(time.time()), 1)
+# )
 
 
 @app.route('/')
 def start():
     return 'MF2 dashboard server is running'
 
+
 @app.route('/test')
 def test():
-    end = 0
-    start = 0
-    get_data(start, end, 1)
+    # obj.insert_data()
     return 'testing'
 
 
@@ -176,7 +175,10 @@ def migration():  # put application's code here
     end = request.args.get('end')
 
     i = int(end)
-    while i > int(start):
+    while i >= int(start):
+        print("#############")
+        print(i)
+        print("#############")
         migrate = output.Output(1, i - 24 * 3600, i)
         err = migrate.insert_data()
 
