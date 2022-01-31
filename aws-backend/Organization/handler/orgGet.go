@@ -100,7 +100,7 @@ func GetChildrenOrgObject(dynaClient *dynamodb.Client, id int, table string) ([]
 	}
 	if out.Item == nil {
 		fmt.Println("OrgUnitNotExisted, OrgID = ", id)
-		return nil, errors.New("OrgUnitNotExisted, OrgId = " + strconv.Itoa(id)), http.StatusInternalServerError
+		return nil, errors.New("OrgUnitNotExisted, OrgId = " + strconv.Itoa(id)), http.StatusNotFound
 	}
 
 	err = attributevalue.UnmarshalMap(out.Item, &org)

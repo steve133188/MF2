@@ -19,6 +19,7 @@ type Customer struct {
 	Gender      string   `json:"gender" dynamodbav:"gender"`
 	CreatedAt   int64    `json:"created_at" dynamodbav:"created_at"`
 	UpdateAt    int64    `json:"update_at" dynamodbav:"update_at"`
+	ECMID       string   `json:"ECMID" dynamodbav:"ECMID"`
 }
 
 type FullCustomer struct {

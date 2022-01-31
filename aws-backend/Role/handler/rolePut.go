@@ -21,7 +21,7 @@ func UpdateRoleWithID(req events.APIGatewayProxyRequest, table string, dynaClien
 	err := json.Unmarshal([]byte(req.Body), &role)
 	if err != nil {
 		fmt.Println("FailedToUnmarshalReqBody, ", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqBody, " + err.Error())}), nil
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("FailedToUnmarshalReqBody, " + err.Error())}), nil
 	}
 
 	av, err := attributevalue.MarshalMap(role)

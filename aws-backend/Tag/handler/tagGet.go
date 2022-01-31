@@ -29,7 +29,7 @@ func GetTagByID(req events.APIGatewayProxyRequest, table string, dynaClient *dyn
 	}
 	if out.Item == nil {
 		fmt.Println("TagNotExists, TagID = ", id, ", ", err)
-		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("TagNotExists, TagID = " + id + ", " + err.Error())}), nil
+		return ApiResponse(http.StatusNotFound, ErrMsg{aws.String("TagNotExists, TagID = " + id + ", " + err.Error())}), nil
 	}
 
 	tag := new(model.Tag)

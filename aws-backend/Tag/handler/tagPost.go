@@ -23,7 +23,7 @@ func AddTag(req events.APIGatewayProxyRequest, table string, dynaClient *dynamod
 	err := json.Unmarshal([]byte(req.Body), &tag)
 	if err != nil {
 		fmt.Println("FailedToUnmarsialReqBody, ", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarsialReqBody, " + err.Error())}), nil
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("FailedToUnmarsialReqBody, " + err.Error())}), nil
 	}
 
 	tag.TagID = utils.IdGenerator()
@@ -59,5 +59,5 @@ func AddTag(req events.APIGatewayProxyRequest, table string, dynaClient *dynamod
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalMap, " + err.Error())}), nil
 	}
 
-	return ApiResponse(http.StatusOK, tag), nil
+	return ApiResponse(http.StatusCreated, tag), nil
 }
