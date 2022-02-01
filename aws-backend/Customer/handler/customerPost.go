@@ -21,19 +21,32 @@ func AddCustomerItem(req events.APIGatewayProxyRequest, table string, dynaClient
 	err := json.Unmarshal([]byte(req.Body), &customer)
 	if err != nil {
 		log.Printf("FailedToUnmarshalInputData: %s", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalInputData")}), nil
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("FailedToUnmarshalInputData")}), nil
 	}
 
 	if customer.CustomerID == 0 {
 		customer.CustomerID = customer.Phone
 	}
-	if customer.CustomerID < 10000000 {
+	fmt.Println(customer.CustomerID)
+	if customer.CustomerID > 100000000 && customer.CustomerID < 9999999 {
 		fmt.Println("UserIdInValid")
 		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("UserIdInValid")}), nil
 	}
 
 	customer.CreatedAt = time.Now().Unix()
 	customer.UpdateAt = time.Now().Unix()
+
+	if len(customer.AgentsID) == 0 {
+		customer.AgentsID = make([]int, 0)
+	}
+
+	if len(customer.Channels) == 0 {
+		customer.Channels = make([]string, 0)
+	}
+
+	if len(customer.TagsID) == 0 {
+		customer.TagsID = make([]int, 0)
+	}
 
 	av, err := attributevalue.MarshalMap(&customer)
 	if err != nil {
@@ -49,7 +62,7 @@ func AddCustomerItem(req events.APIGatewayProxyRequest, table string, dynaClient
 	if err != nil {
 		if err.Error() == "ConditionalCheckFailedException" {
 			log.Printf("ItemExisted: %s", err)
-			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("ItemExisted")}), nil
+			return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("ItemExisted")}), nil
 		}
 		log.Printf("ErrorToAddItem: %s", err)
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("ErrorToAddItem")}), nil
@@ -64,5 +77,5 @@ func AddCustomerItem(req events.APIGatewayProxyRequest, table string, dynaClient
 
 	// }
 
-	return ApiResponse(http.StatusOK, customer), nil
+	return ApiResponse(http.StatusCreated, customer), nil
 }

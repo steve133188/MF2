@@ -24,7 +24,7 @@ func UpdateCustomerItem(req events.APIGatewayProxyRequest, table string, dynaCli
 	err := json.Unmarshal([]byte(req.Body), &customer)
 	if err != nil {
 		log.Printf("FailedToUnmarshalInputData: %s", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalInputData")}), nil
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("FailedToUnmarshalInputData")}), nil
 	}
 
 	customer.UpdateAt = time.Now().Unix()
@@ -62,7 +62,7 @@ func UpdateCustomerTeam(req events.APIGatewayProxyRequest, table string, dynaCli
 	err := json.Unmarshal([]byte(req.Body), &customer)
 	if err != nil {
 		fmt.Printf("FailedToUnmarshalReqBody, %s", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{(aws.String("FailedToUnmarshalReqBody"))}), nil
+		return ApiResponse(http.StatusBadRequest, ErrMsg{(aws.String("FailedToUnmarshalReqBody"))}), nil
 	}
 
 	customer.UpdateAt = time.Now().Unix()
@@ -96,7 +96,7 @@ func AddCustomersTeam(req events.APIGatewayProxyRequest, table string, dynaClien
 	err := json.Unmarshal([]byte(req.Body), &data)
 	if err != nil {
 		fmt.Println("FailedToUnmarshalReqData, ", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqData")}), nil
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("FailedToUnmarshalReqData")}), nil
 	}
 
 	time := time.Now().Unix()
@@ -133,7 +133,7 @@ func EditCustomersTeam(req events.APIGatewayProxyRequest, table string, dynaClie
 	err := json.Unmarshal([]byte(req.Body), &data)
 	if err != nil {
 		fmt.Println("FailedToUnmarshalReqData, ", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqData")}), nil
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("FailedToUnmarshalReqData")}), nil
 	}
 
 	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
@@ -257,7 +257,7 @@ func UpdateGroupToCustomer(req events.APIGatewayProxyRequest, table string, dyna
 	err := json.Unmarshal([]byte(req.Body), &customer)
 	if err != nil {
 		fmt.Printf("FailedToUnmarshalReqBody, %s", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{(aws.String("FailedToUnmarshalReqBody"))}), nil
+		return ApiResponse(http.StatusBadRequest, ErrMsg{(aws.String("FailedToUnmarshalReqBody"))}), nil
 	}
 
 	customer.UpdateAt = time.Now().Unix()
@@ -291,7 +291,7 @@ func UpdateCustomersGroup(req events.APIGatewayProxyRequest, table string, dynaC
 	err := json.Unmarshal([]byte(req.Body), &data)
 	if err != nil {
 		fmt.Println("FailedToUnmarshalReqData, ", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqData")}), nil
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("FailedToUnmarshalReqData")}), nil
 	}
 
 	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
@@ -358,7 +358,7 @@ func AddGroupToCustomers(req events.APIGatewayProxyRequest, table string, dynaCl
 	err := json.Unmarshal([]byte(req.Body), &data)
 	if err != nil {
 		fmt.Println("FailedToUnmarshalReqData, ", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqData")}), nil
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("FailedToUnmarshalReqData")}), nil
 	}
 
 	time := time.Now().Unix()
@@ -455,7 +455,7 @@ func AddTagToCustomer(req events.APIGatewayProxyRequest, table string, dynaClien
 	err := json.Unmarshal([]byte(req.Body), &data)
 	if err != nil {
 		fmt.Println("FailedToUnmarshalReqBody, ", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqBody")}), nil
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("FailedToUnmarshalReqBody")}), nil
 	}
 
 	check, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
@@ -545,7 +545,7 @@ func AddTagToCustomers(req events.APIGatewayProxyRequest, table string, dynaClie
 	err := json.Unmarshal([]byte(req.Body), &data)
 	if err != nil {
 		fmt.Println("FailedToUnmarshalReqBody, ", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqBody")}), nil
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("FailedToUnmarshalReqBody")}), nil
 	}
 
 	res, err := attributevalue.MarshalList(data.Tags)
@@ -587,7 +587,7 @@ func EditCustomersTag(req events.APIGatewayProxyRequest, table string, dynaClien
 	err := json.Unmarshal([]byte(req.Body), &data)
 	if err != nil {
 		fmt.Println("FailedToUnmarshalReqData, ", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqData")}), nil
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("FailedToUnmarshalReqData")}), nil
 	}
 
 	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
@@ -664,7 +664,7 @@ func DeleteCustomerTag(req events.APIGatewayProxyRequest, table string, dynaClie
 
 	err := json.Unmarshal([]byte(req.Body), &data)
 	if err != nil {
-		fmt.Println("FailedToUnmarshalReqBody, ", err)
+		fmt.Println("StatusBadRequest, ", err)
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqBody")}), nil
 	}
 
@@ -690,7 +690,7 @@ func DeleteCustomerTag(req events.APIGatewayProxyRequest, table string, dynaClie
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalMap, CustomerID = " + strconv.Itoa(data.CustomerId))}), nil
 	}
 
-	var tagStr string
+	// var tagStr string
 	fmt.Println("data.tags = ", data.Tags)
 	fmt.Println("customer.TagsID = ", customer.TagsID)
 	for k, v := range customer.TagsID {
@@ -714,18 +714,19 @@ func DeleteCustomerTag(req events.APIGatewayProxyRequest, table string, dynaClie
 					return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("TagNotExist, tagID = " + strconv.Itoa(v))}), nil
 				}
 
-				if k == 0 {
-					tagStr = "REMOVE tags_id[" + strconv.Itoa(k) + "]"
-				} else {
-					tagStr += ", tags_id[" + strconv.Itoa(k) + "]"
-				}
-				break
+				customer.TagsID = remove(customer.TagsID, k)
 			}
 		}
 
 	}
 
-	fmt.Println("tagStr = ", tagStr)
+	tagList, err := attributevalue.MarshalList(customer.TagsID)
+	if err != nil {
+		fmt.Println("FailedToMarshaList CustomerID = ", data.CustomerId, err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToMarshaList CustomerID = " + strconv.Itoa(data.CustomerId) + err.Error())}), nil
+	}
+
+	// fmt.Println("tagStr = ", tagStr)
 	updateTime := time.Now().Unix()
 
 	_, err = dynaClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
@@ -733,11 +734,12 @@ func DeleteCustomerTag(req events.APIGatewayProxyRequest, table string, dynaClie
 		Key: map[string]types.AttributeValue{
 			"customer_id": &types.AttributeValueMemberN{Value: strconv.Itoa(data.CustomerId)},
 		},
-		UpdateExpression:    aws.String(tagStr + " Set update_at = :u"),
+		UpdateExpression:    aws.String("Set update_at = :u, tags_id = :tid"),
 		ReturnValues:        types.ReturnValueUpdatedNew,
 		ConditionExpression: aws.String("attribute_exists(customer_id)"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":u": &types.AttributeValueMemberN{Value: strconv.FormatInt(updateTime, 10)},
+			":u":   &types.AttributeValueMemberN{Value: strconv.FormatInt(updateTime, 10)},
+			":tid": &types.AttributeValueMemberL{Value: tagList},
 		},
 	})
 	if err != nil {
@@ -837,7 +839,7 @@ func AddAgentToCustomer(req events.APIGatewayProxyRequest, table string, dynaCli
 	err := json.Unmarshal([]byte(req.Body), &data)
 	if err != nil {
 		fmt.Println("FailedToUnmarshalReqBody, ", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqBody")}), nil
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("FailedToUnmarshalReqBody")}), nil
 	}
 
 	check, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
@@ -932,7 +934,7 @@ func AddAgentToCustomers(req events.APIGatewayProxyRequest, table string, dynaCl
 	err := json.Unmarshal([]byte(req.Body), &data)
 	if err != nil {
 		fmt.Println("FailedToUnmarshalReqBody, ", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqBody")}), nil
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("FailedToUnmarshalReqBody")}), nil
 	}
 
 	res, err := attributevalue.MarshalList(data.AgentID)
@@ -981,7 +983,7 @@ func EditCustomersAgent(req events.APIGatewayProxyRequest, table string, dynaCli
 	err := json.Unmarshal([]byte(req.Body), &data)
 	if err != nil {
 		fmt.Println("FailedToUnmarshalReqData, ", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqData")}), nil
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("FailedToUnmarshalReqData")}), nil
 	}
 
 	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
@@ -1072,12 +1074,35 @@ func DeleteCustomerAgent(req events.APIGatewayProxyRequest, table string, dynaCl
 	err := json.Unmarshal([]byte(req.Body), &data)
 	if err != nil {
 		fmt.Println("FailedToUnmarshalReqBody, ", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqBody")}), nil
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("FailedToUnmarshalReqBody")}), nil
 	}
 
-	var tagStr string
+	customer := new(model.Customer)
 
-	for k, v := range data.Agents {
+	cout, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
+		TableName: aws.String(table),
+		Key: map[string]types.AttributeValue{
+			"customer_id": &types.AttributeValueMemberN{Value: strconv.Itoa(data.CustomerId)},
+		},
+	})
+	if err != nil {
+		fmt.Println("FailedToGetCustomer, CustomerID = ", data.CustomerId, err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToGetCustomer, CustomerID = " + strconv.Itoa(data.CustomerId))}), nil
+	}
+	if cout.Item == nil {
+		fmt.Println("CustomerNotExist, CustomerID = ", data.CustomerId)
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("CustoemrNotExist, CustomerID = " + strconv.Itoa(data.CustomerId))}), nil
+	}
+
+	err = attributevalue.UnmarshalMap(cout.Item, &customer)
+	if err != nil {
+		fmt.Println("FailedToUnmarshalMap, CustomerID = ", data.CustomerId, err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalMap, CustomerID = " + strconv.Itoa(data.CustomerId))}), nil
+	}
+
+	// var tagStr string
+
+	for _, v := range data.Agents {
 		gout, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
 			TableName: aws.String(os.Getenv("USERTABLE")),
 			Key: map[string]types.AttributeValue{
@@ -1093,12 +1118,18 @@ func DeleteCustomerAgent(req events.APIGatewayProxyRequest, table string, dynaCl
 			return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("AgentNotExist, userID = " + strconv.Itoa(v))}), nil
 		}
 
-		if k == 0 {
-			tagStr = "REMOVE agents_id[" + strconv.Itoa(k) + "]"
-		} else {
-			tagStr += ", agents_id[" + strconv.Itoa(k) + "]"
+		for i, j := range customer.AgentsID {
+			if j == v {
+				customer.AgentsID = remove(customer.AgentsID, i)
+			}
 		}
 
+	}
+
+	a_list, err := attributevalue.MarshalList(customer.AgentsID)
+	if err != nil {
+		fmt.Println("FailedToMarshalList, CustomerId = ", data.CustomerId, err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String(err.Error())}), nil
 	}
 
 	updateTime := time.Now().Unix()
@@ -1108,11 +1139,12 @@ func DeleteCustomerAgent(req events.APIGatewayProxyRequest, table string, dynaCl
 		Key: map[string]types.AttributeValue{
 			"customer_id": &types.AttributeValueMemberN{Value: strconv.Itoa(data.CustomerId)},
 		},
-		UpdateExpression:    aws.String(tagStr + " SET update_at = :u"),
+		UpdateExpression:    aws.String("SET update_at = :u, agents_id = :a"),
 		ConditionExpression: aws.String("attribute_exists(customer_id)"),
 		ReturnValues:        types.ReturnValueUpdatedNew,
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":u": &types.AttributeValueMemberN{Value: strconv.FormatInt(updateTime, 10)},
+			":a": &types.AttributeValueMemberL{Value: a_list},
 		},
 	})
 	if err != nil {
@@ -1138,7 +1170,7 @@ func DeleteCustomersAgent(req events.APIGatewayProxyRequest, table string, dynaC
 	err := json.Unmarshal([]byte(req.Body), &data)
 	if err != nil {
 		fmt.Println("FailedToUnmarshalReqData, ", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalReqData")}), nil
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("FailedToUnmarshalReqData")}), nil
 	}
 
 	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
@@ -1280,3 +1312,7 @@ func DeleteCustomersAgent(req events.APIGatewayProxyRequest, table string, dynaC
 
 // 	return nil
 // }
+
+func remove(slice []int, s int) []int {
+	return append(slice[:s], slice[s+1:]...)
+}

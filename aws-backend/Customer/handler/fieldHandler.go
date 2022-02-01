@@ -40,25 +40,27 @@ func FieldHandler(Agents []int, TeamID int, Tags []int, dynaClient *dynamodb.Cli
 
 		users = append(users, *user)
 	}
+
 	teamID := TeamID
-
 	team := new(model.Team)
+	if teamID != 0 {
 
-	tout, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
-		TableName: aws.String(os.Getenv("ORGTABLE")),
-		Key: map[string]types.AttributeValue{
-			"org_id": &types.AttributeValueMemberN{Value: strconv.Itoa(teamID)},
-		},
-	})
-	if err != nil {
-		fmt.Printf("FailedToGetOrgItem, OrgID = %v, %s", teamID, err)
-		return nil, model.Team{}, nil, err
-	}
+		tout, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
+			TableName: aws.String(os.Getenv("ORGTABLE")),
+			Key: map[string]types.AttributeValue{
+				"org_id": &types.AttributeValueMemberN{Value: strconv.Itoa(teamID)},
+			},
+		})
+		if err != nil {
+			fmt.Printf("FailedToGetOrgItem, OrgID = %v, %s", teamID, err)
+			return nil, model.Team{}, nil, err
+		}
 
-	err = attributevalue.UnmarshalMap(tout.Item, &team)
-	if err != nil {
-		log.Printf("UnmarshalMapError, %s", err)
-		return nil, model.Team{}, nil, err
+		err = attributevalue.UnmarshalMap(tout.Item, &team)
+		if err != nil {
+			log.Printf("UnmarshalMapError, %s", err)
+			return nil, model.Team{}, nil, err
+		}
 	}
 
 	tagID := Tags

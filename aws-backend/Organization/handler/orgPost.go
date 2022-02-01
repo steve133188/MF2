@@ -24,7 +24,7 @@ func AddOrgItem(req events.APIGatewayProxyRequest, table string, dynaClient *dyn
 	err := json.Unmarshal([]byte(req.Body), &org)
 	if err != nil {
 		log.Printf("FailedToUnmarshalInputData: %s", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalInputData")}), nil
+		return ApiResponse(http.StatusBadRequest, ErrMsg{aws.String("FailedToUnmarshalInputData")}), nil
 	}
 
 	fmt.Println(org.Type)
@@ -91,5 +91,5 @@ func AddOrgItem(req events.APIGatewayProxyRequest, table string, dynaClient *dyn
 	}
 
 	attributevalue.UnmarshalMap(out.Attributes, &org)
-	return ApiResponse(http.StatusOK, org), nil
+	return ApiResponse(http.StatusCreated, org), nil
 }

@@ -1,4 +1,4 @@
-module mf-bot-services
+module mf-chatbot-services
 
 go 1.17
 
