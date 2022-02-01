@@ -117,7 +117,7 @@ def test():
 @app.route('/insert')
 def insert():
     test_obj = output.Output(0, 0, 0)
-    print('|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||')
+    print('|'*50)
     return test_obj.insert_data()
 
 
@@ -179,9 +179,9 @@ def migration():  # put application's code here
 
     i = int(end)
     while i >= int(start):
-        print("#############")
+        print("#"*50)
         print(i)
-        print("#############")
+        print("#" * 50)
         migrate = output.Output(1, i - 24 * 3600, i)
         err = migrate.insert_data()
 
