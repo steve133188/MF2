@@ -3,6 +3,7 @@ from functools import lru_cache
 import flask
 import pandas as pd
 from flask import Flask, request
+from flask_cors import CORS
 from dashboard import output, getData
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -11,7 +12,7 @@ import time
 app = Flask(__name__)
 obj = output.Output(0, 0, 0)
 default_data = dict()
-
+CORS(app)
 
 def get_data(start, end, default_index):
     table = getData.GetData(0, 0, 0).dynamodb.Table('Mf2_TCO_DASHBOARD')
