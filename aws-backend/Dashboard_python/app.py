@@ -3,6 +3,7 @@ from functools import lru_cache
 import flask
 import pandas as pd
 from flask import Flask, request
+from flask_cors import CORS
 from dashboard import output, getData
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -11,7 +12,7 @@ import time
 app = Flask(__name__)
 obj = output.Output(0, 0, 0)
 default_data = dict()
-
+CORS(app)
 
 def get_data(start, end, default_index):
     table = getData.GetData(0, 0, 0).dynamodb.Table('Mf2_TCO_DASHBOARD')
@@ -109,16 +110,14 @@ def start():
 
 @app.route('/test')
 def test():
-    end = 0
-    start = 0
-    get_data(start, end, 1)
+    # obj.insert_data()
     return 'testing'
 
 
 @app.route('/insert')
 def insert():
     test_obj = output.Output(0, 0, 0)
-    print('|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||')
+    print('|'*50)
     return test_obj.insert_data()
 
 
@@ -179,7 +178,10 @@ def migration():  # put application's code here
     end = request.args.get('end')
 
     i = int(end)
-    while i > int(start):
+    while i >= int(start):
+        print("#"*50)
+        print(i)
+        print("#" * 50)
         migrate = output.Output(1, i - 24 * 3600, i)
         err = migrate.insert_data()
 
