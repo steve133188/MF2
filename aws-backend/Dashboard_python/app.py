@@ -98,13 +98,14 @@ scheduler.add_job(
     get_data,
     trigger='cron',
     hour=16,
-    args=(round(time.time()) - 3600 * 24, round(time.time()), 1)
+    args=(round(time.time()) - 3600 * 24 * 7 - 3600, round(time.time()), 1)
 )
 
 
 @app.route('/')
 def start():
     return 'MF2 dashboard server is running'
+
 
 @app.route('/test')
 def test():
