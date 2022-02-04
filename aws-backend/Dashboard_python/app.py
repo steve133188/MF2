@@ -14,6 +14,7 @@ obj = output.Output(0, 0, 0)
 default_data = dict()
 CORS(app)
 
+
 def get_data(start, end, default_index):
     table = getData.GetData(0, 0, 0).dynamodb.Table('Mf2_TCO_DASHBOARD')
     dashboard_filter = {
@@ -117,7 +118,7 @@ def test():
 @app.route('/insert')
 def insert():
     test_obj = output.Output(0, 0, 0)
-    print('|'*50)
+    print('|' * 50)
     return test_obj.insert_data()
 
 
@@ -179,7 +180,7 @@ def migration():  # put application's code here
 
     i = int(end)
     while i >= int(start):
-        print("#"*50)
+        print("#" * 50)
         print(i)
         print("#" * 50)
         migrate = output.Output(1, i - 24 * 3600, i)

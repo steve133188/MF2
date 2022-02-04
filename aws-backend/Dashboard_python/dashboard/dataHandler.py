@@ -15,6 +15,7 @@ class DataHandler:
         self.logs = self.data.get_log()
         self.roles = self.data.get_role()
         self.teams = self.data.get_org()
+        self.prev_dash = self.data.get_previous_dash()
 
     #################################################################################
     def get_msg_number(self):
@@ -89,6 +90,11 @@ class DataHandler:
         waba_total_active_contacts_count = 0
         waba_active_list = []
 
+        if self.prev_dash != 0:
+            waba_total_msg_sent = self.prev_dash[0]['total_msg_sent']['WABA']
+            waba_total_msg_rec = self.prev_dash[0]['total_msg_recv']['WABA']
+            waba_total_active_contacts_count = self.prev_dash[0]['active_contacts']['WABA']
+
         if len(self.messages) == 0:
             return {'active_contacts': waba_total_active_contacts_count,
                     'msg_sent': waba_total_msg_sent,
@@ -99,7 +105,7 @@ class DataHandler:
                     }
 
         waba_msg = self.messages.loc[self.messages['channel'] == 'WABA']
-        print('='*50)
+        print('=' * 50)
         print(waba_msg)
 
         for i in waba_msg.index:
@@ -182,6 +188,13 @@ class DataHandler:
                          'avg_first_response_time': 0
                          }
 
+        if self.prev_dash != 0:
+            wts_dashboard['active_contacts'] = int(self.prev_dash[0]['active_contacts']['Whatsapp'])
+            wts_dashboard['delivered_contacts'] = int(self.prev_dash[0]['delivered_contacts']['Whatsapp'])
+            wts_dashboard['unhandled_contacts'] = int(self.prev_dash[0]['unhandled_contacts']['Whatsapp'])
+            wts_dashboard['msg_sent'] = int(self.prev_dash[0]['total_msg_sent']['Whatsapp'])
+            wts_dashboard['msg_recv'] = int(self.prev_dash[0]['total_msg_recv']['Whatsapp'])
+
         print('User length: ', len(self.users))
 
         for user in self.users.index:
@@ -207,12 +220,31 @@ class DataHandler:
                     assignee_count += 1
             agent_dashboard['assigned_contact'].append({user_id: assignee_count})
 
+            contact_list = []
+            active_contact = 0
+            delivered_contact = 0
+            unhandled_contact = 0
+            agent_msg_sent = 0
+            agent_msg_recv = 0
+
+            if self.prev_dash != 0:
+                active_contact = int(next(item for item in self.prev_dash[0]['agents']['active_contact']
+                                          if user_id in item.keys())[user_id])
+                delivered_contact = int(next(item for item in self.prev_dash[0]['agents']['delivered_contact']
+                                             if user_id in item.keys())[user_id])
+                unhandled_contact = int(next(item for item in self.prev_dash[0]['agents']['unhandled_contact']
+                                             if user_id in item.keys())[user_id])
+                agent_msg_sent = int(next(item for item in self.prev_dash[0]['agents']['message_sent']
+                                          if user_id in item.keys())[user_id])
+                agent_msg_recv = int(next(item for item in self.prev_dash[0]['agents']['message_recv']
+                                          if user_id in item.keys())[user_id])
+
             if len(self.messages) == 0 or len(self.messages.loc[self.messages['channel'] == 'Whatsapp']) == 0:
-                agent_dashboard['active_contact'].append({user_id: 0})
-                agent_dashboard['delivered_contact'].append({user_id: 0})
-                agent_dashboard['unhandled_contact'].append({user_id: 0})
-                agent_dashboard['message_sent'].append({user_id: 0})
-                agent_dashboard['message_recv'].append({user_id: 0})
+                agent_dashboard['active_contact'].append({user_id: active_contact})
+                agent_dashboard['delivered_contact'].append({user_id: delivered_contact})
+                agent_dashboard['unhandled_contact'].append({user_id: unhandled_contact})
+                agent_dashboard['message_sent'].append({user_id: agent_msg_sent})
+                agent_dashboard['message_recv'].append({user_id: agent_msg_recv})
                 agent_dashboard['avg_response_time'].append({user_id: 0})
                 agent_dashboard['first_response_time'].append({user_id: 0})
                 agent_dashboard['longest_response_time'].append({user_id: 0})
@@ -229,21 +261,17 @@ class DataHandler:
             print('=' * 50)
 
             if len(user_msg) == 0:
-                agent_dashboard['active_contact'].append({user_id: 0})
-                agent_dashboard['delivered_contact'].append({user_id: 0})
-                agent_dashboard['unhandled_contact'].append({user_id: 0})
-                agent_dashboard['message_sent'].append({user_id: 0})
-                agent_dashboard['message_recv'].append({user_id: 0})
+                agent_dashboard['active_contact'].append({user_id: active_contact})
+                agent_dashboard['delivered_contact'].append({user_id: delivered_contact})
+                agent_dashboard['unhandled_contact'].append({user_id: unhandled_contact})
+                agent_dashboard['message_sent'].append({user_id: agent_msg_sent})
+                agent_dashboard['message_recv'].append({user_id: agent_msg_recv})
                 agent_dashboard['avg_response_time'].append({user_id: 0})
                 agent_dashboard['first_response_time'].append({user_id: 0})
                 agent_dashboard['longest_response_time'].append({user_id: 0})
                 continue
 
             # user contact
-            contact_list = []
-            active_contact = 0
-            delivered_contact = 0
-            unhandled_contact = 0
             for msg in user_msg.index:
 
                 if (len(contact_list) == 0) or not (user_msg['room_id'][msg] in contact_list):
@@ -284,8 +312,8 @@ class DataHandler:
             agent_dashboard['unhandled_contact'].append({user_id: unhandled_contact})
 
             msg_sent = len(user_msg.loc[user_msg['from_me']])
-            agent_dashboard['message_sent'].append({user_id: msg_sent})
-            agent_dashboard['message_recv'].append({user_id: len(user_msg) - msg_sent})
+            agent_dashboard['message_sent'].append({user_id: msg_sent + agent_msg_sent})
+            agent_dashboard['message_recv'].append({user_id: len(user_msg) - msg_sent + agent_msg_recv})
             wts_dashboard['msg_sent'] += msg_sent
             wts_dashboard['msg_recv'] += len(user_msg) - msg_sent
 
@@ -320,8 +348,10 @@ class DataHandler:
                 wts_dashboard['avg_response_time'] += avg_time
                 wts_dashboard['avg_first_response_time'] += first_time
 
-        wts_dashboard['avg_response_time'] = round(wts_dashboard['avg_response_time'] / len(agent_dashboard['username']), 2)
-        wts_dashboard['avg_first_response_time'] = round(wts_dashboard['avg_first_response_time'] / len(agent_dashboard['username']), 2)
+        wts_dashboard['avg_response_time'] = round(
+            wts_dashboard['avg_response_time'] / len(agent_dashboard['username']), 2)
+        wts_dashboard['avg_first_response_time'] = round(
+            wts_dashboard['avg_first_response_time'] / len(agent_dashboard['username']), 2)
 
         print('Agent: \n', agent_dashboard)
         print('Whatsapp Dashboard: \n', wts_dashboard)

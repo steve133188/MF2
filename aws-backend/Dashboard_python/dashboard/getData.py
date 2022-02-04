@@ -25,14 +25,15 @@ class GetData:
         self.tag_table = self.dynamodb.Table('MF2_TCO_TAG')
         self.msg_table = self.dynamodb.Table('MessageTable')
         self.log_table = self.dynamodb.Table('Activity')
+        self.dash_table = self.dynamodb.Table('Mf2_TCO_DASHBOARD')
 
         if index == 1:
             self.start = start
             self.end = end
         else:
             self.now = round(time.time())
-            self.end = str(self.now)
-            self.start = str(self.now - 3600 * 24 * 1)
+            self.end = self.now
+            self.start = self.now - 3600 * 24 * 1 - 5
 
         print('Get Data ', self.start, self.end)
 
@@ -62,6 +63,35 @@ class GetData:
         print('msg_count ', all_msgs_counts)
 
         return pd.DataFrame(msgs_data)
+
+    #################################################################################
+    def get_previous_dash(self):
+        start_t = int(self.start)
+        end_t = int(self.end)
+        dash_filter = {
+            'FilterExpression': '#ts between :s and :e',
+            'ExpressionAttributeValues': {
+                ':s': start_t,
+                ':e': end_t
+            },
+            'ExpressionAttributeNames': {
+                '#ts': 'timestamp'
+            },
+            'Limit': 1
+        }
+
+        dash = self.dash_table.scan(**dash_filter)
+        dash_data = dash['Items']
+
+        while dash.get('LastEvaluatedKey'):
+            dash = self.dash_table.scan(ExclusiveStartKey=dash['LastEvaluatedKey'], **dash_filter)
+            dash_data.extend(dash['Items'])
+
+        if len(dash_data) == 0:
+            return 0
+
+        print('Previous Dash: \n', len(dash_data))
+        return dash_data
 
     #################################################################################
     def get_user(self):
