@@ -9,12 +9,12 @@ class Output:
     def __init__(self, index, start, end):
         if index == 1:
             self.get_from_logic = DataHandler(1, start, end)
-            self.get_from_db = GetData(1, start, end)
+            self.get_from_db = self.get_from_logic.data
             self.end = end
             print('Output ', start, end)
         else:
             self.get_from_logic = DataHandler(0, start, end)
-            self.get_from_db = GetData(0, start, end)
+            self.get_from_db = self.get_from_logic.data
             self.end = 0
             print('Default Time ', start, end)
 

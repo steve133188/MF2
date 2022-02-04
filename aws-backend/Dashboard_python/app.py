@@ -48,17 +48,14 @@ def get_data(start, end, default_index):
                     agent_output[agent_column] = agent_temp[agent_column][len(agent_temp) - 1]
                     continue
 
-                column_temp = agent_temp[agent_column][0]
-                for i in range(1, len(agent_temp[agent_column])):
-                    if len(agent_temp[agent_column][i]) == 0:
-                        continue
-                    column_temp += agent_temp[agent_column][i]
+                if agent_column == 'avg_response_time' or agent_column == 'longest_response_time' or \
+                        agent_column == 'first_response_time':
+                    sum_df = pd.DataFrame(agent_temp[agent_column].to_list()).mean().astype(int)
+                    agent_output[agent_column] = sum_df.to_dict()
+                    continue
 
-                sum_df = pd.DataFrame.from_dict(column_temp).mean().astype(int)
-                temp_put = []
-                for (column, column_data) in sum_df.iteritems():
-                    temp_put.append({column: column_data})
-                agent_output[agent_column] = temp_put
+                sum_df = pd.DataFrame(agent_temp[agent_column].to_list()).sum().astype(int)
+                agent_output[agent_column] = sum_df.to_dict()
 
             output_data[name] = agent_output
 
@@ -178,15 +175,16 @@ def migration():  # put application's code here
     start = request.args.get('start')
     end = request.args.get('end')
 
-    i = int(end)
-    while i >= int(start):
+    i = int(start)
+    while i <= int(end):
         print("#" * 50)
         print(i)
         print("#" * 50)
-        migrate = output.Output(1, i - 24 * 3600, i)
+        migrate = output.Output(1, i, i + 24 * 3600)
         err = migrate.insert_data()
 
-        i = i - 24 * 3600
+        i = i + 24 * 3600
+        time.sleep(5)
 
     return flask.Response(status=200)
 

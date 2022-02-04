@@ -77,7 +77,7 @@ class GetData:
             'ExpressionAttributeNames': {
                 '#ts': 'timestamp'
             },
-            'Limit': 1
+            'Limit': 2
         }
 
         dash = self.dash_table.scan(**dash_filter)
