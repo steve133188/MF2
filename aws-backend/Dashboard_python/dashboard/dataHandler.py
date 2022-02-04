@@ -166,7 +166,6 @@ class DataHandler:
         agent_dashboard = {'username': {},
                            'role': {},
                            'team': {},
-                           'status': {},
                            'assigned_contact': {},
                            'active_contact': {},
                            'delivered_contact': {},
