@@ -53,7 +53,7 @@ def get_data(start, end, default_index):
                     agent_output[agent_column] = sum_df.to_dict()
                     continue
 
-                sum_df = pd.DataFrame(agent_temp[agent_column].to_list()).sum().astype(int)
+                sum_df = pd.DataFrame(agent_temp[agent_column].to_list()).mean().astype(int)
                 agent_output[agent_column] = sum_df.to_dict()
 
             output_data[name] = agent_output
