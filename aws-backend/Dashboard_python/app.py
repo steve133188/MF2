@@ -58,6 +58,14 @@ def get_data(start, end, default_index):
 
             output_data[name] = agent_output
 
+            # Team info
+            temp = pd.DataFrame(agent_output)
+            teams = temp.groupby(['team']).sum()
+            teams['avg_response_time'] = round(teams['avg_response_time'] / len(teams), 1)
+            teams['first_response_time'] = round(teams['first_response_time'] / len(teams), 1)
+            teams['longest_response_time'] = round(teams['longest_response_time'] / len(teams), 1)
+            output_data['teams'] = teams.to_dict()
+
         elif name == 'communication_hours':
             temp = pd.DataFrame(data.values.tolist())
             waba_temp = pd.DataFrame(temp['WABA'].to_list()).sum()
@@ -167,6 +175,21 @@ def agent():  # put application's code here
     end = request.args.get('end')
 
     return get_data(start, end, 0)
+
+
+@app.route('/dashboard/team')
+def team():  # put application's code here
+    start = request.args.get('start')
+    end = request.args.get('end')
+
+    original_data = get_data(start, end, 0)
+    temp = pd.DataFrame(original_data['agents'])
+    teams = temp.groupby(['team']).sum()
+    teams['avg_response_time'] = round(teams['avg_response_time'] / len(teams), 1)
+    teams['first_response_time'] = round(teams['first_response_time'] / len(teams), 1)
+    teams['longest_response_time'] = round(teams['longest_response_time'] / len(teams), 1)
+
+    return teams.to_dict()
 
 
 @app.route('/migration')
