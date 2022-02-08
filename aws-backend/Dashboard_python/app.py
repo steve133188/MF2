@@ -43,7 +43,8 @@ def get_data(start, end, default_index):
             agent_output = {}
             print(agent_temp)
             for (agent_column, agent_data) in agent_temp.iteritems():
-                if agent_column == 'role' or agent_column == 'team' or agent_column == 'username' or agent_column == 'status':
+                # if agent_column == 'role' or agent_column == 'team' or agent_column == 'username' or agent_column == 'status':
+                if agent_column == 'role' or agent_column == 'team' or agent_column == 'username':
                     agent_output[agent_column] = agent_temp[agent_column][len(agent_temp) - 1]
                     continue
 
