@@ -10,7 +10,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import time
 
 app = Flask(__name__)
-obj = output.Output(0, 0, 0)
 default_data = dict()
 CORS(app)
 
@@ -96,7 +95,7 @@ def get_data(start, end, default_index):
 scheduler = BackgroundScheduler()
 scheduler.start()
 scheduler.add_job(
-    obj.insert_data,
+    output.Output(0, 0, 0).insert_data,
     trigger='cron',
     hour=16,
 )
