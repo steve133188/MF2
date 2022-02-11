@@ -136,6 +136,13 @@ def default():  # put application's code here
 
     return default_data[0]
 
+@app.route('/default/refresh')
+def refresh():  # put application's code here
+
+    get_data(round(time.time()) - 3600 * 24 * 7 - 3600, round(time.time()), 1)
+
+    return default_data[0]
+
 
 # now = round(time.time())
 # print(now)
