@@ -10,7 +10,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import time
 
 app = Flask(__name__)
-obj = output.Output(0, 0, 0)
 default_data = dict()
 CORS(app)
 
@@ -100,7 +99,7 @@ def get_data(start, end, default_index):
 scheduler = BackgroundScheduler()
 scheduler.start()
 scheduler.add_job(
-    obj.insert_data,
+    output.Output(0, 0, 0).insert_data,
     trigger='cron',
     hour=16,
 )
@@ -134,6 +133,13 @@ def insert():
 def default():  # put application's code here
     if len(default_data) == 0:
         get_data(round(time.time()) - 3600 * 24 * 7 - 3600, round(time.time()), 1)
+
+    return default_data[0]
+
+@app.route('/default/refresh')
+def refresh():  # put application's code here
+
+    get_data(round(time.time()) - 3600 * 24 * 7 - 3600, round(time.time()), 1)
 
     return default_data[0]
 

@@ -146,9 +146,9 @@ class DataHandler:
         waba_data = {'active_contacts': waba_total_active_contacts_count,
                      'msg_sent': waba_total_msg_sent,
                      'msg_recv': waba_total_msg_rec,
-                     'resp_time': round(waba_total_resp_time / 60, 2),
-                     'first_time': round(waba_first_time / 60, 2),
-                     'longest_time': round(waba_longest_time / 60, 2)
+                     'resp_time': round(waba_total_resp_time / 60000, 2),
+                     'first_time': round(waba_first_time / 60000, 2),
+                     'longest_time': round(waba_longest_time / 60000, 2)
                      }
 
         print('---------------------------------------------')
