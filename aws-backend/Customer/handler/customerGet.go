@@ -445,104 +445,37 @@ func GetCustomersByTag(req events.APIGatewayProxyRequest, table string, dynaClie
 
 }
 
-func GetCustomersByAgentsID(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
-	fmt.Println("req.Parameters = ", req.PathParameters)
+func GetCustomersByAgentID(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
+	agentId := req.PathParameters["agent"]
 
-	agentIdList := req.MultiValueQueryStringParameters["agent"]
-	// "contains(tags_id, :t1) AND contains(tags_id, :t2)"
-	dataVal := make(map[string]types.AttributeValue)
-	var filterStr string
-
-	for k, v := range agentIdList {
-		if k != 0 {
-			filterStr += " AND contains(agents_id, :t" + strconv.Itoa(k) + ")"
-		} else {
-			filterStr += "contains(agents_id, :t" + strconv.Itoa(k) + ")"
-		}
-
-		key := ":t" + strconv.Itoa(k)
-		dataVal[key] = &types.AttributeValueMemberN{Value: v}
-
-	}
-
-	res, _ := json.Marshal(dataVal)
-
-	fmt.Println("dataVal = ", string(res))
-	fmt.Println("filterStr = ", filterStr)
-
-	var customers []model.Customer = make([]model.Customer, 0)
-
-	out, err := dynaClient.Scan(context.TODO(), &dynamodb.ScanInput{
-		TableName:                 aws.String(table),
-		FilterExpression:          aws.String(filterStr),
-		ExpressionAttributeValues: dataVal,
+	p := dynamodb.NewQueryPaginator(dynaClient, &dynamodb.QueryInput{
+		TableName:              aws.String(table),
+		IndexName:              aws.String("handler_id-index"),
+		KeyConditionExpression: aws.String("handler_id = :hid"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":hid": &types.AttributeValueMemberN{Value: agentId},
+		},
 	})
-	if err != nil {
-		if err.Error() == "ConditionalCheckFailedException" {
-			log.Printf("ItemNotExisted: %s", err)
-			return ApiResponse(http.StatusNotFound, ErrMsg{aws.String("ItemNotExisted")}), nil
+
+	customers := make([]model.Customer, 0)
+	for p.HasMorePages() {
+		outs, err := p.NextPage(context.TODO())
+		if err != nil {
+			fmt.Println("Error in query,", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("Error in query, " + err.Error())}), nil
 		}
-		fmt.Printf("FailedToScan, %s", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToScan")}), nil
+
+		pCustomers := make([]model.Customer, 0)
+		err = attributevalue.UnmarshalListOfMaps(outs.Items, &pCustomers)
+		if err != nil {
+			fmt.Println("Error in unmarshal list of data,", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("Error in unmarshal list of data, " + err.Error())}), nil
+		}
+
+		customers = append(customers, pCustomers...)
 	}
-
-	fmt.Println("count = ", out.Count)
-
-	err = attributevalue.UnmarshalListOfMaps(out.Items, &customers)
-	if err != nil {
-		fmt.Printf("FailedToUnmarshalListOfMap, %s", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalListOfMap")}), nil
-	}
-
-	//fullCustomers := make([]model.FullCustomer, 0)
-	//
-	//for k, v := range customers {
-	//	fullCustomer := new(model.FullCustomer)
-	//	users, team, tags, err := FieldHandler(v.AgentsID, v.TeamID, v.TagsID, dynaClient)
-	//	if err != nil {
-	//		fmt.Printf("ErrorFromFieldHandler, %s", err)
-	//		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("ErrorFromFieldHandler")}), nil
-	//	}
-	//
-	//	err = attributevalue.UnmarshalMap(out.Items[k], &fullCustomer)
-	//	if err != nil {
-	//		fmt.Printf("FailedToUnmarshalMap, %s", err)
-	//		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalMap")}), nil
-	//	}
-	//	fmt.Printf("fullcustomer = %v", fullCustomer)
-	//	fullCustomer.Agents = users
-	//	fullCustomer.Team = team
-	//	fullCustomer.Tags = tags
-	//
-	//	sout, err := dynaClient.Scan(context.TODO(), &dynamodb.ScanInput{
-	//		TableName:        aws.String(os.Getenv("CHATROOM")),
-	//		FilterExpression: aws.String("room_id = :id"),
-	//		ExpressionAttributeValues: map[string]types.AttributeValue{
-	//			":id": &types.AttributeValueMemberN{Value: strconv.Itoa(v.CustomerID)},
-	//		},
-	//	})
-	//	if err != nil {
-	//		fmt.Println(err)
-	//		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String(err.Error())}), nil
-	//	}
-	//
-	//	chatroom := make([]model.ChatRoom, 0)
-	//
-	//	err = attributevalue.UnmarshalListOfMaps(sout.Items, &chatroom)
-	//	if err != nil {
-	//		log.Printf("UnmarshalListOfMaps CustomerID = %v, %s", strconv.Itoa(v.CustomerID), err)
-	//		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UnmarshalListOfMaps")}), nil
-	//	}
-	//
-	//	for _, v := range chatroom {
-	//		fullCustomer.Channels = append(fullCustomer.Channels, v.Channel)
-	//	}
-	//
-	//	fullCustomers = append(fullCustomers, *fullCustomer)
-	//}
 
 	return ApiResponse(http.StatusOK, customers), nil
-
 }
 
 func GetCustomersByChannel(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {

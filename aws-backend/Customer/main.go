@@ -33,8 +33,8 @@ func handleRequest(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyRe
 			return handler.GetCustomersByTag(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
 		case "/customers/group/{group}":
 			return handler.GetCustomersByGroup(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
-		case "/customers/agent":
-			return handler.GetCustomersByAgentsID(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
+		case "/customers/agent/{agent}":
+			return handler.GetCustomersByAgentID(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
 		case "/customers/channel":
 			return handler.GetCustomersByChannel(req, os.Getenv("CUSTOMERTABLE"), dynaClient)
 		default:
