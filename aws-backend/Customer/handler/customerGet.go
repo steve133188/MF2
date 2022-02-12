@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -43,49 +44,49 @@ func GetCustomerItemByID(req events.APIGatewayProxyRequest, table string, dynaCl
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UnmarshalMapError")}), nil
 	}
 
-	//users, team, tags, err := FieldHandler(customer.AgentsID, customer.TeamID, customer.TagsID, dynaClient)
-	//if err != nil {
-	//	fmt.Printf("ErrorFromFieldHandler, %s", err)
-	//	return ApiResponse(http.StatusPartialContent, customer), nil
-	//}
-	//
-	//fullCustomer := new(model.FullCustomer)
-	//
-	//err = attributevalue.UnmarshalMap(out.Item, fullCustomer)
-	//if err != nil {
-	//	log.Printf("UnmarshalMapError CustomerID = %v, %s", customerId, err)
-	//	return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UnmarshalMapError")}), nil
-	//}
-	//
-	//sout, err := dynaClient.Scan(context.TODO(), &dynamodb.ScanInput{
-	//	TableName:        aws.String(os.Getenv("CHATROOM")),
-	//	FilterExpression: aws.String("room_id = :id"),
-	//	ExpressionAttributeValues: map[string]types.AttributeValue{
-	//		":id": &types.AttributeValueMemberN{Value: customerId},
-	//	},
-	//})
-	//if err != nil {
-	//	fmt.Println(err)
-	//	return ApiResponse(http.StatusNotFound, ErrMsg{aws.String(err.Error())}), nil
-	//}
-	//
-	//chatroom := make([]model.ChatRoom, 0)
-	//
-	//err = attributevalue.UnmarshalListOfMaps(sout.Items, &chatroom)
-	//if err != nil {
-	//	log.Printf("UnmarshalListOfMaps CustomerID = %v, %s", customerId, err)
-	//	return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UnmarshalListOfMaps")}), nil
-	//}
-	//
-	//for _, v := range chatroom {
-	//	fullCustomer.Channels = append(fullCustomer.Channels, v.Channel)
-	//}
-	//
-	//fullCustomer.Agents = users
-	//fullCustomer.Team = team
-	//fullCustomer.Tags = tags
+	users, team, tags, err := FieldHandler(customer.AgentsID, customer.TeamID, customer.TagsID, dynaClient)
+	if err != nil {
+		fmt.Printf("ErrorFromFieldHandler, %s", err)
+		return ApiResponse(http.StatusPartialContent, customer), nil
+	}
 
-	return ApiResponse(http.StatusOK, customer), nil
+	fullCustomer := new(model.FullCustomer)
+
+	err = attributevalue.UnmarshalMap(out.Item, fullCustomer)
+	if err != nil {
+		log.Printf("UnmarshalMapError CustomerID = %v, %s", customerId, err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UnmarshalMapError")}), nil
+	}
+
+	sout, err := dynaClient.Scan(context.TODO(), &dynamodb.ScanInput{
+		TableName:        aws.String(os.Getenv("CHATROOM")),
+		FilterExpression: aws.String("room_id = :id"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":id": &types.AttributeValueMemberN{Value: customerId},
+		},
+	})
+	if err != nil {
+		fmt.Println(err)
+		return ApiResponse(http.StatusNotFound, ErrMsg{aws.String(err.Error())}), nil
+	}
+
+	chatroom := make([]model.ChatRoom, 0)
+
+	err = attributevalue.UnmarshalListOfMaps(sout.Items, &chatroom)
+	if err != nil {
+		log.Printf("UnmarshalListOfMaps CustomerID = %v, %s", customerId, err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("UnmarshalListOfMaps")}), nil
+	}
+
+	for _, v := range chatroom {
+		fullCustomer.Channels = append(fullCustomer.Channels, v.Channel)
+	}
+
+	fullCustomer.Agents = users
+	fullCustomer.Team = team
+	fullCustomer.Tags = tags
+
+	return ApiResponse(http.StatusOK, fullCustomer), nil
 }
 
 func GetCustomerItems(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
@@ -174,30 +175,46 @@ func GetCustomerItems(req events.APIGatewayProxyRequest, table string, dynaClien
 func GetCustomersByTeamID(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
 	teamId := req.PathParameters["teamId"]
 
-	var customers []model.Customer = make([]model.Customer, 0)
-
-	out, err := dynaClient.Scan(context.TODO(), &dynamodb.ScanInput{
-		TableName:        &table,
-		FilterExpression: aws.String("team_id = :t"),
+	outs, err := dynaClient.Query(context.TODO(), &dynamodb.QueryInput{
+		TableName:              aws.String(table),
+		IndexName:              aws.String("team_id-index"),
+		KeyConditionExpression: aws.String("team_id = :val"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":t": &types.AttributeValueMemberN{Value: teamId},
+			":val": &types.AttributeValueMemberN{Value: teamId},
 		},
 	})
-
 	if err != nil {
-		if err.Error() == "ConditionalCheckFailedException" {
-			log.Printf("ItemNotExisted: %s", err)
-			return ApiResponse(http.StatusNotFound, ErrMsg{aws.String("ItemNotExisted")}), nil
-		}
-		fmt.Printf("FailedToScan, %s", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToScan")}), nil
+		log.Println(err)
 	}
 
-	err = attributevalue.UnmarshalListOfMaps(out.Items, &customers)
+	var customers []model.Customer = make([]model.Customer, 0)
+	err = attributevalue.UnmarshalListOfMaps(outs.Items, &customers)
 	if err != nil {
-		fmt.Printf("FailedToUnmarshalListOfMap, %s", err)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalListOfMap")}), nil
+		log.Println(err)
 	}
+
+	// out, err := dynaClient.Scan(context.TODO(), &dynamodb.ScanInput{
+	// 	TableName:        &table,
+	// 	FilterExpression: aws.String("team_id = :t"),
+	// 	ExpressionAttributeValues: map[string]types.AttributeValue{
+	// 		":t": &types.AttributeValueMemberN{Value: teamId},
+	// 	},
+	// })
+
+	// if err != nil {
+	// 	if err.Error() == "ConditionalCheckFailedException" {
+	// 		log.Printf("ItemNotExisted: %s", err)
+	// 		return ApiResponse(http.StatusNotFound, ErrMsg{aws.String("ItemNotExisted")}), nil
+	// 	}
+	// 	fmt.Printf("FailedToScan, %s", err)
+	// 	return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToScan")}), nil
+	// }
+
+	// err = attributevalue.UnmarshalListOfMaps(out.Items, &customers)
+	// if err != nil {
+	// 	fmt.Printf("FailedToUnmarshalListOfMap, %s", err)
+	// 	return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalListOfMap")}), nil
+	// }
 
 	//fullCustomers := make([]model.FullCustomer, 0)
 	//
