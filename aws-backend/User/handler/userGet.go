@@ -491,3 +491,32 @@ func GetUsersWithoutTeam(req events.APIGatewayProxyRequest, table string, dynaCl
 
 	return ApiResponse(http.StatusOK, fullUsers), nil
 }
+
+func GetUserWhatsappInfo(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
+	userId := req.PathParameters["userId"]
+
+	out, err := dynaClient.Scan(context.TODO(), &dynamodb.ScanInput{
+		TableName:        aws.String("whatsapp_nodeTable"),
+		FilterExpression: aws.String("user_id = :uid"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":uid": &types.AttributeValueMemberN{Value: userId},
+		},
+	})
+	if err != nil {
+		fmt.Println("Error in Scan,", err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("Error in Scan, " + err.Error())}), nil
+	}
+
+	if out.Count == 0 {
+		return ApiResponse(http.StatusNotFound, ErrMsg{aws.String("Not found for user ID = " + userId)}), nil
+	}
+	channel := new(model.Chan)
+	err = attributevalue.UnmarshalMap(out.Items[0], &channel)
+	if err != nil {
+		fmt.Println("Error in Unmarshal data,", err)
+		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("Error in Unmarshal data, " + err.Error())}), nil
+	}
+
+	channel.ChannelName = "Whatsapp"
+	return ApiResponse(http.StatusOK, channel), nil
+}
