@@ -66,7 +66,7 @@ type Team struct {
 
 type Chan struct {
 	ChannelName string `json:"channel_name" dynamodbav:"channel_name"`
-	ChannelUrl  string `json:"channel_url" dynamodbav:"channel_url"`
+	ChannelUrl  string `json:"url" dynamodbav:"url"`
 }
 
 type Role struct {

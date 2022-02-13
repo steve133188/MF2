@@ -34,6 +34,8 @@ func handleRequest(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyRe
 			return handler.GetUsers(req, table, dynaClient)
 		case "/api/users/no-team":
 			return handler.GetUsersWithoutTeam(req, table, dynaClient)
+		case "/api/user/whatsapp/{userId}":
+			return handler.GetUserWhatsappInfo(req, table, dynaClient)
 		default:
 			return handler.ApiResponse(http.StatusBadRequest, handler.ErrMsg{aws.String("InvalidGetMethod")}), nil
 		}
