@@ -108,6 +108,23 @@ class GetData:
         return pd.DataFrame(users_data)
 
     #################################################################################
+    def update_user(self, customer_id, active_contact, unhandled_contact, delivered_contact):
+
+        response = self.customer_table.update_item(
+            Key={
+                'customer_id': customer_id
+            },
+            UpdateExpression="set active_contact=:a, unhandled_contact=:u, delivered_contact=:d",
+            ExpressionAttributeValues={
+                ':a': active_contact,
+                ':u': unhandled_contact,
+                ':d': delivered_contact
+            },
+        )
+
+        return response
+
+    #################################################################################
     def get_role(self):
         roles = self.role_table.scan()
         roles_data = roles['Items']
@@ -145,7 +162,7 @@ class GetData:
             customers_data.extend(customers['Items'])
 
         all_customers_counts = int(customers['Count'])
-        print('customers count ', all_customers_counts)
+        print('Customer count:', len(customers_data))
 
         return pd.DataFrame(customers_data)
 

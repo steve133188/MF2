@@ -136,20 +136,13 @@ def default():  # put application's code here
 
     return default_data[0]
 
+
 @app.route('/default/refresh')
 def refresh():  # put application's code here
 
     get_data(round(time.time()) - 3600 * 24 * 7 - 3600, round(time.time()), 1)
 
     return default_data[0]
-
-
-# now = round(time.time())
-# print(now)
-# end = str(now)
-# start = str(now - 3600 * 24 * 1)
-# return output.Output(0, start, end)
-# return 'dashboard api is running'
 
 
 @app.route('/dashboard')
@@ -206,6 +199,12 @@ def team():  # put application's code here
 def migration():  # put application's code here
     start = request.args.get('start')
     end = request.args.get('end')
+
+    # reset_customer = output.Output(0, 0, 0)
+    # customer = reset_customer.get_from_db.get_customer()
+    # for i in customer.index:
+    #     reset_customer.get_from_db.update_user(customer['customer_id'][i], [], [], [])
+    # print('Done for reset customer contact')
 
     i = int(start)
     while i <= int(end):
