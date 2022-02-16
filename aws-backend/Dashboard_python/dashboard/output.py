@@ -7,7 +7,6 @@ from decimal import Decimal
 
 class Output:
     def __init__(self, index, start, end):
-        self.reset()
         if index == 1:
             self.get_from_logic = DataHandler(1, start, end)
             self.get_from_db = self.get_from_logic.data
