@@ -70,10 +70,21 @@ class Output:
                      }
         return data_dash
 
-    def insert_data(self):
+    def new_data(self):
         # dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000")
 
         self.reset(0, 0, 0)
+        table = self.get_from_db.dynamodb.Table('Mf2_TCO_DASHBOARD')
+        items = json.loads(json.dumps(self.construct_data()), parse_float=Decimal)
+        response = table.put_item(
+            Item=items
+        )
+        print(response)
+        return response
+
+    def insert_data(self):
+        # dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000")
+
         table = self.get_from_db.dynamodb.Table('Mf2_TCO_DASHBOARD')
         items = json.loads(json.dumps(self.construct_data()), parse_float=Decimal)
         response = table.put_item(
