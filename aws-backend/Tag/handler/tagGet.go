@@ -29,7 +29,7 @@ func GetTagByID(req events.APIGatewayProxyRequest, table string, dynaClient *dyn
 	}
 	if out.Item == nil {
 		fmt.Println("TagNotExists, TagID = ", id, ", ", err)
-		return ApiResponse(http.StatusNotFound, ErrMsg{aws.String("TagNotExists, TagID = " + id + ", " + err.Error())}), nil
+		return ApiResponse(http.StatusNotFound, ErrMsg{aws.String("TagNotExists, TagID = " + id)}), nil
 	}
 
 	tag := new(model.Tag)
@@ -47,7 +47,6 @@ func GetAllTags(req events.APIGatewayProxyRequest, table string, dynaClient *dyn
 
 	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
 		TableName: aws.String(os.Getenv("TABLE")),
-		Limit:     aws.Int32(50),
 	})
 
 	for p.HasMorePages() {

@@ -47,7 +47,6 @@ func GetAllStdReplies(req events.APIGatewayProxyRequest, table string, dynaClien
 
 	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
 		TableName: aws.String(table),
-		Limit:     aws.Int32(1000),
 	})
 
 	for p.HasMorePages() {
@@ -75,7 +74,6 @@ func GetStdRepliesByChannel(req events.APIGatewayProxyRequest, table string, dyn
 
 	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
 		TableName:        aws.String(table),
-		Limit:            aws.Int32(1000),
 		FilterExpression: aws.String("contains(#ch, :ch)"),
 		ExpressionAttributeNames: map[string]string{
 			"#ch": "channels",
@@ -117,7 +115,6 @@ func GetAllRepliesName(req events.APIGatewayProxyRequest, table string, dynaClie
 		ExpressionAttributeNames: map[string]string{
 			"#name": "name",
 		},
-		Limit: aws.Int32(1000),
 	})
 
 	for p.HasMorePages() {
