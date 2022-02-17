@@ -66,10 +66,6 @@ func GetUserByID(req events.APIGatewayProxyRequest, table string, dynaClient *dy
 			fmt.Println("FailedToGetOrgItem, OrgID = ", user.TeamID, ", ", err)
 			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToGetOrgItem, OrgID = " + strconv.Itoa(user.TeamID) + ", " + err.Error())}), nil
 		}
-		if tout.Item == nil {
-			fmt.Println("OrgNotExists, OrgID = ", user.TeamID)
-			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("OrgNotExists, OrgID = " + strconv.Itoa(user.TeamID))}), nil
-		}
 		team := new(model.Team)
 		err = attributevalue.UnmarshalMap(tout.Item, &team)
 		if err != nil {
@@ -92,10 +88,7 @@ func GetUserByID(req events.APIGatewayProxyRequest, table string, dynaClient *dy
 			fmt.Println("FailedToGetRoleItem, RoleID = ", user.RoleID, ", ", err)
 			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToGetRoleItem, RoleID = " + strconv.Itoa(user.RoleID) + ", " + err.Error())}), nil
 		}
-		if rout.Item == nil {
-			fmt.Println("RoleNotExists, RoleID = ", user.RoleID)
-			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("RoleNotExists, RoleID = " + strconv.Itoa(user.RoleID))}), nil
-		}
+
 		role := new(model.Role)
 		err = attributevalue.UnmarshalMap(rout.Item, &role)
 		if err != nil {
@@ -120,32 +113,29 @@ func GetUsersByTeamID(req events.APIGatewayProxyRequest, table string, dynaClien
 	teamId := req.PathParameters["teamId"]
 	Users := make([]model.User, 0)
 
-	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
-		TableName:        &table,
-		Limit:            aws.Int32(50),
-		FilterExpression: aws.String("team_id = :t AND user_id <> :id"),
+	p := dynamodb.NewQueryPaginator(dynaClient, &dynamodb.QueryInput{
+		TableName:              aws.String(table),
+		IndexName:              aws.String("team_id-index"),
+		KeyConditionExpression: aws.String("team_id = :tid"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":t":  &types.AttributeValueMemberN{Value: teamId},
-			":id": &types.AttributeValueMemberN{Value: strconv.Itoa(1)},
+			":tid": &types.AttributeValueMemberN{Value: teamId},
 		},
 	})
 
 	for p.HasMorePages() {
-		out, err := p.NextPage(context.TODO())
+		outs, err := p.NextPage(context.TODO())
 		if err != nil {
-			fmt.Printf("FailedToScan, %s", err)
-			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToScan")}), nil
+			fmt.Printf("FailedToQuery, %s", err)
+			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToQuery")}), nil
 		}
-
 		pUsers := make([]model.User, 0)
-		err = attributevalue.UnmarshalListOfMaps(out.Items, &pUsers)
+		err = attributevalue.UnmarshalListOfMaps(outs.Items, &pUsers)
 		if err != nil {
 			fmt.Printf("FailedToUnmarshalListOfMap, %s", err)
 			return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToUnmarshalListOfMap")}), nil
 		}
 
 		Users = append(Users, pUsers...)
-
 	}
 
 	tout, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
@@ -158,10 +148,7 @@ func GetUsersByTeamID(req events.APIGatewayProxyRequest, table string, dynaClien
 		fmt.Println("FailedToGetOrgItem, OrgID = ", teamId, ", ", err)
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToGetOrgItem, OrgID = " + teamId + ", " + err.Error())}), nil
 	}
-	if tout.Item == nil {
-		fmt.Println("OrgNotExists, OrgID = ", teamId)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("OrgNotExists, OrgID = " + teamId)}), nil
-	}
+
 	team := new(model.Team)
 	err = attributevalue.UnmarshalMap(tout.Item, &team)
 	if err != nil {
@@ -194,10 +181,7 @@ func GetUsersByTeamID(req events.APIGatewayProxyRequest, table string, dynaClien
 				fmt.Println("FailedToGetOrgItem, RoleID = ", v.RoleID, ", ", err)
 				return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToGetRoleItem, RoleID = " + strconv.Itoa(v.RoleID) + ", " + err.Error())}), nil
 			}
-			if rout.Item == nil {
-				fmt.Println("OrgNotExists, RoleID = ", v.RoleID)
-				return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("RoleNotExists, RoleID = " + strconv.Itoa(v.RoleID))}), nil
-			}
+
 			role := new(model.Role)
 			err = attributevalue.UnmarshalMap(rout.Item, &role)
 			if err != nil {
@@ -243,10 +227,6 @@ func GetUsersByRoleID(req events.APIGatewayProxyRequest, table string, dynaClien
 	if err != nil {
 		fmt.Println("FailedToGetOrgItem, RoleID = ", roleId, ", ", err)
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToGetRoleItem, RoleID = " + roleId + ", " + err.Error())}), nil
-	}
-	if rout.Item == nil {
-		fmt.Println("OrgNotExists, RoleID = ", roleId)
-		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("RoleNotExists, RoleID = " + roleId)}), nil
 	}
 
 	role := new(model.Role)
@@ -297,10 +277,7 @@ func GetUsersByRoleID(req events.APIGatewayProxyRequest, table string, dynaClien
 				fmt.Println("FailedToGetOrg, OrgID = ", v.TeamID, ", ", err)
 				return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToGetOrg, OrgID = " + strconv.Itoa(v.TeamID) + ", " + err.Error())}), nil
 			}
-			if out.Item == nil {
-				fmt.Println("OrgNotExists, OrgID = ", v.TeamID)
-				return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("OrgNotExists, OrgID = " + strconv.Itoa(v.TeamID))}), nil
-			}
+
 			attributevalue.UnmarshalMap(out.Item, &fullUser.Team)
 		}
 		fullUser.RoleName = role.RoleName
@@ -468,10 +445,7 @@ func GetUsersWithoutTeam(req events.APIGatewayProxyRequest, table string, dynaCl
 				fmt.Println("FailedToGetOrgItem, RoleID = ", v.RoleID, ", ", err)
 				return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToGetRoleItem, RoleID = " + strconv.Itoa(v.RoleID) + ", " + err.Error())}), nil
 			}
-			if rout.Item == nil {
-				fmt.Println("OrgNotExists, RoleID = ", v.RoleID)
-				return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("RoleNotExists, RoleID = " + strconv.Itoa(v.RoleID))}), nil
-			}
+
 			role := new(model.Role)
 			err = attributevalue.UnmarshalMap(rout.Item, &role)
 			if err != nil {
@@ -510,13 +484,12 @@ func GetUserWhatsappInfo(req events.APIGatewayProxyRequest, table string, dynaCl
 	if out.Count == 0 {
 		return ApiResponse(http.StatusNotFound, ErrMsg{aws.String("Not found for user ID = " + userId)}), nil
 	}
-	channel := new(model.Chan)
-	err = attributevalue.UnmarshalMap(out.Items[0], &channel)
+	node := new(model.Node)
+	err = attributevalue.UnmarshalMap(out.Items[0], &node)
 	if err != nil {
 		fmt.Println("Error in Unmarshal data,", err)
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("Error in Unmarshal data, " + err.Error())}), nil
 	}
 
-	channel.ChannelName = "Whatsapp"
-	return ApiResponse(http.StatusOK, channel), nil
+	return ApiResponse(http.StatusOK, node), nil
 }
