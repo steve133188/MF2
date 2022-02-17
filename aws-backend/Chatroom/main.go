@@ -28,5 +28,8 @@ func main() {
 	api.Get("/chatrooms/user/:userId", handler.GetChatroomsByUser)
 
 	api.Put("/chatroom/channel/:channel/room/:room_id", handler.UpdateChatroomunreadToZero)
+
+	api.Post("/chatrooms/user", handler.GetChatroomByAgent)
+
 	app.Listen(":3010")
 }

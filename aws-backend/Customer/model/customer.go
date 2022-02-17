@@ -63,22 +63,6 @@ type User struct {
 	ActivityLog int    `json:"activity_log" dynamodbav:"activity_log"`
 }
 
-type Auth struct {
-	Dashboard        bool `json:"dashboard" dynamodbav:"dashboard" default:"false"`
-	Livechat         bool `json:"livechat" dynamodbav:"livechat" default:"false"`
-	Contact          bool `json:"contact" dynamodbav:"contact" default:"false"`
-	Broadcast        bool `json:"broadcast" dynamodbav:"broadcast" default:"false"`
-	Flowbuilder      bool `json:"flowbuilder" dynamodbav:"flowbuilder" default:"false"`
-	Integrations     bool `json:"integrations" dynamodbav:"integrations" default:"false"`
-	ProductCatalogue bool `json:"product_catalogue" dynamodbav:"product_catalogue" default:"false"`
-	Organization     bool `json:"organization" dynamodbav:"organization" default:"false"`
-	Admin            bool `json:"admin" dynamodbav:"admin" default:"false"`
-	Whatsapp         bool `json:"whatsapp" dynamodbav:"whatsapp"`
-	WABA             bool `json:"waba" dynamodbav:"waba"`
-	Messager         bool `json:"messager" dynamodbav:"messager"`
-	WeChat           bool `json:"wechat" dynamodbav:"wechat"`
-}
-
 type Tag struct {
 	TagID    int    `json:"tag_id" dynamodbav:"tag_id"`
 	TagName  string `json:"tag_name" dynamodbav:"tag_name"`
@@ -109,4 +93,27 @@ type ChatRoom struct {
 	Name       string `json:"name" dynamodbav:"name"`
 	Phone      string `json:"phone" dynamodbav:"phone"`
 	Unread     int    `json:"unread" dynamodbav:"unread"`
+}
+
+type Role struct {
+	RoleID   int    `json:"role_id" dynamodbav:"role_id"`
+	RoleName string `json:"role_name" dynamodbav:"role_name"`
+	Auth     Auth   `json:"authority" dynamodbav:"authority"`
+}
+
+type Auth struct {
+	Dashboard        bool `json:"dashboard" dynamodbav:"dashboard" default:"false"`
+	Livechat         bool `json:"livechat" dynamodbav:"livechat" default:"false"`
+	Contact          bool `json:"contact" dynamodbav:"contact" default:"false"`
+	Broadcast        bool `json:"broadcast" dynamodbav:"broadcast" default:"false"`
+	Flowbuilder      bool `json:"flowbuilder" dynamodbav:"flowbuilder" default:"false"`
+	Integrations     bool `json:"integrations" dynamodbav:"integrations" default:"false"`
+	ProductCatalogue bool `json:"product_catalogue" dynamodbav:"product_catalogue" default:"false"`
+	Organization     bool `json:"organization" dynamodbav:"organization" default:"false"`
+	Admin            bool `json:"admin" dynamodbav:"admin" default:"false"`
+	Whatsapp         bool `json:"whatsapp" dynamodbav:"whatsapp"`
+	WABA             bool `json:"waba" dynamodbav:"waba"`
+	Messager         bool `json:"messager" dynamodbav:"messager"`
+	WeChat           bool `json:"wechat" dynamodbav:"wechat"`
+	All              bool `json:"all" dynamodbav:"all" default:"false"`
 }
