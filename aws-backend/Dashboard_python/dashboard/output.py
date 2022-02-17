@@ -18,6 +18,12 @@ class Output:
             self.end = 0
             print('Default Time ', start, end)
 
+    def reset(self, index, start, end):
+        self.get_from_logic = DataHandler(index, start, end)
+        self.get_from_db = self.get_from_logic.data
+        self.end = end
+        print('Reset Time ', start, end)
+
     def construct_data(self):
         if self.end == 0:
             table_timestamp = int(round(time.time()))
@@ -62,6 +68,18 @@ class Output:
                      'agents': agent
                      }
         return data_dash
+
+    def new_data(self):
+        # dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000")
+
+        self.reset(0, 0, 0)
+        table = self.get_from_db.dynamodb.Table('Mf2_TCO_DASHBOARD')
+        items = json.loads(json.dumps(self.construct_data()), parse_float=Decimal)
+        response = table.put_item(
+            Item=items
+        )
+        print(response)
+        return response
 
     def insert_data(self):
         # dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000")

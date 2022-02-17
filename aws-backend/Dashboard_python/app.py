@@ -99,7 +99,7 @@ def get_data(start, end, default_index):
 scheduler = BackgroundScheduler()
 scheduler.start()
 scheduler.add_job(
-    output.Output(0, 0, 0).insert_data,
+    output.Output(0, 0, 0).new_data,
     trigger='cron',
     hour=16,
 )
