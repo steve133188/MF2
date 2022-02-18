@@ -35,10 +35,10 @@ func GetRoleByID(req events.APIGatewayProxyRequest, table string, dynaClient *dy
 	}
 
 	//find total number of users having this role
-	up := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
-		TableName:        aws.String(os.Getenv("USERTABLE")),
-		Limit:            aws.Int32(50),
-		FilterExpression: aws.String("role_id = :id"),
+	up := dynamodb.NewQueryPaginator(dynaClient, &dynamodb.QueryInput{
+		TableName:              aws.String(os.Getenv("USERTABLE")),
+		IndexName:              aws.String("role_id-index"),
+		KeyConditionExpression: aws.String("role_id = :id"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":id": &types.AttributeValueMemberN{Value: id},
 		},
@@ -70,7 +70,6 @@ func GetAllRoles(req events.APIGatewayProxyRequest, table string, dynaClient *dy
 
 	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
 		TableName: aws.String(os.Getenv("TABLE")),
-		Limit:     aws.Int32(50),
 	})
 
 	for p.HasMorePages() {
@@ -91,49 +90,24 @@ func GetAllRoles(req events.APIGatewayProxyRequest, table string, dynaClient *dy
 	}
 	fullRoles := make([]model.FullRole, 0)
 	for _, v := range roles {
-		// up := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
-		// 	TableName:        aws.String(os.Getenv("USERTABLE")),
-		// 	Limit:            aws.Int32(1000),
-		// 	FilterExpression: aws.String("role_id = :id"),
-		// 	ExpressionAttributeValues: map[string]types.AttributeValue{
-		// 		":id": &types.AttributeValueMemberN{Value: strconv.Itoa(v.RoleID)},
-		// 	},
-		// })
-
-		// count := 0
-		// for up.HasMorePages() {
-		// 	uout, err := up.NextPage(context.TODO())
-		// 	if err != nil {
-		// 		fmt.Println("GetAllRoles ", err)
-		// 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("GetAllRoles " + err.Error())}), nil
-		// 	}
-		// 	count += int(uout.Count)
-		// }
-
-		sout, err := dynaClient.Query(context.TODO(), &dynamodb.QueryInput{
+		up := dynamodb.NewQueryPaginator(dynaClient, &dynamodb.QueryInput{
 			TableName:              aws.String(os.Getenv("USERTABLE")),
 			IndexName:              aws.String("role_id-index"),
-			KeyConditionExpression: aws.String("role_id = :rid"),
+			KeyConditionExpression: aws.String("role_id = :id"),
 			ExpressionAttributeValues: map[string]types.AttributeValue{
-				":rid": &types.AttributeValueMemberN{Value: strconv.Itoa(v.RoleID)},
+				":id": &types.AttributeValueMemberN{Value: strconv.Itoa(v.RoleID)},
 			},
 		})
-		if err != nil {
-			fmt.Println("GetAllRoles ", err)
-		}
-		// sout, err := dynaClient.Scan(context.TODO(), &dynamodb.ScanInput{
-		// 	TableName:        aws.String(os.Getenv("USERTABLE")),
-		// 	FilterExpression: aws.String("role_id = :id"),
-		// 	ExpressionAttributeValues: map[string]types.AttributeValue{
-		// 		":id": &types.AttributeValueMemberN{Value: strconv.Itoa(v.RoleID)},
-		// 	},
-		// })
-		// if err != nil {
-		// 	fmt.Println("GetAllRoles ", err)
-		// 	return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("GetAllRoles " + err.Error())}), nil
-		// }
 
-		count := int(sout.Count)
+		count := 0
+		for up.HasMorePages() {
+			uout, err := up.NextPage(context.TODO())
+			if err != nil {
+				fmt.Println("GetRoleByID ", err)
+				return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("GetRoleByID " + err.Error())}), nil
+			}
+			count += int(uout.Count)
+		}
 
 		frole := new(model.FullRole)
 		val, err := json.Marshal(v)

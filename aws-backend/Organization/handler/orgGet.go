@@ -26,7 +26,7 @@ func GetOrgItemByID(req events.APIGatewayProxyRequest, table string, dynaClient 
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("FailedToConvert" + err.Error())}), nil
 	}
 
-	results, err, status := GetChildrenOrgObject(dynaClient, id, table)
+	results, status, err := GetChildrenOrgObject(dynaClient, id, table)
 	if err != nil {
 		fmt.Println("FailedToGetChildren, ", err)
 		return ApiResponse(status, ErrMsg{aws.String(err.Error())}), nil
@@ -42,7 +42,6 @@ func GetOrgItems(req events.APIGatewayProxyRequest, table string, dynaClient *dy
 
 	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
 		TableName:        aws.String(table),
-		Limit:            aws.Int32(100),
 		FilterExpression: aws.String("parent_id = :parentID"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":parentID": &types.AttributeValueMemberN{Value: strconv.Itoa(0)},
@@ -72,7 +71,7 @@ func GetOrgItems(req events.APIGatewayProxyRequest, table string, dynaClient *dy
 	for _, v := range orgs {
 		id := v.OrgID
 
-		results, err, status := GetChildrenOrgObject(dynaClient, id, table)
+		results, status, err := GetChildrenOrgObject(dynaClient, id, table)
 		if err != nil {
 			fmt.Println("FailedToGetChildren, ", err)
 			return ApiResponse(status, ErrMsg{aws.String(err.Error())}), nil
@@ -85,7 +84,7 @@ func GetOrgItems(req events.APIGatewayProxyRequest, table string, dynaClient *dy
 
 }
 
-func GetChildrenOrgObject(dynaClient *dynamodb.Client, id int, table string) ([]model.OrgStruct, error, int) {
+func GetChildrenOrgObject(dynaClient *dynamodb.Client, id int, table string) ([]model.OrgStruct, int, error) {
 	org := new(model.Organization)
 
 	out, err := dynaClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
@@ -96,24 +95,24 @@ func GetChildrenOrgObject(dynaClient *dynamodb.Client, id int, table string) ([]
 	})
 	if err != nil {
 		fmt.Println("FailedToGetItem, OrgId = ", id)
-		return nil, errors.New("FailedToGetItem, OrgId = " + strconv.Itoa(id)), http.StatusInternalServerError
+		return nil, http.StatusInternalServerError, errors.New("FailedToGetItem, OrgId = " + strconv.Itoa(id))
 	}
 	if out.Item == nil {
 		fmt.Println("OrgUnitNotExisted, OrgID = ", id)
-		return nil, errors.New("OrgUnitNotExisted, OrgId = " + strconv.Itoa(id)), http.StatusNotFound
+		return nil, http.StatusNotFound, errors.New("OrgUnitNotExisted, OrgId = " + strconv.Itoa(id))
 	}
 
 	err = attributevalue.UnmarshalMap(out.Item, &org)
 	if err != nil {
 		fmt.Println("FailedToUNmarshalMap, OrgID = ", id)
-		return nil, errors.New("OrgUnitNotExisted, OrgId = " + strconv.Itoa(id)), http.StatusInternalServerError
+		return nil, http.StatusInternalServerError, errors.New("OrgUnitNotExisted, OrgId = " + strconv.Itoa(id))
 	}
 
 	data := new(model.OrgStruct)
 	err = attributevalue.UnmarshalMap(out.Item, &data)
 	if err != nil {
 		fmt.Println("FailedToUNmarshalMap, OrgID = ", id)
-		return nil, errors.New("OrgUnitNotExisted, OrgId = " + strconv.Itoa(id)), http.StatusInternalServerError
+		return nil, http.StatusInternalServerError, errors.New("OrgUnitNotExisted, OrgId = " + strconv.Itoa(id))
 	}
 
 	results := make([]model.OrgStruct, 0)
@@ -121,23 +120,22 @@ func GetChildrenOrgObject(dynaClient *dynamodb.Client, id int, table string) ([]
 	if len(org.ChildrenID) != 0 {
 		data.Children = make([]model.OrgStruct, 0)
 		for _, v := range org.ChildrenID {
-			result, err, status := GetChildrenOrgObject(dynaClient, v, table)
+			result, status, err := GetChildrenOrgObject(dynaClient, v, table)
 			if err != nil {
-				return nil, err, status
+				return nil, status, err
 			}
 			data.Children = append(data.Children, result...)
 		}
 	}
 
 	results = append(results, *data)
-	return results, nil, http.StatusOK
+	return results, http.StatusOK, nil
 }
 
 func GetTeamName(req events.APIGatewayProxyRequest, table string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
 	org := make([]model.Organization, 0)
 	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
 		TableName:        aws.String(table),
-		Limit:            aws.Int32(100),
 		FilterExpression: aws.String("#type = :team"),
 		ExpressionAttributeNames: map[string]string{
 			"#type": "type",
@@ -171,7 +169,6 @@ func GetAllDivison(req events.APIGatewayProxyRequest, table string, dynaClient *
 
 	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
 		TableName:        aws.String(table),
-		Limit:            aws.Int32(50),
 		FilterExpression: aws.String("#type = :div"),
 		ExpressionAttributeNames: map[string]string{
 			"#type": "type",

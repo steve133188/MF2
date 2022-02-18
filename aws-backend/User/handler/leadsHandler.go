@@ -12,10 +12,10 @@ import (
 )
 
 func getUserLeads(userId string, dynaClient *dynamodb.Client) (int, error) {
-	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
-		TableName:        aws.String(os.Getenv("CUSTOMERTABLE")),
-		Limit:            aws.Int32(8000),
-		FilterExpression: aws.String("contains(agents_id, :id)"),
+	p := dynamodb.NewQueryPaginator(dynaClient, &dynamodb.QueryInput{
+		TableName:              aws.String(os.Getenv("CUSTOMERTABLE")),
+		IndexName:              aws.String("handler_id-index"),
+		KeyConditionExpression: aws.String("handler_id = :id"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":id": &types.AttributeValueMemberN{Value: userId},
 		},

@@ -74,3 +74,14 @@ type Role struct {
 	RoleName string `json:"role_name" dynamodbav:"role_name"`
 	Auth     Auth   `json:"authority" dynamodbav:"authority"`
 }
+
+type Node struct {
+	NodeIndex int    `json:"node_index" dynamodbav:"node_index"`
+	UserId    int    `json:"user_id" dynamodbav:"user_id"`
+	ChannelId string `json:"channel_id" dynamodbav:"channel_id"`
+	Status    string `json:"status" dynamodbav:"status"`
+	Url       string `json:"url" dynamodbav:"url"`
+	NodeName  string `json:"node_name" dynamodbav:"node_name"`
+	Init      bool   `json:"init" dynamodbav:"init"`
+	NodeId    string `json:"node_id" dynamodbav:"node_id"`
+}
