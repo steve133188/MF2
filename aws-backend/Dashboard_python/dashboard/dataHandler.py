@@ -442,6 +442,10 @@ class DataHandler:
             agent_dashboard['unhandled_contact'][user_id] = agent_dashboard['assigned_contact'][user_id] \
                                                             - agent_dashboard['active_contact'][user_id] \
                                                             - agent_dashboard['delivered_contact'][user_id]
+
+            if agent_dashboard['unhandled_contact'][user_id] < 0:
+                agent_dashboard['unhandled_contact'][user_id] = 0
+
         print('Agent: \n', agent_dashboard)
         print('Whatsapp Dashboard: \n', wts_dashboard)
         return agent_dashboard, wts_dashboard
