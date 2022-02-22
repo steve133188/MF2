@@ -105,8 +105,7 @@ class DataHandler:
                     }
 
         waba_msg = self.messages.loc[self.messages['channel'] == 'WABA']
-        print('=' * 50)
-        print(waba_msg)
+        print("WABA Msg: ", waba_msg)
 
         for i in waba_msg.index:
             if waba_msg['from_me'][i]:
@@ -198,7 +197,7 @@ class DataHandler:
             wts_dashboard['msg_sent'] = int(self.prev_dash[len(self.prev_dash) - 1]['total_msg_sent']['Whatsapp'])
             wts_dashboard['msg_recv'] = int(self.prev_dash[len(self.prev_dash) - 1]['total_msg_recv']['Whatsapp'])
 
-        print('Customer length: ', len(self.customers))
+        print('=' * 50)
 
         # Init User Data & Calculate no of Msg and Response Time
         for user in self.users.index:
@@ -211,7 +210,7 @@ class DataHandler:
             if self.users['team_id'][user] != 0:
                 team = self.teams.loc[self.teams['org_id'] == self.users['team_id'][user]]['name'].to_string(
                     index=False)
-            print('=' * 50)
+
             user_id = str(self.users['user_id'][user])
             agent_dashboard['username'][user_id] = self.users['username'][user]
             agent_dashboard['team'][user_id] = team
@@ -252,14 +251,11 @@ class DataHandler:
                 continue
             else:
                 wts_msg = self.messages.loc[self.messages['channel'] == 'Whatsapp']
-                print('Whatsapp Messages length: ', len(wts_msg))
 
             user_msg = wts_msg.loc[
                 (wts_msg['sender'] == str(self.users['user_id'][user])) |
                 (wts_msg['recipient'] == str(self.users['user_id'][user]))
                 ].reset_index()
-            print('User msg: ', len(user_msg))
-            print('=' * 50)
 
             # Return for no OWN msg today
             if len(user_msg) == 0:
@@ -282,10 +278,6 @@ class DataHandler:
             agent_dashboard['message_recv'][user_id] = len(user_msg) - msg_sent + agent_msg_recv
             wts_dashboard['msg_sent'] += msg_sent
             wts_dashboard['msg_recv'] += len(user_msg) - msg_sent
-            print('=' * 50)
-            print(
-                '\n message_sent', agent_dashboard['message_sent'],
-                '\n message_recv', agent_dashboard['message_recv'])
 
             # User Response Time Count
             resp_time = []
@@ -328,15 +320,12 @@ class DataHandler:
                 break
 
             wts_msg = self.messages.loc[self.messages['channel'] == 'Whatsapp']
-            print('Whatsapp Messages length: ', len(wts_msg))
 
             customer_msg = wts_msg.loc[
                 (wts_msg['sender'] == str(self.customers['customer_id'][index])) |
                 (wts_msg['recipient'] == str(self.customers['customer_id'][index]))
                 ].reset_index()
 
-            print('Customer ID: ', self.customers['customer_id'][index],
-                  '   Customer Msg Length: ', len(customer_msg))
 
             # No OWN message Today & no need to update contact for this customer
             if len(customer_msg) == 0:
@@ -453,6 +442,10 @@ class DataHandler:
             agent_dashboard['unhandled_contact'][user_id] = agent_dashboard['assigned_contact'][user_id] \
                                                             - agent_dashboard['active_contact'][user_id] \
                                                             - agent_dashboard['delivered_contact'][user_id]
+
+            if agent_dashboard['unhandled_contact'][user_id] < 0:
+                agent_dashboard['unhandled_contact'][user_id] = 0
+
         print('Agent: \n', agent_dashboard)
         print('Whatsapp Dashboard: \n', wts_dashboard)
         return agent_dashboard, wts_dashboard
