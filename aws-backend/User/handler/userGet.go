@@ -396,7 +396,7 @@ func GetUsersWithoutTeam(req events.APIGatewayProxyRequest, table string, dynaCl
 	p := dynamodb.NewScanPaginator(dynaClient, &dynamodb.ScanInput{
 		TableName:        aws.String(table),
 		Limit:            aws.Int32(50),
-		FilterExpression: aws.String(" team_id = :val, user_id <> :id"),
+		FilterExpression: aws.String("team_id = :val and user_id <> :id"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":val": &types.AttributeValueMemberN{Value: strconv.Itoa(0)},
 			":id":  &types.AttributeValueMemberN{Value: strconv.Itoa(1)},
@@ -481,10 +481,11 @@ func GetUserWhatsappInfo(req events.APIGatewayProxyRequest, table string, dynaCl
 		return ApiResponse(http.StatusInternalServerError, ErrMsg{aws.String("Error in Scan, " + err.Error())}), nil
 	}
 
-	if out.Count == 0 {
-		return ApiResponse(http.StatusNotFound, ErrMsg{aws.String("Not found for user ID = " + userId)}), nil
-	}
 	node := new(model.Node)
+	node.UserId, _ = strconv.Atoi(userId)
+	if out.Count == 0 {
+		return ApiResponse(http.StatusOK, node), nil
+	}
 	err = attributevalue.UnmarshalMap(out.Items[0], &node)
 	if err != nil {
 		fmt.Println("Error in Unmarshal data,", err)

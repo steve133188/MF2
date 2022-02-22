@@ -15,7 +15,6 @@ import (
 )
 
 func GetChatrooms(c *fiber.Ctx) error {
-
 	chatrooms := make([]model.Chatroom, 0)
 	p := dynamodb.NewScanPaginator(config.DynaClient, &dynamodb.ScanInput{
 		TableName: aws.String(config.GoDotEnvVariable("CHATROOM")),

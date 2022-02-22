@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: message-api
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: message-api
+  name: message-api
+  namespace: message-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: message-api
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: message-api
+    spec:
+      containers:
+      - image: 244112418223.dkr.ecr.ap-east-1.amazonaws.com/mf2-tco-whatsapp:message-api
+        name: message-api
+        imagePullPolicy: Always
+        resources: {}
+        ports:
+          - containerPort: 8080
+      nodeSelector: 
+        service: message-api-server
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: message-api
+  labels:
+    run: message-api
+  namespace: message-api
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 30380
+  selector:
+    app: message-api
+  type: NodePort

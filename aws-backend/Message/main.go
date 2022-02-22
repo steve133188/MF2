@@ -23,6 +23,7 @@ func main() {
 
 	api := app.Group("/api")
 	api.Get("/messages/chatroom/:roomId", handler.GetAllMessagesByChatroom)
+	api.Post("/message", handler.AddMessage)
 
 	app.Listen(":3011")
 }

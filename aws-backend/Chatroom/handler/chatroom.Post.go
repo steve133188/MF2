@@ -56,18 +56,16 @@ func GetChatroomByAgent(c *fiber.Ctx) error {
 			TableName: aws.String(config.GoDotEnvVariable("CHATROOM")),
 		})
 	} else {
-		filterStr := ""
+		filterStr := "user_id = :uid"
 		filterExp := make(map[string]types.AttributeValue)
+		filterExp[":uid"] = &types.AttributeValueMemberN{Value: strconv.Itoa(data.UserID)}
 		if role.Auth.WABA {
-			filterStr = "contains(channels, :waba) or "
+			filterStr = " or contains(channels, :waba)"
 			filterExp[":waba"] = &types.AttributeValueMemberS{Value: "WABA"}
 		}
 		if role.Auth.Whatsapp {
-			filterStr += "team_id = :tid"
+			filterStr += " or team_id = :tid"
 			filterExp[":tid"] = &types.AttributeValueMemberN{Value: strconv.Itoa(data.TeamID)}
-		} else {
-			filterStr += "user_id = :uid"
-			filterExp[":uid"] = &types.AttributeValueMemberN{Value: strconv.Itoa(data.UserID)}
 		}
 		p = dynamodb.NewScanPaginator(config.DynaClient, &dynamodb.ScanInput{
 			TableName:                 aws.String(config.GoDotEnvVariable("CHATROOM")),
