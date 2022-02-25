@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: channel-router
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: channel-router
+  name: channel-router
+  namespace: channel-router
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: channel-router
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: channel-router
+    spec:
+      containers:
+        - image: 244112418223.dkr.ecr.ap-east-1.amazonaws.com/mf2-tco-whatsapp:router
+          name: channel-router
+          imagePullPolicy: Always
+          resources: {}
+          ports:
+            - containerPort: 8081
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: channel-router
+  labels:
+    run: channel-router
+  namespace: channel-router
+spec:
+  ports:
+    - port: 8081
+      targetPort: 8081
+      nodePort: 30381
+  selector:
+    app: channel-router
+  type: NodePort
