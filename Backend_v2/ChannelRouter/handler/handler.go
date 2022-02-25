@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"bytes"
 	"github.com/gofiber/fiber/v2"
 	"io/ioutil"
 	"log"
@@ -8,7 +9,6 @@ import (
 	"mf2-channel-router/model"
 	"net/http"
 	"net/url"
-	"strconv"
 	"strings"
 )
 
@@ -23,13 +23,13 @@ func ChannelConnect(c *fiber.Ctx) error {
 
 	hKey := connectData.CID + ":channels:" + connectData.CName + ":" + connectData.UID
 
-	err = config.RedisClient.HSet(c.Context(), hKey, "status", "CONNECTING").Err()
+	err = config.ClusterClient.HSet(c.Context(), hKey, "status", "CONNECTING").Err()
 	if err != nil {
 		log.Println(err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	redisData, err := config.RedisClient.HGetAll(c.Context(), hKey).Result()
+	redisData, err := config.ClusterClient.HGetAll(c.Context(), hKey).Result()
 	if err != nil {
 		log.Println(err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
@@ -70,7 +70,7 @@ func ChannelRestart(c *fiber.Ctx) error {
 
 	hKey := cid + ":channels:" + cname + ":" + uid
 
-	url, err := config.RedisClient.HGet(c.Context(), hKey, "url").Result()
+	url, err := config.ClusterClient.HGet(c.Context(), hKey, "url").Result()
 	if err != nil {
 		log.Println("HGetAll error", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
@@ -94,7 +94,7 @@ func ChannelDisconnect(c *fiber.Ctx) error {
 
 	hKey := cid + ":channels:" + cname + ":" + uid
 
-	url, err := config.RedisClient.HGet(c.Context(), hKey, "url").Result()
+	url, err := config.ClusterClient.HGet(c.Context(), hKey, "url").Result()
 	if err != nil {
 		log.Println("HGetAll error", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
@@ -117,7 +117,7 @@ func ChannelSendMessage(c *fiber.Ctx) error {
 	uid := c.Query("uid")
 
 	hKey := cid + ":channels:" + cname + ":" + uid
-	URL, err := config.RedisClient.HGet(c.Context(), hKey, "url").Result()
+	URL, err := config.ClusterClient.HGet(c.Context(), hKey, "url").Result()
 	if err != nil {
 		log.Println("HGetAll error", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
@@ -125,34 +125,45 @@ func ChannelSendMessage(c *fiber.Ctx) error {
 
 	URL += "/send-message"
 
-	message := new(model.Message)
-	err = c.BodyParser(&message)
+	//message := new(model.Message)
+	//err = c.BodyParser(&message)
+	//if err != nil {
+	//	log.Println("parser error,", err)
+	//	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	//}
+	//data := url.Values{}
+	//data.Set("room_id", message.RoomID)
+	//data.Set("timestamp", message.Timestamp)
+	//data.Set("status", message.Status)
+	//data.Set("message_type", message.MessageType)
+	//data.Set("hasQuotedMsg", strconv.FormatBool(message.HasQuotedMsg))
+	//data.Set("is_media", strconv.FormatBool(message.IsMedia))
+	//data.Set("message_id", message.MessageID)
+	//data.Set("channel", message.Channel)
+	//data.Set("media_id", message.MediaUrl)
+	//data.Set("sender", message.Sender)
+	//data.Set("recipient", message.Recipient)
+	//data.Set("read", strconv.FormatBool(message.Read))
+	//data.Set("is_forwarded", strconv.FormatBool(message.IsForwarded))
+	//data.Set("from_me", strconv.FormatBool(message.FromMe))
+	//data.Set("link", message.Link)
+	//data.Set("body", message.Body)
+	//data.Set("quote", message.Quote)
+
+	inputData := c.Body()
+
+	req, err := http.NewRequest(http.MethodPost, URL, bytes.NewBuffer(inputData))
 	if err != nil {
-		log.Println("parser error,", err)
+		log.Println("request error,", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
-	data := url.Values{}
-	data.Set("room_id", message.RoomID)
-	data.Set("timestamp", message.Timestamp)
-	data.Set("status", message.Status)
-	data.Set("message_type", message.MessageType)
-	data.Set("hasQuotedMsg", strconv.FormatBool(message.HasQuotedMsg))
-	data.Set("is_media", strconv.FormatBool(message.IsMedia))
-	data.Set("message_id", message.MessageID)
-	data.Set("channel", message.Channel)
-	data.Set("media_id", message.MediaUrl)
-	data.Set("sender", message.Sender)
-	data.Set("recipient", message.Recipient)
-	data.Set("read", strconv.FormatBool(message.Read))
-	data.Set("is_forwarded", strconv.FormatBool(message.IsForwarded))
-	data.Set("from_me", strconv.FormatBool(message.FromMe))
-	data.Set("link", message.Link)
-	data.Set("body", message.Body)
-	data.Set("quote", message.Quote)
+	req.Header.Set("Content-Type", "application/json")
 
-	resp, err := http.PostForm(URL, data)
+	client := http.Client{}
+
+	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("postform error,", err)
+		log.Println("do request error,", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 	defer resp.Body.Close()
@@ -163,7 +174,7 @@ func ChannelSendMessage(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(body)
+	return c.Status(resp.StatusCode).JSON(body)
 }
 
 func ChannelUpdateStatus(c *fiber.Ctx) error {
@@ -174,7 +185,7 @@ func ChannelUpdateStatus(c *fiber.Ctx) error {
 
 	hKey := cid + ":channels:" + cname + ":" + uid
 
-	err := config.RedisClient.HSet(c.Context(), hKey, "status", status).Err()
+	err := config.ClusterClient.HSet(c.Context(), hKey, "status", status).Err()
 	if err != nil {
 		log.Println("hset error,", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
