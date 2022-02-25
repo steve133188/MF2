@@ -18,6 +18,7 @@ func main() {
 	app.Use(cors.New())
 
 	config.DynamodbConfig()
+	config.RedisInit()
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.Status(http.StatusOK).SendString("Chatroom API Server is running")
@@ -29,5 +30,7 @@ func main() {
 	api := app.Group("/api")
 	api.Get("/chatrooms", handler.GetChatrooms)
 	api.Get("/chatrooms/user/:userId", handler.GetChatroomsByUser)
+
+	api.Put("/chatroom/channel/:channel/room/:room_id", handler.UpdateChatroomUnreadToZero)
 	app.Listen(":3010")
 }
