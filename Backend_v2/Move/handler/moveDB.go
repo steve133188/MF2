@@ -53,7 +53,7 @@ func MoveChatroom(c *fiber.Ctx) error {
 		temp := structs.Map(&v)
 		temp["BotOn"] = strconv.FormatBool(v.BotOn)
 		temp["IsPin"] = strconv.FormatBool(v.IsPin)
-		err := RedisClient.HMSet(ctx, "Chatroom:"+v.RoomID, temp).Err()
+		err := RedisClient.HMSet(ctx, v.Channel+":Chatroom:"+v.RoomID, temp).Err()
 		if err != nil {
 			fmt.Println(err)
 		}

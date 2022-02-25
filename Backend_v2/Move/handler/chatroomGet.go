@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"Move/config"
 	"Move/model"
 	"context"
 	"fmt"
@@ -14,24 +15,19 @@ import (
 func GetChatrooms(c *fiber.Ctx) error {
 
 	ctx := context.Background()
-	RedisClient := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "", // no password set
-		DB:       0,  // use default DB
-	})
 
 	result := make([]*redis.StringStringMapCmd, 0)
 
 	start := time.Now()
 
-	keys, err := RedisClient.Keys(ctx, "*").Result()
+	keys, err := config.RedisClient.Keys(ctx, "*Chatroom:*").Result()
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	chatroom := make([]model.ChatroomRedis, 0)
 
-	pipe := RedisClient.Pipeline()
+	pipe := config.RedisClient.Pipeline()
 	for _, v := range keys {
 		result = append(result, pipe.HGetAll(ctx, v))
 	}
@@ -68,28 +64,23 @@ func GetChatrooms(c *fiber.Ctx) error {
 
 func GetChatroomsByUser(c *fiber.Ctx) error {
 
-	userID := c.Params("userId")
-	filterKey := "Chatroom:*-" + userID
-
 	ctx := context.Background()
-	RedisClient := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "", // no password set
-		DB:       0,  // use default DB
-	})
+
+	userID := c.Params("userId")
+	filterKey := "*:Chatroom:*-" + userID
 
 	result := make([]*redis.StringStringMapCmd, 0)
 
 	start := time.Now()
 
-	keys, err := RedisClient.Keys(ctx, filterKey).Result()
+	keys, err := config.RedisClient.Keys(ctx, filterKey).Result()
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	chatroom := make([]model.ChatroomRedis, 0)
 
-	pipe := RedisClient.Pipeline()
+	pipe := config.RedisClient.Pipeline()
 	for _, v := range keys {
 		result = append(result, pipe.HGetAll(ctx, v))
 	}
