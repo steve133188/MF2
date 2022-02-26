@@ -2,6 +2,7 @@ package config
 
 import (
 	"context"
+	"crypto/tls"
 	"github.com/go-redis/redis/v8"
 	"log"
 )
@@ -11,17 +12,11 @@ var RedisClient *redis.Client
 func RedisInit() {
 	var ctx = context.Background()
 
-	//RedisClient = redis.NewClusterClient(&redis.ClusterOptions{
-	//	Addrs: []string{GoDotEnvVariable("REDISURL")},
-	//	TLSConfig: &tls.Config{
-	//		MinVersion: tls.VersionTLS12,
-	//	},
-	//})
-
 	RedisClient = redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "", // no password set
-		DB:       0,  // use default DB
+		Addr: GoDotEnvVariable("REDISURL"),
+		TLSConfig: &tls.Config{
+			MinVersion: tls.VersionTLS12,
+		},
 	})
 
 	pong, err := RedisClient.Ping(ctx).Result()

@@ -46,23 +46,6 @@ type FullCustomer struct {
 	HandlerId   int      `json:"handler_id" dynamodbav:"handler_id"`
 }
 
-type User struct {
-	UserID      int    `json:"user_id" dynamodbav:"user_id"`
-	Username    string `json:"username" dynamodbav:"username"`
-	Email       string `json:"email" dynamodbav:"email"`
-	Password    string `json:"password" dynamodbav:"password"`
-	Phone       int    `json:"phone" dynamodbav:"phone"`
-	CountryCode int    `json:"country_code" dynamodbav:"country_code"`
-	RoleID      int    `json:"role_id" dynamodbav:"role_id"`
-	Status      string `json:"user_status" dynamodbav:"user_status"`
-	TeamID      int    `json:"team_id" dynamodbav:"team_id"`
-	Channels    []Chan `json:"channels" dynamodbav:"channels"`
-	CheckAuth   bool   `json:"check_auth" dynamodbav:"check_auth" default:"false"`
-	CreateAt    int64  `json:"create_at" dynamodbav:"create_at"`
-	LastLogin   int64  `json:"last_login" dynamodbav:"last_login"`
-	ActivityLog int    `json:"activity_log" dynamodbav:"activity_log"`
-}
-
 type Tag struct {
 	TagID    int    `json:"tag_id" dynamodbav:"tag_id"`
 	TagName  string `json:"tag_name" dynamodbav:"tag_name"`
@@ -77,9 +60,4 @@ type Team struct {
 	ChildrenID []int  `json:"children_id" dynamodbav:"children_id"`
 	ParentID   int    `json:"parent_id" dynamodbav:"parent_id"`
 	Name       string `json:"name" dynamodbav:"name"`
-}
-
-type Chan struct {
-	ChannelName string `json:"channel_name" dynamodbav:"channel_name"`
-	ChannelUrl  string `json:"channel_url" dynamodbav:"channel_url"`
 }
