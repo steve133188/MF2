@@ -19,8 +19,6 @@ func main() {
 
 	config.RedisInit()
 
-
-
 	go func() {
 
 		messagesSub := config.ChatBotDB.Subscribe(context.Background(),"messages.received" )

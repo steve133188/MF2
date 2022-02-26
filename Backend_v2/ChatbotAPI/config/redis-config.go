@@ -22,6 +22,40 @@ var MEMORYDBURL = []string{"clustercfg.mf2-redis.2j4s5t.memorydb.ap-east-1.amazo
 
 var CHATBOTDBURL ="127.0.0.1:6379"
 
+var dummyOption1 = map[string]interface{}{
+
+}
+var dummyOption2 = map[string]interface{}{
+
+}
+var dummyAction = map[string]interface{}{
+	"type": "REPLY",
+	"consumer": []string{"customer or message "},
+	"payload":  map[string]interface{}{"body": "why why tell me why"},
+}
+
+var defualtAction = map[string]interface{}{
+
+}
+
+
+var dummyFlow = map[string]interface{}{
+	"flowName": "flow1",
+	"companyId": "matrixsense",
+	"length": 1,
+	"flow":[]string{
+		"actions:tiffany:automations:0:flowKey:0:0:ANY:REPLY",
+	},
+	"create_at": "0000000000",
+	"update_at": "0000000000",
+	"create_by": "matrixsense",
+	"update_by": "tiffany",
+	"default": "actions:tiffany:automations:0:flowKey:0:0:ANY",
+	"timeout": map[string]interface{}{"duration": "10s" , "action": []string{
+		"actions:tiffany:automations:0:0:0:ANY:REPLY",
+	}},
+}
+
 
 func MemoryDBInit(){
 	var ctx,cancel = context.WithTimeout(context.Background() ,time.Second*3)

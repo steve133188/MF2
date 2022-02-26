@@ -1,6 +1,6 @@
 {
 //  String
-  "flow":{"companyId:flow:flowName": {
+  "flow":{"companyId:flows:flowId": {
     "flowName": "flow1",
     "companyId": "matrixsense",
     "length": 3,
@@ -14,20 +14,16 @@
     "create_by": "matrixsense",
     "update_by": "tiffany",
     "default": action,
-    "timeout": {"duration": "10s" , "action": {}}
+    "timeout": {"duration": "10s" , "action": {}},
   }},
 //  String
   "option": {
-    "automations:options:flowKey:parent:flowNum:condition": {
-      "condition": "default or keywords",
-      "triggerMode": "absolute or partial",
-      "actions": ["actionKey"]
-    }
+    "companyId:automations:stages:parentKey:condition": ["actionKey"]
   },
 
 //  String
   "action":{
-    "actions:optionKey:type": {
+    "companyId:actions:actionId": {
       "type": "ADDTAG , RemoveTag or Reply ...",
       "consumer": ["customer or message "],
       "payload": {"body": "why why tell me why", "tagIds": ""}
@@ -38,7 +34,7 @@
     "companyId:botBucket:channel:room_id":{
       "stage": 0,
       "parent": "",
-      "flowId": ""
+      "flowKey": ""
     }
   }
 }
