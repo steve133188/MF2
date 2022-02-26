@@ -102,29 +102,29 @@ func SaveDummy() {
 	pipe := MemoryDB.Pipeline()
 	//flow
 	flow, _ := json.Marshal(dummyFlow)
-	pipe.HSet(context.Background(), "matrixsense:flows:0000000000000", flow)
+	pipe.Set(context.Background(), "matrixsense:flows:0000000000000", flow, 0)
 
 	//option
 	option1, _ := json.Marshal(dummyOption1)
-	pipe.HSet(context.Background(), "matrixsense:automations:1:0:#1", option1)
+	pipe.Set(context.Background(), "matrixsense:automations:1:0:#1", option1, 0)
 	option2, _ := json.Marshal(dummyOption2)
-	pipe.HSet(context.Background(), "matrixsense:automations:1:0:#2", option2)
+	pipe.Set(context.Background(), "matrixsense:automations:1:0:#2", option2, 0)
 	option3, _ := json.Marshal(dummyOption3)
-	pipe.HSet(context.Background(), "matrixsense:automations:1:0:#3", option3)
+	pipe.Set(context.Background(), "matrixsense:automations:1:0:#3", option3, 0)
 
 	//action
 	defaultaction, _ := json.Marshal(defaultAction)
-	pipe.HSet(context.Background(), "matrixsense:actions:0000000000001", defaultaction)
+	pipe.Set(context.Background(), "matrixsense:actions:0000000000001", defaultaction, 0)
 
 	errcation, _ := json.Marshal(errorHandleAction)
-	pipe.HSet(context.Background(), "matrixsense:actions:00000000000", errcation)
+	pipe.Set(context.Background(), "matrixsense:actions:00000000000", errcation, 0)
 
 	action2, _ := json.Marshal(dummyReplyAction2)
-	pipe.HSet(context.Background(), "matrixsense:actions:00000000004", action2)
+	pipe.Set(context.Background(), "matrixsense:actions:00000000004", action2, 0)
 	action3, _ := json.Marshal(dummyReplyAction3)
-	pipe.HSet(context.Background(), "matrixsense:actions:00000000003", action3)
+	pipe.Set(context.Background(), "matrixsense:actions:00000000003", action3, 0)
 	action4, _ := json.Marshal(dummyReplyAction4)
-	pipe.HSet(context.Background(), "matrixsense:actions:00000000002", action4)
+	pipe.Set(context.Background(), "matrixsense:actions:00000000002", action4, 0)
 
 	_, err := pipe.Exec(context.Background())
 	if err != nil {
