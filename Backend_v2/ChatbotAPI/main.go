@@ -3,6 +3,8 @@ package main
 import (
 	"ChatbotAPI/config"
 	"ChatbotAPI/hanlder"
+	"context"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -16,6 +18,23 @@ func main() {
 	app.Use(cors.New())
 
 	config.RedisInit()
+
+
+
+	go func() {
+
+		messagesSub := config.ChatBotDB.Subscribe(context.Background(),"messages.received" )
+
+		for{
+			for msg := range messagesSub.Channel() {
+
+				fmt.Printf("channel=%s message=%s\n", msg.Channel, msg.Payload)
+
+			}
+		}
+
+	}()
+
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.Status(http.StatusOK).SendString("Chat Bot API Server is running")
