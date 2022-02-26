@@ -21,21 +21,49 @@ func RedisInit() {
 var MEMORYDBURL = []string{"clustercfg.mf2-redis.2j4s5t.memorydb.ap-east-1.amazonaws.com:6379"}
 
 var CHATBOTDBURL ="127.0.0.1:6379"
-
-var dummyOption1 = map[string]interface{}{
-
+//"matrixsense:automations:1:0:#1"
+var dummyOption1 = []string{
+	"matrixsense:actions:00000000002",
 }
-var dummyOption2 = map[string]interface{}{
-
+//"matrixsense:automations:1:0:#2"
+var dummyOption2 = []string{
+	"matrixsense:actions:00000000003",
 }
-var dummyAction = map[string]interface{}{
+//"matrixsense:automations:1:0:#3"
+var dummyOption3 = []string{
+	"matrixsense:actions:00000000004",
+}
+
+//"matrixsense:actions:00000000004"
+var dummyReplyAction2 = map[string]interface{}{
 	"type": "REPLY",
-	"consumer": []string{"customer or message "},
-	"payload":  map[string]interface{}{"body": "why why tell me why"},
+	"consumer": "customer or message ",
+	"payload":  map[string]interface{}{"body": "Lun Height :183"},
+}
+//"matrixsense:actions:00000000003"
+var dummyReplyAction3 = map[string]interface{}{
+	"type": "REPLY",
+	"consumer": "customer or message ",
+	"payload":  map[string]interface{}{"body": "Ben Height : 170"},
+}
+//"matrixsense:actions:00000000002"
+var dummyReplyAction4 = map[string]interface{}{
+	"type": "REPLY",
+	"consumer": "customer or message ",
+	"payload":  map[string]interface{}{"body": "Steve Height :180"},
+}
+//"matrixsense:actions:00000000000"
+var errorHandleAction = map[string]interface{}{
+	"type": "REPLY",
+	"consumer": "message ",
+	"payload":  map[string]interface{}{"body": "Sorry I dont understand please try agein"},
 }
 
-var defualtAction = map[string]interface{}{
-
+//"matrixsense:actions:0000000000001"
+var defaultAction = map[string]interface{}{
+	"type": "REPLY",
+	"consumer": "message ",
+	"payload":  map[string]interface{}{"body": "Hi I'm MF Assistant \n What can I help you? \n  Please type and rely following number of items \n 1. How tall is Steve\n 1. How tall is Ben\n1. How tall is Lun\n"},
 }
 
 
@@ -43,16 +71,20 @@ var dummyFlow = map[string]interface{}{
 	"flowName": "flow1",
 	"companyId": "matrixsense",
 	"length": 1,
-	"flow":[]string{
-		"actions:tiffany:automations:0:flowKey:0:0:ANY:REPLY",
+	"flow":[][]string{
+		[]string{
+			"matrixsense:automations:1:0:#1",
+			"matrixsense:automations:1:0:#2",
+			"matrixsense:automations:1:0:#3",
+		},
 	},
 	"create_at": "0000000000",
 	"update_at": "0000000000",
 	"create_by": "matrixsense",
 	"update_by": "tiffany",
-	"default": "actions:tiffany:automations:0:flowKey:0:0:ANY",
+	"default": "matrixsense:actions:0000000000001",
 	"timeout": map[string]interface{}{"duration": "10s" , "action": []string{
-		"actions:tiffany:automations:0:0:0:ANY:REPLY",
+		"tiffany:actions:00000000000",
 	}},
 }
 

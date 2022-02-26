@@ -18,11 +18,11 @@
   }},
 //  String
   "option": {
-    "companyId:automations:stages:parentKey:condition": ["actionKey"]
+    "companyId:automations:stages:parentKey:condition": [...actionKey]
   },
 
 //  String
-  "action":{
+  "actions":{
     "companyId:actions:actionId": {
       "type": "ADDTAG , RemoveTag or Reply ...",
       "consumer": ["customer or message "],
@@ -33,7 +33,7 @@
   "chatList": {
     "companyId:botBucket:channel:room_id":{
       "stage": 0,
-      "parent": "",
+      "parentKey": "",
       "flowKey": ""
     }
   }
