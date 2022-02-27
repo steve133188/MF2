@@ -1,0 +1,47 @@
+{
+//  String
+  "flow":{"companyId:flows:flowId:channel?:default": {
+    "flowName": "flow1",
+    "companyId": "matrixsense",
+    "length": 3,
+    "flow":[
+      [options],
+      [options] ,
+      [options]
+    ],
+    "create_at": "0000000000",
+    "update_at": "0000000000",
+    "create_by": "matrixsense",
+    "update_by": "tiffany",
+    "default": action,
+    "timeout": {"duration": "10s" , "action": {}},
+  }},
+//  String
+  "option": {
+    "companyId:automations:stages:parentKey:condition": [...actionKey]
+  },
+
+//  String
+  "actions":{
+    "companyId:actions:actionId": {
+      "type": "ADDTAG , RemoveTag or Reply ...",
+      "consumer": ["customer or message "],
+      "payload": {"body": "why why tell me why",
+        recipientId
+      ,type}
+    }
+  },
+//  Hash
+  "chatList": {
+    "companyId:botBucket:channel:room_id":{
+      "stage": 0,
+      "parentKey": "",
+      "flowKey": "",
+      "flowLength": 1,
+    }
+  }
+}
+
+type
+recipientId
+body

@@ -26,6 +26,11 @@ func main() {
 
 	move := app.Group("/move")
 	move.Get("/chatrooms", handler.MoveChatroom)
+	move.Get("/customers", handler.MoveCustomers)
+	move.Get("/users", handler.MoveUsers)
+	move.Get("/tags", handler.MoveTags)
+	move.Get("/teams", handler.MoveTeams)
+	move.Get("/roles", handler.MoveRoles)
 
 	api := app.Group("/api")
 	api.Get("/chatrooms", handler.GetChatrooms)

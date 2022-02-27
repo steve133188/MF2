@@ -18,6 +18,10 @@ func GetChatrooms(c *fiber.Ctx) error {
 
 	result := make([]*redis.StringStringMapCmd, 0)
 
+	chatroom := make([]model.ChatroomRedis, 0)
+
+	pipe := config.RedisClient.Pipeline()
+
 	start := time.Now()
 
 	keys, err := config.RedisClient.Keys(ctx, "*Chatroom:*").Result()
@@ -25,9 +29,6 @@ func GetChatrooms(c *fiber.Ctx) error {
 		fmt.Println(err)
 	}
 
-	chatroom := make([]model.ChatroomRedis, 0)
-
-	pipe := config.RedisClient.Pipeline()
 	for _, v := range keys {
 		result = append(result, pipe.HGetAll(ctx, v))
 	}
