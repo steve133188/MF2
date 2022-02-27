@@ -196,17 +196,17 @@ func ChatBotDBInit() {
 	defer cancel()
 
 	//addr := os.Getenv("CHATBOTDBURL")
-	addr := CHATBOTDBURL
-	
+	addrs := MEMORYDBURL
+
 
 	//ChatBotDB = redis.NewClient(&redis.Options{
 	//	Addr: addr,
 	//})
-	addrs := strings.Split(os.Getenv("MEMORYDBURL"), " ")
+	//addrs := strings.Split(os.Getenv("MEMORYDBURL"), " ")
 
-	if len(addrs) == 0 || addrs == nil {
-		addrs = MEMORYDBURL
-	}
+	//if len(addrs) == 0 || addrs == nil {
+	//	addrs = MEMORYDBURL
+	//}
 
 	ChatBotDB = redis.NewClusterClient(&redis.ClusterOptions{
 		Addrs: addrs,
