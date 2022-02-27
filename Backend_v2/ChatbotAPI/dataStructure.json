@@ -1,6 +1,6 @@
 {
 //  String
-  "flow":{"companyId:flows:flowId": {
+  "flow":{"companyId:flows:flowId:channel?:default": {
     "flowName": "flow1",
     "companyId": "matrixsense",
     "length": 3,
@@ -26,7 +26,9 @@
     "companyId:actions:actionId": {
       "type": "ADDTAG , RemoveTag or Reply ...",
       "consumer": ["customer or message "],
-      "payload": {"body": "why why tell me why", "tagIds": ""}
+      "payload": {"body": "why why tell me why",
+        recipientId
+      ,type}
     }
   },
 //  Hash
@@ -34,7 +36,12 @@
     "companyId:botBucket:channel:room_id":{
       "stage": 0,
       "parentKey": "",
-      "flowKey": ""
+      "flowKey": "",
+      "flowLength": 1,
     }
   }
 }
+
+type
+recipientId
+body
