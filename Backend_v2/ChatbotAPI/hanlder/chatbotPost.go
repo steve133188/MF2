@@ -7,8 +7,6 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"log"
-	"strconv"
-	"time"
 )
 
 func CreateFlow(c *fiber.Ctx) error {
@@ -59,9 +57,9 @@ func CreateAction(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusCreated)
 }
 
-func GenerateFlowKey(companyId string) string {
-	return companyId + ":flows:" + strconv.FormatInt(time.Now().UnixMicro(), 10)
-}
+//func GenerateFlowKey(companyId string) string {
+//	return companyId + ":flows:" + strconv.FormatInt(time.Now().UnixMicro(), 10)
+//}
 
 func GenerateOptionKey(companyId string, stage string, parentKey string, condition []string) string {
 	var temp string
@@ -71,9 +69,9 @@ func GenerateOptionKey(companyId string, stage string, parentKey string, conditi
 	return companyId + ":automations:" + stage + ":" + parentKey + temp
 }
 
-func GenerateActionKey(companyId string) string {
-	return companyId + ":actions:" + strconv.FormatInt(time.Now().UnixMicro(), 10)
-}
+//func GenerateActionKey(companyId string) string {
+//	return companyId + ":actions:" + strconv.FormatInt(time.Now().UnixMicro(), 10)
+//}
 
 //func CreateChatList(c *fiber.Ctx) error {
 //	var data map[string]interface{}

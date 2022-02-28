@@ -18,6 +18,6 @@ COPY *.go ./
 
 RUN go build -o /channel-router
 
-EXPOSE 8080
+EXPOSE 3010
 
 CMD [ "/channel-router" ]
