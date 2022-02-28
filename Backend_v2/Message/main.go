@@ -4,11 +4,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"log"
 	"mf2-message-server/config"
 	"mf2-message-server/router"
 )
 
 func main() {
+	log.Println("Message Server is running")
+
 	app := fiber.New()
 
 	app.Use(logger.New())
@@ -40,7 +43,7 @@ func main() {
 
 	api := app.Group("/api-v2")
 
-	api.Get("/", func(c *fiber.Ctx) error {
+	api.Get("/message-test", func(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusOK).SendString("Message API Server is running")
 	})
 

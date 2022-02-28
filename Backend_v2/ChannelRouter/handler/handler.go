@@ -2,6 +2,7 @@ package handler
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"io/ioutil"
 	"log"
@@ -116,40 +117,37 @@ func ChannelSendMessage(c *fiber.Ctx) error {
 	cname := c.Query("cname")
 	uid := c.Query("uid")
 
-	hKey := cid + ":channels:" + cname + ":" + uid
+	urlVal := url.Values{}
+	urlVal.Set("cid", cid)
+	urlVal.Set("cname", cname)
+
+	var hKey string
+	switch cname {
+	case "WABA":
+		hKey = cid + ":channels:" + cname
+	case "Whatsapp":
+		hKey = cid + ":channels:" + cname + ":" + uid
+		urlVal.Set("uid", uid)
+	default:
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid channel name"})
+	}
+
 	URL, err := config.ClusterClient.HGet(c.Context(), hKey, "url").Result()
 	if err != nil {
 		log.Println("HGetAll error", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	URL += "/send-message"
+	if URL == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "url of channel is undefined in redis"})
+	}
 
-	//message := new(model.Message)
-	//err = c.BodyParser(&message)
-	//if err != nil {
-	//	log.Println("parser error,", err)
-	//	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
-	//}
-	//data := url.Values{}
-	//data.Set("room_id", message.RoomID)
-	//data.Set("timestamp", message.Timestamp)
-	//data.Set("status", message.Status)
-	//data.Set("message_type", message.MessageType)
-	//data.Set("hasQuotedMsg", strconv.FormatBool(message.HasQuotedMsg))
-	//data.Set("is_media", strconv.FormatBool(message.IsMedia))
-	//data.Set("message_id", message.MessageID)
-	//data.Set("channel", message.Channel)
-	//data.Set("media_id", message.MediaUrl)
-	//data.Set("sender", message.Sender)
-	//data.Set("recipient", message.Recipient)
-	//data.Set("read", strconv.FormatBool(message.Read))
-	//data.Set("is_forwarded", strconv.FormatBool(message.IsForwarded))
-	//data.Set("from_me", strconv.FormatBool(message.FromMe))
-	//data.Set("link", message.Link)
-	//data.Set("body", message.Body)
-	//data.Set("quote", message.Quote)
+	if cname != "WABA" {
+		URL += "/send-message"
+	}
 
+	URL = URL + "?" + urlVal.Encode()
+	fmt.Println(URL)
 	inputData := c.Body()
 
 	req, err := http.NewRequest(http.MethodPost, URL, bytes.NewBuffer(inputData))
@@ -174,7 +172,7 @@ func ChannelSendMessage(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	return c.Status(resp.StatusCode).JSON(body)
+	return c.Status(resp.StatusCode).JSON(string(body))
 }
 
 func ChannelUpdateStatus(c *fiber.Ctx) error {

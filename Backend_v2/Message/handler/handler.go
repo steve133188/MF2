@@ -20,21 +20,20 @@ func AddMessage(c *fiber.Ctx) error {
 	hKey := cid + ":messages:" + cname + ":" + rid + ":" + ts
 
 	msg := make(map[string]interface{})
-
-	err := c.BodyParser(&msg)
+	body := c.Body()
+	err := json.Unmarshal(body, &msg)
 	if err != nil {
-		log.Println("error in body parse", err)
+		log.Println("error in unmarshal", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	//err = config.ClusterClient.HMSet(c.Context(), hKey, msg).Err()
+	//err = config.TestClient.HMSet(c.Context(), hKey, msg).Err()
 	err = config.ClusterClient.HMSet(c.Context(), hKey, msg).Err()
 	if err != nil {
 		log.Println("error in HMSet", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	//err = config.ClusterClient.Publish(c.Context(), "messages", hKey).Err()
 	pubMsg := make(map[string]interface{})
 	pubMsg[hKey] = msg
 	item, _ := json.Marshal(pubMsg)
@@ -42,6 +41,18 @@ func AddMessage(c *fiber.Ctx) error {
 	if err != nil {
 		log.Println("error in publish", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	log.Println("published message")
+	if msg["from_me"] == false {
+		pubMsg := make(map[string]interface{})
+		pubMsg[hKey] = msg
+		item, _ := json.Marshal(pubMsg)
+		err = config.ClusterClient.Publish(c.Context(), "messages.received.WABA", item).Err()
+		if err != nil {
+			log.Println("error in publish", err)
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		}
+		log.Println("published message")
 	}
 
 	return c.SendStatus(fiber.StatusOK)

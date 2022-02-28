@@ -10,7 +10,7 @@ import (
 
 var ClusterClient *redis.ClusterClient
 
-//var TestClient *redis.Client
+var TestClient *redis.Client
 
 func RedisInit() {
 	var ctx = context.Background()
@@ -25,27 +25,27 @@ func RedisInit() {
 	log.Println(pong, err)
 
 	// set get test
-	err = ClusterClient.Set(ctx, "router", "success", 30*time.Second).Err()
+	err = ClusterClient.Set(ctx, "message", "success", 30*time.Second).Err()
 	if err != nil {
 		log.Println("error in redis config,", err)
 	}
-	log.Println("set key router")
+	log.Println("set key message")
 
-	val, err := ClusterClient.Get(ctx, "router").Result()
+	val, err := ClusterClient.Get(ctx, "message").Result()
 	if err != nil {
 		log.Println(err)
 	}
-	log.Println("router: ", val)
+	log.Println("message: ", val)
 }
 
-//func TestRedis() {
-//	var ctx = context.Background()
-//
-//	TestClient = redis.NewClient(&redis.Options{
-//		// Addr:     "redis-master-sr.default.svc.cluster.local:6379",
-//		Addr: "localhost:6379",
-//	})
-//	pong, err := TestClient.Ping(ctx).Result()
-//	log.Println(pong, err)
-//
-//}
+func TestRedis() {
+	var ctx = context.Background()
+
+	TestClient = redis.NewClient(&redis.Options{
+		// Addr:     "redis-master-sr.default.svc.cluster.local:6379",
+		Addr: "localhost:6379",
+	})
+	pong, err := TestClient.Ping(ctx).Result()
+	log.Println(pong, err)
+
+}
