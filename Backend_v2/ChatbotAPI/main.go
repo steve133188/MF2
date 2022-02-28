@@ -62,6 +62,8 @@ func main() {
 
 					flowKeyPattern := fmt.Sprintf("flows:*:%s:default", payload["channel"])
 
+					fmt.Println("flowKeyPattern : " , flowKeyPattern)
+
 					flows, err := config.ChatBotDB.Keys(context.Background(), flowKeyPattern).Result()
 
 					if err != nil || len(flows) ==0{
