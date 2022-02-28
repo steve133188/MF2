@@ -48,7 +48,7 @@ func main() {
 				fmt.Println("bot : " , msg.Payload)
 			}
 			//--------------------------------------- messages.received------------------------------------------------------------
-			if msg.Channel =="messages.received"{
+			if msg.Channel =="messages.received.WABA"{
 				chatListItems := make(map[string]string)
 				//flow := make(map[string]string)
 
@@ -273,7 +273,7 @@ func main() {
 		//	panic(err)
 		//}
 
-		config.ChatBotDB.Publish(context.Background() ,"messages.received" , c.Body())
+		config.ChatBotDB.Publish(context.Background() ,"messages.received.WABA" , c.Body())
 
 		return c.Status(http.StatusOK).JSON(c.Body())
 	})
