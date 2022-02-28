@@ -60,16 +60,18 @@ func main() {
 					//#2.1 if chatlist not exist check the channel's flow
 					log.Println("get ChatList err : ", err)
 
-					flowKey := fmt.Sprintf("flows:*:%s:default", payload["channel"])
+					flowKeyPattern := fmt.Sprintf("flows:*:%s:default", payload["channel"])
 
-					flows, err := config.ChatBotDB.Keys(context.Background(), flowKey).Result()
+					flows, err := config.ChatBotDB.Keys(context.Background(), flowKeyPattern).Result()
 
-					if err != nil {
+					if err != nil || len(flows) ==0{
 						fmt.Println("no chat bot exist")
 						continue
 					}
 
-					flowKey = flows[0]
+					fmt.Println("found flowKeys " , flows)
+
+					flowKey := flows[0]
 
 					val, err := config.ChatBotDB.Get(context.Background(), flowKey).Result()
 					if err != nil {
