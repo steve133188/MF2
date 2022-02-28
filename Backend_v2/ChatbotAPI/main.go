@@ -28,27 +28,29 @@ func main() {
 
 		messagesSub := config.ChatBotDB.Subscribe(context.Background(),"messages.received.WABA" ,"bot")
 
-		payload := make(map[string]interface{})
 
-		actions :=make([]interface{} ,0)
 
 		//botPip := config.ChatBotDB.Pipeline()
 
 		for msg := range messagesSub.Channel() {
-			flow := make( map[string]interface{})
 
-			// #1 Unmarshall data
-			if err := json.Unmarshal([]byte(msg.Payload), &payload);err != nil{
 
-				fmt.Printf("Marshall failed=%s\n",err)
-
-			}
 
 			if msg.Channel =="bot"{
 				fmt.Println("bot : " , msg.Payload)
 			}
 			//--------------------------------------- messages.received------------------------------------------------------------
 			if msg.Channel =="messages.received.WABA"{
+				flow := make( map[string]interface{})
+
+				payload := make(map[string]interface{})
+				// #1 Unmarshall data
+				if err := json.Unmarshal([]byte(msg.Payload), &payload);err != nil{
+
+					fmt.Printf("Marshall failed=%s\n",err)
+
+				}
+				actions :=make([]interface{} ,0)
 				chatListItems := make(map[string]string)
 				//flow := make(map[string]string)
 

@@ -86,7 +86,7 @@ var defaultAction = map[string]interface{}{
 	"payload":  map[string]interface{}{"text": "Hi I'm MF Assistant \nWhat can I help you? \nPlease type and rely following number of items\n1. How tall is Steve\n2. How tall is Ben\n3. How tall is Lun\n", "type":"TEXT"},
 }
 
-//"flows:0000000000000"
+//"flows:0000000000000:WABA:default"
 var dummyFlow = map[string]interface{}{
 	"flowName":  "flow1",
 	"companyId": "matrixsense",
@@ -104,7 +104,7 @@ var dummyFlow = map[string]interface{}{
 	"update_by": "tiffany",
 	"default":   "actions:0000000000001",
 	"timeout": map[string]interface{}{"duration": "10s", "actions": []string{
-		"tiffany:actions:00000000000",
+		"actions:00000000000",
 	}},
 }
 
