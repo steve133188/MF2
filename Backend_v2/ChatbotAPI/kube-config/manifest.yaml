@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: chatbot
+  name: chatbot
+spec:
+  replicas:
+  selector:
+    matchLabels:
+      app: chatbot
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: chatbot
+    spec:
+      containers:
+        - image: 244112418223.dkr.ecr.ap-east-1.amazonaws.com/mf2-tco-whatsapp:chatbot
+          name: chatbot
+          imagePullPolicy: Always
+          resources: {}
+          ports:
+            - containerPort: 3010
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chatbot
+  labels:
+    run: chatbot
+spec:
+  ports:
+    - port: 3010
+      targetPort: 3010
+      nodePort: 30310
+      protocol: TCP
+  selector:
+    app: chatbot
+  type: NodePort
